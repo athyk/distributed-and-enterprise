@@ -13,11 +13,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+from common.files.client import StorageClient
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -132,3 +133,12 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Image handling
+S3_ACCESS_KEY_ID = os.environ.get("MINIO_ROOT_USER", "minio")
+S3_ACCESS_KEY = os.environ.get("MINIO_ROOT_PASSWORD", "minio123")
+S3_BUCKET_NAME = os.environ.get("MINIO_BUCKET_NAME", "unihub")
+S3_ENDPOINT_URL = os.environ.get("MINIO_ENDPOINT", "http://minio:9000")
+S3_URL = os.environ.get("S3_URL", "http://localhost:9000")
+
+StorageClient.initialise(S3_ENDPOINT_URL, S3_ACCESS_KEY_ID, S3_ACCESS_KEY, S3_BUCKET_NAME, S3_URL)
