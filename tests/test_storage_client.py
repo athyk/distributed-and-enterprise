@@ -1,5 +1,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
+
+import requests
 from django.core.files.uploadedfile import SimpleUploadedFile
 from common.files import StorageClient
 
@@ -39,7 +41,30 @@ class StorageClientTestCase(unittest.TestCase):
         uploaded_url = self.client.upload_file(test_file)
         self.assertIsNotNone(uploaded_url)
         self.assertTrue(uploaded_url.startswith("http://test-minio:9000/test-bucket/"))
-        self.mock_s3.upload_fileobj.assert_called_once() # Ensure upload was called
+        self.mock_s3.upload_fileobj.assert_called_once()  # Ensure upload was called
+
+    def test_compress_and_upload_image(self):
+        # Get image from internet, since a fake local image won't compress
+        response = requests.get("https://randomwordgenerator.com/img/picture-generator/53e1dc4a4b52a814f1dc8460962e33791c3ad6e04e507440742e7dd5964cc0_640.jpg", stream=True)
+        response.raise_for_status()
+
+        test_file = SimpleUploadedFile("test.jpg", response.content, content_type="image/jpeg")
+
+        self.mock_s3.upload_fileobj.return_value = None
+
+        uploaded_url = self.client.compress_and_upload_image(test_file)
+        self.assertIsNotNone(uploaded_url)
+        self.assertTrue(uploaded_url.startswith("http://test-minio:9000/test-bucket/"))
+        self.mock_s3.upload_fileobj.assert_called_once()
+
+    def test_compress_and_upload_image_error(self):
+        test_file = SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg")
+        self.mock_s3.upload_fileobj.side_effect = Exception("Upload failed")
+
+        self.mock_s3.upload_fileobj.return_value = None
+
+        uploaded_url = self.client.compress_and_upload_image(test_file)
+        self.assertIsNone(uploaded_url)
 
     def test_upload_file_with_error(self):
         test_file = SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg")

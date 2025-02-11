@@ -1,3 +1,4 @@
+import io
 import typing
 import uuid
 
@@ -5,6 +6,7 @@ import boto3
 import threading
 
 import django.core.files
+from PIL import Image
 
 
 class StorageClient:
@@ -80,9 +82,43 @@ class StorageClient:
             Policy=str(bucket_policy).replace("'", '"')  # JSON requires double quotes
         )
 
+    def compress_and_upload_image(self, image_file: django.core.files.File, quality: int = 85,
+                                  optimise: bool = True) -> typing.Optional[str]:
+        """
+        Compress and upload a png or jpg image file to storage. The image will be resized and compressed.
+
+        :param image_file: A Django File object containing the image.
+        :param quality: JPEG quality (1-95) where higher means better quality/larger size. Values over 95 should be avoided.
+        :param optimise: Whether to optimize the image (True) or just resize (False).
+        :return: The public URL of the uploaded image, or None if the upload failed.
+        """
+        file_extension = image_file.name.split(".")[-1]
+
+        try:
+            img = Image.open(image_file)
+            buffer = io.BytesIO()
+
+            format_ = 'JPEG' if img.format == 'JPEG' else 'PNG'
+            # See: https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#jpeg-saving
+            img.save(buffer, format=format_, quality=quality, optimize=optimise)
+            buffer.seek(0)
+
+            # Cannot call upload_file as it expects a Django File object
+            s3_key = f"{uuid.uuid4()}.{file_extension}"
+            self._s3_client.upload_fileobj(
+                buffer,
+                self._bucket_name,
+                s3_key,
+                ExtraArgs={'ACL': 's3:GetObject'}
+            )
+            return self._get_url(s3_key)
+        except Exception as e:
+            print(f"Error processing and uploading image: {e}")
+            return None
+
     def upload_file(self, file: django.core.files.File) -> typing.Optional[str]:
         """
-        Upload a file. This will auto generate a unique filename.
+        Upload a regular file (non-image). This will auto generate a unique filename.
 
         Ensure a file extension is present in the file name.
 

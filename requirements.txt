@@ -6,3 +6,5 @@ python-dotenv==1.0.1
 boto3==1.36.17
 coverage==7.6.11
 moto==5.0.28
+pillow==11.1.0
+requests==2.32.3
