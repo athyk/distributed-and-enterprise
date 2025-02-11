@@ -50,7 +50,7 @@ class StorageClientTestCase(unittest.TestCase):
 
     def test_get_url(self):
         expected_url = "http://test-minio:9000/test-bucket/test-file.jpg"
-        self.assertEqual(self.client.get_url("test-file.jpg"), expected_url)
+        self.assertEqual(self.client._get_url("test-file.jpg"), expected_url)
 
     def test_delete_file(self):
         self.client.delete_file("test-file.jpg")
