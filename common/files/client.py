@@ -8,6 +8,9 @@ import django.core.files
 
 
 class StorageClient:
+    """
+    A client for interacting with an S3-compatible storage service.
+    """
     _instance = None
     _lock = threading.Lock()
 
