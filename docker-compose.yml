@@ -23,6 +23,8 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
     env_file: .env
+    logging:
+      driver: none
   django-web:
     build: .
     container_name: django-docker
@@ -31,6 +33,7 @@ services:
     depends_on:
       - db
       - minio
+      - redis
     environment:
       DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
       DEBUG: ${DEBUG}
@@ -41,6 +44,13 @@ services:
       DATABASE_HOST: ${DATABASE_HOST}
       DATABASE_PORT: ${DATABASE_PORT}
     env_file: .env
+  redis:
+    image: redis:latest
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    env_file: .env
+    logging:
+      driver: none
 volumes:
   postgres_data:
   minio_data:
