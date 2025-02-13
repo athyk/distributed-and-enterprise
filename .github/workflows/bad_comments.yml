@@ -1,0 +1,29 @@
+name: Prevent Bad Comments
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-bad-comments:
+    name: Check for Bad Comments
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check for region tags
+        run: |
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.py$' | xargs grep -nE '#region|#endregion'; then
+            echo "❌ Found #region or #endregion in changed files. Please remove them."
+            exit 1
+          fi
+      - name: Check for commented out code
+        run: |
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.py$' | xargs grep -nE '^\s*#\s*(if|else|endif|print|include|\w+\s*=)'; then
+            echo "❌ Found commented out code in changed files. Please remove them."
+            exit 1
+          fi

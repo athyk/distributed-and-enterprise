@@ -14,3 +14,7 @@ To run in the background, run `docker-compose up -d --build`.
 ## Creating the project
 
 First command was: `django-admin startproject unihub_project .`
+
+## Need help or need to know more?
+
+See the documentation written at [`/docs/README.md`](/docs) for more information.
