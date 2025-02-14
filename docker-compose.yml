@@ -23,8 +23,6 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
     env_file: .env
-    logging:
-      driver: none
   django-web:
     build: .
     container_name: django-docker
