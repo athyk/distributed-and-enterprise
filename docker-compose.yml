@@ -23,9 +23,9 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
     env_file: .env
-  django-web:
+  django-backend:
     build: .
-    container_name: django-docker
+    container_name: django-backend
     ports:
       - ${DJANGO_PORT}:8000
     depends_on:
@@ -33,6 +33,17 @@ services:
       - minio
       - redis
     env_file: .env
+  svelte-frontend:
+    build:
+      context: ./frontend
+    container_name: svelte-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - django-backend
+    working_dir: /app
   redis:
     image: redis:latest
     ports:
