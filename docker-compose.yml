@@ -12,7 +12,9 @@ services:
         POSTGRES_PORT: ${DATABASE_PORT}
     env_file: .env
   minio:
-    image: docker.io/bitnami/minio:2025.2.7
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data
     ports:
       - ${MINIO_PORT}:${MINIO_PORT}
       - ${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}
