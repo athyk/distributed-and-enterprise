@@ -82,7 +82,7 @@ DATABASES = {
     "default": {
         "NAME": os.environ.get("DATABASE_NAME", "unihub"),
         "USER": os.environ.get("DATABASE_USERNAME", "root"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
+        "PASSWORD": os.environ.get("DATABASE_PASSWORD", "hVvBgjrKY5wx9dv56Zadbi4AKbFK"),
         "HOST": os.environ.get("DATABASE_HOST", "127.0.0.1"),
         "PORT": os.environ.get("DATABASE_PORT", 5432),
         "CONN_MAX_AGE": 300,
