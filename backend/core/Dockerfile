@@ -23,6 +23,7 @@ COPY --from=base /usr/local/bin/ /usr/local/bin/
 
 WORKDIR /app
 COPY --chown=appuser:appuser . .
+RUN rm -rf .git .github .venv docs frontend
 
 # Prevents writing pyc files to disk
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -31,4 +32,5 @@ ENV PYTHONUNBUFFERED=1
 USER appuser
 
 EXPOSE 8000
+ENV PYTHONPATH=/app/backend/common/proto
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "unihub_project.wsgi:application"]

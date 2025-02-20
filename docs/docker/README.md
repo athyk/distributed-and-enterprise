@@ -103,7 +103,7 @@ When using `docker-compose up --build`, the logs are shown in the terminal, whic
 The `build` field is used to build the image from the Dockerfile in the current directory.
 
 [frontend/Dockerfile](../../frontend/Dockerfile) is used to build the Svelte frontend image.
-[Dockerfile](../../Dockerfile) is used to build the Django backend image.
+[Dockerfile](../../backend/core/Dockerfile) is used to build the Django backend image.
 
 
 #### What's the `container_name` field?

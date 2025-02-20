@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 
 import requests
 from django.core.files.uploadedfile import SimpleUploadedFile
-from common.files import StorageClient
+from backend.common.files import StorageClient
 
 
 class StorageClientTestCase(unittest.TestCase):

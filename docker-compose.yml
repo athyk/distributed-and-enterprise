@@ -25,8 +25,21 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
     env_file: .env
+  chat-service:
+    build:
+        context: .
+        dockerfile: backend/chat/Dockerfile
+    container_name: chat-service
+    ports:
+      - ${CHAT_PORT}:${CHAT_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
   django-backend:
-    build: .
+    build:
+        context: .
+        dockerfile: backend/core/Dockerfile
     container_name: django-backend
     ports:
       - ${DJANGO_PORT}:8000
@@ -34,6 +47,7 @@ services:
       - db
       - minio
       - redis
+      - chat-service
     env_file: .env
   svelte-frontend:
     build:
