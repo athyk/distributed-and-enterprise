@@ -39,7 +39,7 @@ def chat_message(request: WSGIRequest):
 
     data = json.loads(request.body)
 
-    channel = grpc.insecure_channel("chat-service:" + os.environ.get('SERVICE1_PORT', '50051'))
+    channel = grpc.insecure_channel("chat-service:" + os.environ.get('CHAT_PORT', '50051'))
     stub = chat_pb2_grpc.ChatStub(channel)
     response: chat_pb2.MessageResponse = stub.SendMessage(chat_pb2.MessageRequest(message=data['message']))
 
