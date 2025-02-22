@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from django.core.validators import RegexValidator
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class User(models.Model):
     email = models.TextField(

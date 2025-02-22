@@ -1,51 +1,38 @@
-from django.db import models
-from django.utils.timezone import now
-from django.core.validators import RegexValidator
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password
 
-from django.shortcuts import render, HttpResponse
-'''
-class User(models.Model):
-    email = models.TextField(
-        unique=True,
-        validators=[
-            RegexValidator(
-                regex=r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$",
-                message="Enter a valid email address.",
-                code="invalid_email",
-            )
-        ],
-    )
-    email_verified = models.BooleanField(default=False)
-    password = models.TextField()
-    two_fa_secret = models.TextField(blank=True, null=True)
-    
-    full_name = models.TextField()
-    first_name = models.TextField()
-    last_name = models.TextField()
-    nickname = models.CharField(max_length=50, blank=True, null=True)
-    
-    GENDER_CHOICES = [
-        ("Male", "Male"),
-        ("Female", "Female"),
-        ("Other", "Other"),
-        ("Prefer not to say", "Prefer not to say"),
-    ]
-    gender = models.CharField(
-        max_length=20,
-        choices=GENDER_CHOICES,
-        blank=True,
-        null=True
-    )
+from django.contrib.auth import authenticate, login as auth_login
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
 
-    picture_url = models.TextField(blank=True, null=True)
+from .forms import SignupForm, LoginForm
 
-    created_at = models.DateTimeField(default=now, editable=False)
-    updated_at = models.DateTimeField(auto_now=True)
+from django.http import HttpResponse
+import json
 
-    class Meta:
-        db_table = "user"  # Match PostgreSQL table name
-'''
+def signup(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            request.session["user_id"] = user.id  # Manual session login
+            return HttpResponse(json.dumps({"message": "Signup successful", "user_id": user.id}), content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({"errors": form.errors}), content_type="application/json", status=400)
+    return render(request, "signup.html", {"form": SignupForm()})
 
-
-def home(request):
-    return HttpResponse("hello world")
+def user_login(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = form.cleaned_data["user"]
+            request.session["user_id"] = user.id  # Store user session
+            return HttpResponse(json.dumps({"message": "Login successful", "user_id": user.id}), content_type="application/json")
+        else:
+            return HttpResponse(json.dumps({"errors": form.errors}), content_type="application/json", status=400)
+    return render(request, "login.html", {"form": LoginForm()})
