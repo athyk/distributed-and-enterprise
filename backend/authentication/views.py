@@ -1,19 +1,7 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-from django.contrib.auth.models import User
-from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.hashers import make_password
-
-from django.contrib.auth import authenticate, login as auth_login
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-
-from .forms import SignupForm, LoginForm
-
-from django.http import HttpResponse
 import json
+from django.http import HttpResponse
+from django.shortcuts import render
+from .forms import SignupForm, LoginForm
 
 def signup(request):
     if request.method == "POST":
