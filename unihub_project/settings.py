@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    
+ 
 ]
 
 MIDDLEWARE = [
@@ -80,9 +83,10 @@ WSGI_APPLICATION = "unihub_project.wsgi.application"
 
 DATABASES = {
     "default": {
+        'ENGINE': 'django.db.backends.postgresql',  #
         "NAME": os.environ.get("DATABASE_NAME", "unihub"),
         "USER": os.environ.get("DATABASE_USERNAME", "root"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD", "hVvBgjrKY5wx9dv56Zadbi4AKbFK"),
+        "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
         "HOST": os.environ.get("DATABASE_HOST", "127.0.0.1"),
         "PORT": os.environ.get("DATABASE_PORT", 5432),
         "CONN_MAX_AGE": 300,

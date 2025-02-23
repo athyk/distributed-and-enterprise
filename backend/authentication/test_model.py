@@ -1,6 +1,8 @@
 from django.test import TestCase
+from django.core.exceptions import ValidationError
+from django.db.utils import IntegrityError
+from models import User
 
-# Create your tests here.
 class UserModelTest(TestCase):
     def setUp(self):
         """Set up a test user."""

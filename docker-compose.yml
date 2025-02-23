@@ -1,45 +1,71 @@
+version: '3.9'  # Use a suitable version
+
 services:
   db:
     image: postgres:17
     ports:
-      - ${DATABASE_PORT}:${DATABASE_PORT}
+      - "5432:5432"  # Expose only if needed for external access
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-        POSTGRES_DB: ${DATABASE_NAME}
-        POSTGRES_USER: ${DATABASE_USERNAME}
-        POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-        POSTGRES_PORT: ${DATABASE_PORT}
-    env_file: .env
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      # POSTGRES_PORT: ${DATABASE_PORT} # Usually not needed inside the container.
+    networks:
+      - app_network  # Connect to the shared network
+
   minio:
     image: docker.io/bitnami/minio:2025.2.7
     ports:
-      - ${MINIO_PORT}:${MINIO_PORT}
-      - ${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}
+      - "${MINIO_PORT}:${MINIO_PORT}"
+      - "${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}"
     volumes:
       - 'minio_data:/data'
     environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
-      - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
-    env_file: .env
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS}
+    networks:
+      - app_network  # Connect to the shared network
+
   django-web:
     build: .
     container_name: django-docker
+    command: python manage.py runserver 0.0.0.0:8000  #  <-- ADD THIS!
+    volumes:
+      - .:/code  # Mount your project directory
     ports:
-      - ${DJANGO_PORT}:8000
+      - "${DJANGO_PORT}:8000"
     depends_on:
       - db
       - minio
       - redis
-    env_file: .env
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: ${DEBUG}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USERNAME: ${DATABASE_USERNAME}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: db  # Use the service name 'db'
+      DATABASE_PORT: ${DATABASE_PORT} #This port setting is used for internal communication.
+      REDIS_URL: ${REDIS_URL}
+      # Add other Django-specific environment variables here
+    networks:
+      - app_network  # Connect to the shared network
+
   redis:
     image: redis:latest
     ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
-    env_file: .env
+      - "${REDIS_PORT}:${REDIS_PORT}"
     logging:
       driver: none
+    networks:
+      - app_network #connect to the shared network
+
 volumes:
   postgres_data:
   minio_data:
+
+networks:
+  app_network:  # Define the shared network
