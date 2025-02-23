@@ -83,12 +83,20 @@ WSGI_APPLICATION = "unihub_project.wsgi.application"
 
 DATABASES = {
     "default": {
+<<<<<<< HEAD
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DATABASE_NAME", "unihub"),
         "USER": os.getenv("DATABASE_USERNAME", "root"),
         "PASSWORD": os.getenv("DATABASE_PASSWORD", "hVvBgjrKY5wx9dv56Zadbi4AKbFK"),
         "HOST": os.getenv("DATABASE_HOST", "127.0.0.1"),
         "PORT": os.getenv("DATABASE_PORT", "5432"),  # Ensure it's a string
+=======
+        "NAME": os.environ.get("DATABASE_NAME", "unihub"),
+        "USER": os.environ.get("DATABASE_USERNAME", "root"),
+        "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
+        "HOST": os.environ.get("DATABASE_HOST", "127.0.0.1"),
+        "PORT": os.environ.get("DATABASE_PORT", 5432),
+>>>>>>> parent of b51ebc0 (started)
         "CONN_MAX_AGE": 300,
         "OPTIONS": {
             "client_encoding": "UTF8",
