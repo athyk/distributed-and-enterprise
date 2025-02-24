@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.timezone import now
 from django.core.validators import RegexValidator
 
+
+
 class User(models.Model):
     email = models.TextField(
         unique=True,
