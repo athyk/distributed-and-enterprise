@@ -25,8 +25,28 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
     env_file: .env
+  redis:
+    image: redis:latest
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    env_file: .env
+    logging:
+      driver: none
+  chat-service:
+    build:
+        context: .
+        dockerfile: backend/chat/Dockerfile
+    container_name: chat-service
+    ports:
+      - ${CHAT_PORT}:${CHAT_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
   django-backend:
-    build: .
+    build:
+        context: .
+        dockerfile: backend/core/Dockerfile
     container_name: django-backend
     ports:
       - ${DJANGO_PORT}:8000
@@ -34,6 +54,7 @@ services:
       - db
       - minio
       - redis
+      - chat-service
     env_file: .env
   svelte-frontend:
     build:
@@ -46,13 +67,6 @@ services:
     depends_on:
       - django-backend
     working_dir: /app
-  redis:
-    image: redis:latest
-    ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
-    env_file: .env
-    logging:
-      driver: none
 volumes:
   postgres_data:
   minio_data:

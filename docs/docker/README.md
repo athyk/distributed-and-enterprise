@@ -28,7 +28,9 @@ services:
       POSTGRES_PORT: ${DATABASE_PORT}
     env_file: .env
   minio:
-    image: docker.io/bitnami/minio:2025.2.7
+    image: minio/minio:latest
+    container_name: minio
+    command: server /data
     ports:
       - ${MINIO_PORT}:${MINIO_PORT}
       - ${MINIO_CONSOLE_PORT}:${MINIO_CONSOLE_PORT}
@@ -39,8 +41,28 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
     env_file: .env
+  redis:
+    image: redis:latest
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    env_file: .env
+    logging:
+      driver: none
+  chat-service:
+    build:
+      context: .
+      dockerfile: backend/chat/Dockerfile
+    container_name: chat-service
+    ports:
+      - ${CHAT_PORT}:${CHAT_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
   django-backend:
-    build: .
+    build:
+      context: .
+      dockerfile: backend/core/Dockerfile
     container_name: django-backend
     ports:
       - ${DJANGO_PORT}:8000
@@ -48,6 +70,7 @@ services:
       - db
       - minio
       - redis
+      - chat-service
     env_file: .env
   svelte-frontend:
     build:
@@ -60,13 +83,6 @@ services:
     depends_on:
       - django-backend
     working_dir: /app
-  redis:
-    image: redis:latest
-    ports:
-      - ${REDIS_PORT}:${REDIS_PORT}
-    env_file: .env
-    logging:
-      driver: none
 volumes:
   postgres_data:
   minio_data:
@@ -74,9 +90,10 @@ volumes:
 
 - `db` service: This is the PostgreSQL database service, handles the database like Mysql/Sqlite.
 - `minio` service: This is the Minio service, handles file storage similar to AWS S3.
-- `django-backend` service: This is the Django service (web server/backend).
-- `svelte-frontend` service: This is the Svelte service (frontend).
 - `redis` service: This is the Redis service, handles caching.
+- `django-backend` service: This is the Django service (web server/backend).
+- `chat-service` service: This is the chat service (backend).
+- `svelte-frontend` service: This is the Svelte service (frontend).
 
 #### Why use `environment` with `env_file`?
 It shows clearly what each service requires and allows for easy configuration.
@@ -102,8 +119,10 @@ When using `docker-compose up --build`, the logs are shown in the terminal, whic
 
 The `build` field is used to build the image from the Dockerfile in the current directory.
 
+Adding `context` allows it to be called from that directory, and `dockerfile` allows you to specify the Dockerfile to use.
+
 [frontend/Dockerfile](../../frontend/Dockerfile) is used to build the Svelte frontend image.
-[Dockerfile](../../Dockerfile) is used to build the Django backend image.
+[Dockerfile](../../backend/core/Dockerfile) is used to build the Django backend image.
 
 
 #### What's the `container_name` field?
