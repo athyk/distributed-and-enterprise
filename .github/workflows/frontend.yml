@@ -15,6 +15,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd frontend
+          npm install -g pnpm
           pnpm i --frozen-lockfile
       - name: Run eslint
         run: |
