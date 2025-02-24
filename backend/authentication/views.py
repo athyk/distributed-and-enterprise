@@ -2,7 +2,7 @@ import json
 from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import check_password, make_password
-from models import User
+from backend.authentication.models import User
 
 def home(request):
     return HttpResponse("Hello, world")
@@ -10,8 +10,10 @@ def home(request):
 @csrf_exempt  # Remove in production!
 def user_login(request):
     if request.method == "POST":
+        print("request To create user made")
         try:
             data = json.loads(request.body.decode("utf-8"))
+            print(f'Data Got: {data}')
             email = data.get("email")
             password = data.get("password")
 
@@ -22,7 +24,11 @@ def user_login(request):
             # Check if user exists
             user = User.objects.filter(email=email).first()
             if not user or not check_password(password, user.password):  # ✅ Use check_password for authentication
-                return JsonResponse({"error": "Invalid credentials"}, status=400)
+                if not user:
+                    return JsonResponse({"error": "Invalid credentials (Not User)"}, status=400)
+
+                elif not check_password(password, user.password):
+                    return JsonResponse({"error": "Invalid credentials (Not Check Password)"}, status=400)
 
             return JsonResponse({"message": "Login successful"}, status=200)
 

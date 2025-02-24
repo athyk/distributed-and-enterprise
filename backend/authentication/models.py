@@ -43,4 +43,4 @@ class User(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = "user"  # Match PostgreSQL table name
+        db_table = "users"  # Match PostgreSQL table name
