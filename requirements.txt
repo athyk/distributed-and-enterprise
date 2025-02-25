@@ -12,3 +12,6 @@ django_redis==5.4.0
 redis==5.2.1
 grpcio==1.70.0
 grpcio-tools==1.70.0
+SQLAlchemy==2.0.25
+SQLAlchemy-Utils==0.41.1
+typing==3.7.4.3

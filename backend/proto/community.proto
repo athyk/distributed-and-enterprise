@@ -1,0 +1,98 @@
+syntax = "proto3";
+
+// CommunityCreateRequest is the request message for the CommunityCreate method.
+message CommunityCreateRequest {
+    // name is the community identifier for users
+    string name = 1;
+    // description is the short paragraph regarding the community
+    string description = 2;
+    // public is for restricting access to users when false
+    bool public = 3;
+    // tags is a flag to indicate if the message is from a bot.
+    repeated string tags = 4;
+    // degrees is a flag to indicate if the message is from a bot.
+    repeated string degrees = 5;
+}
+
+// CommunityUpdateRequest is the request message for the CommunityCreate method.
+message CommunityUpdateRequest {
+    // id is the community unique identification
+    int32 id = 1;
+    // name is the community identifier for users
+    string name = 2;
+    // description is the short paragraph regarding the community
+    string description = 3;
+    // public is for restricting access to users when false
+    bool public = 4;
+    // tags is a flag to indicate if the message is from a bot.
+    repeated string tags = 5;
+    // degrees is a flag to indicate if the message is from a bot.
+    repeated string degrees = 6;
+}
+
+// CommunityViewRequest is the request message for the CommunityCreate method.
+message CommunityViewRequest {
+    // id is the community unique identification
+    int32 id = 1;
+}
+
+// CommunityDeleteRequest is the request message for the CommunityCreate method.
+message CommunityDeleteRequest {
+    // id is the community unique identification
+    int32 id = 1;
+}
+
+// BasicCommunityResponse is the response message for the CommunityCreate method from the chat service.
+//
+// It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
+message BasicCommunityResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+}
+
+// BasicCommunityResponse is the response message for the CommunityCreate method from the chat service.
+//
+// It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
+message CommunityIDResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+    // id is the community unique identification
+    int32 id = 4;
+}
+
+// BasicCommunityResponse is the response message for the CommunityCreate method from the chat service.
+//
+// It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
+message CommunityDataResponse {
+    // id is the community unique identification
+    int32 id = 1;
+    // name is the community identifier for users
+    string name = 2;
+    // description is the short paragraph regarding the community
+    string description = 3;
+    // public is for restricting access to users when false
+    bool public = 4;
+    // tags is a flag to indicate if the message is from a bot.
+    repeated string tags = 5;
+    // degrees is a flag to indicate if the message is from a bot.
+    repeated string degrees = 6;
+}
+
+service Community {
+    // CommunityCreate creates a new community
+    rpc CommunityCreate(CommunityCreateRequest) returns (CommunityIDResponse) {}
+    // CommunityUpdate creates a new community
+    rpc CommunityUpdate(CommunityUpdateRequest) returns (BasicCommunityResponse) {}
+    // CommunityView creates a new community
+    rpc CommunityView(CommunityViewRequest) returns (CommunityDataResponse) {}
+    // CommunityDelete creates a new community
+    rpc CommunityDelete(CommunityDeleteRequest) returns (BasicCommunityResponse) {}
+}
