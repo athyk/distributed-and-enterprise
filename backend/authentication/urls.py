@@ -6,6 +6,6 @@ urlpatterns = [
     path("", views.home, name="home"),
     path("login/", views.user_login, name="login"),
     path("signup/", views.create_user, name="signup"),  # Change to `signup`
-    path("send/", views.send_verifcation_code, name="send"),
+    path("send/", verify.send_verifcation_code, name="send"),
     path("verify/", verify.verify_otp, name="verify"),
 ]
