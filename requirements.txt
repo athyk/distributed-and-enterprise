@@ -10,3 +10,4 @@ pillow==11.1.0
 requests==2.32.3
 django_redis==5.4.0
 redis==5.2.1
+sendgrid==6.11.0
