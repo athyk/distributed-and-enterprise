@@ -54,6 +54,7 @@ def create_user(request):
 
             # Validate required fields
             if not all([email, first_name, last_name, password, password2, gender]):
+           
                 return JsonResponse({"error": "All fields are required"}, status=400)
 
             # Validate password match
