@@ -97,14 +97,14 @@ def send_verifcation_code(request):
             email = data.get("email")
             if not email:
                 return JsonResponse({"error": "Email is required"}, status=400)
-
             send_email = send_verification_code_email("SENDGRID_EMAIL", email)
             print(send_email)
             if send_email[1] == 500:
                 return JsonResponse({"error": send_email[0]}, status=500)
-            return JsonResponse({"message": "Verification code sent successfully"}, status=200)
+            return JsonResponse({"message": "Verification code sent successfully","ID": send_email[2]}, status=200)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON format"}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
