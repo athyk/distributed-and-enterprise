@@ -47,13 +47,13 @@ def send_verification_code_email(send_id, user_email,code):
     # Send Email Code Capped at 100 a day
 
 
-    # try:
-    #     sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-    #     response = sg.send(message)
-    #     print(response.status_code)
-    #     print(response.body)
-    #     print(response.headers)
-    # except Exception as e:
-    #     return e.message, 500
+    try:
+        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
+        response = sg.send(message)
+        print(response.status_code)
+        print(response.body)
+        print(response.headers)
+    except Exception as e:
+        return e.message, 500
 
     return "Email sent successfully", 200
