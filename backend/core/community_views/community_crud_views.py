@@ -4,7 +4,6 @@ import os
 
 import grpc
 from django.core.handlers.wsgi import WSGIRequest
-from django.views.decorators.cache import cache_page
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
