@@ -7,85 +7,14 @@ from concurrent import futures
 #
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
-from backend.common.proto import community_pb2_grpc, community_pb2
-
-
+from backend.common.proto import community_pb2_grpc
 from backend.community.database.database import engine, Base, confirm_database_exists
 
-
-
-
-from backend.community.crud.create import create_community
-from backend.community.crud.view import get_community_data
-from backend.community.crud.update import update_community
-from backend.community.crud.delete import delete_community
-
-class Service(community_pb2_grpc.CommunityServicer):
-    def CommunityCreate(self, request: community_pb2.CommunityCreateRequest, context: grpc.ServicerContext) -> community_pb2.CommunityIDResponse:
-        print("CommunityCreate Request Made:")
-        print(request)
-        print('-----')
-        print(request.user_id)
-
-        success, id, message = create_community(request.name, request.description, request.public, list(request.tags), list(request.degrees), request.user_id)
-        http_code = 201
-
-        if not success:
-            http_code = 400
-        
-        return community_pb2.CommunityIDResponse(success=success, http_status=http_code, error_message=message, id=id)
-
-
-    def CommunityView(self, request: community_pb2.CommunityViewRequest, context: grpc.ServicerContext) -> community_pb2.CommunityDataResponse:
-        print("CommunityView Request Made:")
-        print(request)
-
-        success, message, name, description, public, tag, degree = get_community_data(request.id)
-        http_code = 200
-
-        if not success:
-            http_code = 400
-
-        return community_pb2.CommunityDataResponse(
-            success=success,
-            http_status=http_code,
-            error_message=message,
-            name=name,
-            description=description,
-            public_community=public,
-            tags=tag,
-            degrees=degree
-            )
-    
-
-    def CommunityUpdate(self, request: community_pb2.CommunityUpdateRequest, context: grpc.ServicerContext) -> community_pb2.BasicCommunityResponse:
-        print("CommunityUpdate Request Made:")
-        print(request)
-
-        success, message = update_community(request.id, request.name, request.description, request.public, list(request.tags), list(request.degrees), request.user_id)
-        http_code = 200
-
-        if not success:
-            http_code = 400
-
-        return community_pb2.BasicCommunityResponse(success=success, http_status=http_code, error_message=message)
-    
-
-    def CommunityDelete(self, request: community_pb2.CommunityDeleteRequest, context: grpc.ServicerContext) -> community_pb2.BasicCommunityResponse:
-        print("CommunityDelete Request Made:")
-        print(request)
-
-        success, message = delete_community(request.id, request.user_id)
-        http_code = 200
-
-        if not success:
-            http_code = 400
-
-        return community_pb2.BasicCommunityResponse(success=success, http_status=http_code, error_message=message)
-
+# All community services that will be run goes here
+from backend.community.services.community_crud import Community_CRUD_Service
 
 def serve():
-    port = os.environ.get('COMMUNITY_PORT', '50051')
+    port = os.environ.get('COMMUNITY_PORT', '50052')
     max_workers = int(os.environ.get('COMMUNITY_MAX_WORKERS', 10))
 
     print('--------------------------- Server Starting -------------------------\n')
@@ -94,7 +23,7 @@ def serve():
     print(f'Max Workers Assigned: {max_workers}')
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
-    community_pb2_grpc.add_CommunityServicer_to_server(Service(), server)
+    community_pb2_grpc.add_CommunityServicer_to_server(Community_CRUD_Service(), server)
     server.add_insecure_port('[::]:' + port)
     server.start()
 
@@ -104,7 +33,7 @@ def serve():
 
     confirm_database_exists()
 
-    print('Creating All Tables')
+    print('\nCreating All Tables')
     Base.metadata.create_all(engine)
     print('Tables Created')
 
