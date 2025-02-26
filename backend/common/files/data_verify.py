@@ -1,5 +1,5 @@
 def verify_string(string, min_len, max_len):
-    if type(string) != str:
+    if type(string) is not str:
         return False, f'Variable Expected Was str | Recieved: {type(string)} | Data: {string}'
     
     if len(string) < min_len:
@@ -12,7 +12,7 @@ def verify_string(string, min_len, max_len):
 
 
 def verify_integer(integer, min, max):
-    if type(integer) != int:
+    if type(integer) is not int:
         return False, f'Variable Expected Was int | Recieved: {type(integer)} | Data: {integer}'
     
     if integer < min:
@@ -25,14 +25,14 @@ def verify_integer(integer, min, max):
 
 
 def verify_boolean(boolean):
-    if type(boolean) != bool:
+    if type(boolean) is not bool:
         return False, f'Variable Expected Was bool | Recieved: {type(boolean)} | Data: {boolean}'
     
     return True, ""
 
 
 def verify_list(lst, min_len, max_len):
-    if type(lst) != list:
+    if type(lst) is not list:
         return False, f'Variable Expected Was list | Recieved: {type(lst)} | Data: {lst}'
     
     if len(lst) < min_len:
