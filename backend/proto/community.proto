@@ -84,18 +84,16 @@ message CommunityDataResponse {
     int32 http_status = 2;
     // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
     repeated string error_message = 3;
-    // id is the community unique identification
-    int32 id = 4;
     // name is the community identifier for users
-    string name = 5;
+    string name = 4;
     // description is the short paragraph regarding the community
-    string description = 6;
+    string description = 5;
     // public is for restricting access to users when false
-    bool public = 7;
+    bool public_community = 6;
     // tags is a flag to indicate if the message is from a bot.
-    repeated string tags = 8;
+    repeated string tags = 7;
     // degrees is a flag to indicate if the message is from a bot.
-    repeated string degrees = 9;
+    repeated string degrees = 8;
 }
 
 service Community {

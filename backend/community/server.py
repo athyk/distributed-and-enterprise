@@ -16,6 +16,7 @@ from backend.community.database.database import engine, Base, confirm_database_e
 
 
 from backend.community.crud.create import create_community
+from backend.community.crud.view import get_community_data
 
 
 class Service(community_pb2_grpc.CommunityServicer):
@@ -25,12 +26,35 @@ class Service(community_pb2_grpc.CommunityServicer):
         print(request)
 
         success, id, message = create_community(request.name, request.description, request.public, list(request.tags), list(request.degrees), request.user_id)
+        http_code = 201
 
-        print(success, id, message)
-
-        print(message)
+        if not success:
+            http_code = 400
         
-        return community_pb2.CommunityIDResponse(success=success, http_status=200, error_message=message, id=id)
+        return community_pb2.CommunityIDResponse(success=success, http_status=http_code, error_message=message, id=id)
+
+
+    def CommunityView(self, request: community_pb2.CommunityViewRequest, context: grpc.ServicerContext) -> community_pb2.CommunityDataResponse:
+        print("CommunityView Request Made:")
+        print(request)
+
+        success, message, name, description, public, tag, degree = get_community_data(request.id)
+        http_code = 200
+
+        if not success:
+            http_code = 400
+
+        return community_pb2.CommunityDataResponse(
+            success=success,
+            http_status=http_code,
+            error_message=message,
+            name=name,
+            description=description,
+            public_community=public,
+            tags=tag,
+            degrees=degree
+            )
+
 
 
 

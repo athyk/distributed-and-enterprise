@@ -76,23 +76,21 @@ class CommunityIDResponse(_message.Message):
     def __init__(self, success: bool = ..., http_status: _Optional[int] = ..., error_message: _Optional[_Iterable[str]] = ..., id: _Optional[int] = ...) -> None: ...
 
 class CommunityDataResponse(_message.Message):
-    __slots__ = ("success", "http_status", "error_message", "id", "name", "description", "public", "tags", "degrees")
+    __slots__ = ("success", "http_status", "error_message", "name", "description", "public_community", "tags", "degrees")
     SUCCESS_FIELD_NUMBER: _ClassVar[int]
     HTTP_STATUS_FIELD_NUMBER: _ClassVar[int]
     ERROR_MESSAGE_FIELD_NUMBER: _ClassVar[int]
-    ID_FIELD_NUMBER: _ClassVar[int]
     NAME_FIELD_NUMBER: _ClassVar[int]
     DESCRIPTION_FIELD_NUMBER: _ClassVar[int]
-    PUBLIC_FIELD_NUMBER: _ClassVar[int]
+    PUBLIC_COMMUNITY_FIELD_NUMBER: _ClassVar[int]
     TAGS_FIELD_NUMBER: _ClassVar[int]
     DEGREES_FIELD_NUMBER: _ClassVar[int]
     success: bool
     http_status: int
     error_message: _containers.RepeatedScalarFieldContainer[str]
-    id: int
     name: str
     description: str
-    public: bool
+    public_community: bool
     tags: _containers.RepeatedScalarFieldContainer[str]
     degrees: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, success: bool = ..., http_status: _Optional[int] = ..., error_message: _Optional[_Iterable[str]] = ..., id: _Optional[int] = ..., name: _Optional[str] = ..., description: _Optional[str] = ..., public: bool = ..., tags: _Optional[_Iterable[str]] = ..., degrees: _Optional[_Iterable[str]] = ...) -> None: ...
+    def __init__(self, success: bool = ..., http_status: _Optional[int] = ..., error_message: _Optional[_Iterable[str]] = ..., name: _Optional[str] = ..., description: _Optional[str] = ..., public_community: bool = ..., tags: _Optional[_Iterable[str]] = ..., degrees: _Optional[_Iterable[str]] = ...) -> None: ...
