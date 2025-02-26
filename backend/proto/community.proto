@@ -12,6 +12,8 @@ message CommunityCreateRequest {
     repeated string tags = 4;
     // degrees is a flag to indicate if the message is from a bot.
     repeated string degrees = 5;
+    // user_id is the user who is performing the operation
+    int32 user_id = 6;
 }
 
 // CommunityUpdateRequest is the request message for the CommunityCreate method.
@@ -28,6 +30,8 @@ message CommunityUpdateRequest {
     repeated string tags = 5;
     // degrees is a flag to indicate if the message is from a bot.
     repeated string degrees = 6;
+    // user_id is the user who is performing the operation
+    int32 user_id = 7;
 }
 
 // CommunityViewRequest is the request message for the CommunityCreate method.
@@ -40,6 +44,8 @@ message CommunityViewRequest {
 message CommunityDeleteRequest {
     // id is the community unique identification
     int32 id = 1;
+    // user_id is the user who is performing the operation
+    int32 user_id = 2;
 }
 
 // BasicCommunityResponse is the response message for the CommunityCreate method from the chat service.
@@ -72,18 +78,24 @@ message CommunityIDResponse {
 //
 // It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
 message CommunityDataResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
     // id is the community unique identification
-    int32 id = 1;
+    int32 id = 4;
     // name is the community identifier for users
-    string name = 2;
+    string name = 5;
     // description is the short paragraph regarding the community
-    string description = 3;
+    string description = 6;
     // public is for restricting access to users when false
-    bool public = 4;
+    bool public = 7;
     // tags is a flag to indicate if the message is from a bot.
-    repeated string tags = 5;
+    repeated string tags = 8;
     // degrees is a flag to indicate if the message is from a bot.
-    repeated string degrees = 6;
+    repeated string degrees = 9;
 }
 
 service Community {

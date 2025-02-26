@@ -8,44 +8,10 @@ from concurrent import futures
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
 from backend.common.proto import community_pb2_grpc, community_pb2
-#from backend.community.database.database import get_session
 
 
+from backend.community.database.database import engine, Base, confirm_database_exists
 
-
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-
-from sqlalchemy import Column
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import create_engine
-
-# Database setup
-DATABASE_URL = "postgresql+psycopg2://unihub:hVvBgjrKY5wx9dv56Zadbi4AKbFK@db:50052/uni_community"
-Base = declarative_base()
-engine = create_engine(DATABASE_URL)
-
-
-class User(Base):
-    __tablename__ = 'users'
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, index=True)
-    email = Column(String, index=True)
-
-Base.metadata.create_all(bind=engine)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-
-session = SessionLocal()
-user = session.query(User).filter(User.id == 1).first()
-if user:
-    print('found user')
-
-print('done')
 
 
 
@@ -58,7 +24,7 @@ class Service(community_pb2_grpc.CommunityServicer):
         print("CommunityCreate Request Made:")
         print(request)
 
-        success, id, message = create_community(request.name, request.description, request.public, request.tags, request.degrees)
+        success, id, message = create_community(request.name, request.description, request.public, list(request.tags), list(request.degrees), request.user_id)
 
         print(success, id, message)
 
@@ -72,11 +38,28 @@ def serve():
     port = os.environ.get('COMMUNITY_PORT', '50051')
     max_workers = int(os.environ.get('COMMUNITY_MAX_WORKERS', 10))
 
-    print(f"Starting server on port {port} with {max_workers} workers")
+    print('--------------------------- Server Starting -------------------------\n')
+
+    print(f'Port: {port}')
+    print(f'Max Workers Assigned: {max_workers}')
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     community_pb2_grpc.add_CommunityServicer_to_server(Service(), server)
     server.add_insecure_port('[::]:' + port)
     server.start()
+
+    print('\n--------------------------- Server Started --------------------------\n')
+
+    print('----------------- Internal Server Setup Initialising ----------------\n')
+
+    confirm_database_exists()
+
+    print('Creating All Tables')
+    Base.metadata.create_all(engine)
+    print('Tables Created')
+
+    print('\n------------------ Internal Server Setup Completed ------------------')
+
     server.wait_for_termination()
 
 
