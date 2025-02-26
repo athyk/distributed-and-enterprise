@@ -1,19 +1,11 @@
 from backend.common.files.data_verify import verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag, CommunityUser
+from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag
 
 from math import inf as INFINITY
 
 def get_community_data(community_id):
     community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-
-    data_gathered = {
-        'name' : None,
-        'description' : None,
-        'public' : None,
-        'tags' : [],
-        'degrees' : []
-    }
 
     if False in [community_verify]:
 
