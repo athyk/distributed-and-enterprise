@@ -5,8 +5,6 @@ def add_tags(session, tags, community_id, further_non_critical_errors):
     for tag in tags:
         result = session.query(Tag.id).filter(Tag.name == tag).first()
 
-        print(result)
-
         if not result:
             error = f'Community Tag ({tag}) Does Not Exist. Tag Not Applied.'
             further_non_critical_errors.append(error)
@@ -26,13 +24,9 @@ def add_degrees(session, degrees, community_id, further_non_critical_errors):
     for degree in degrees:
         result = session.query(Degree.id).filter(Degree.name == degree).first()
 
-        print(result)
-
         if not result:
             error = f'Degree ({degree}) Does Not Exist. Degree Not Applied.'
             further_non_critical_errors.append(error)
-
-        
 
         else:
             append_degree = CommunityDegree(
