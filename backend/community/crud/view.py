@@ -1,4 +1,4 @@
-from backend.common.files.data_verify import verify_string, verify_boolean, verify_list, verify_integer
+from backend.common.files.data_verify import verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag, CommunityUser
 

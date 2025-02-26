@@ -1,12 +1,14 @@
 from backend.common.files.data_verify import verify_string, verify_boolean, verify_list, verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag, CommunityUser
+from backend.community.database.models import Community, CommunityUser
+
+from backend.community.crud.local_functions import add_tags, add_degrees
 
 from math import inf as INFINITY
 
 def create_community(name, description, public, tags, degrees, user_id):
-    name_verify, name_error = verify_string(name, 4, 32)
-    description_verify, description_error = verify_string(description, 4, 6)
+    name_verify, name_error = verify_string(name, 4, 64)
+    description_verify, description_error = verify_string(description, 4, 511)
     public_verify, public_error = verify_boolean(public)
     tags_verify, tags_error = verify_list(tags, 0, 5)
     degrees_verify, degrees_error = verify_list(degrees, 0, 5)
@@ -37,35 +39,8 @@ def create_community(name, description, public, tags, degrees, user_id):
         new_community_id = new_community.id
         further_non_critical_errors = ['Community Successfully Created']
 
-        for tag in tags:
-            result = session.query(Tag.id).filter(Tag.name == tag).all()
-
-            if not result:
-                error = f'Community Tag ({tag}) Does Not Exist. Tag Not Applied.'
-                further_non_critical_errors.append(error)
-
-            else:
-                append_tag = CommunityTag(
-                    community_id=new_community_id,
-                    tag_id=result[0][0]
-                )
-
-                session.add(append_tag)
-
-        for degree in degrees:
-            result = session.query(Degree.id).filter(Degree.name == degree).all()
-
-            if not result:
-                error = f'Community Tag ({tag}) Does Not Exist. Tag Not Applied.'
-                further_non_critical_errors.append(error)
-
-            else:
-                append_degree = CommunityDegree(
-                    community_id=new_community_id,
-                    degree_id=result[0][0]
-                )
-
-                session.add(append_degree)
+        further_non_critical_errors = add_tags(session, tags, new_community_id, further_non_critical_errors)
+        further_non_critical_errors = add_degrees(session, degrees, new_community_id, further_non_critical_errors)
 
         new_admin = CommunityUser(
             community_id=new_community_id,
