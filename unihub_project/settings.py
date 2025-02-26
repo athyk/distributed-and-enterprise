@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from common.files.client import StorageClient
+from backend.common.files import StorageClient
 
 load_dotenv()
 

@@ -10,11 +10,12 @@ Ensure docker is installed on your machine. To test the file/image uploading in 
 
 - Go into an app (e.g. `core`)
 - Add the following code to a view:
+
 ```python
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from common.files import StorageClient
+from backend import StorageClient
 
 
 @csrf_exempt

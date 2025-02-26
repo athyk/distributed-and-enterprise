@@ -1,0 +1,13 @@
+[lint]
+# E501 - Line too long (82 > 79 characters)
+ignore = ["E501"]
+
+[lint.per-file-ignores]
+"__init__.py" = ["E402"]
+"**/{tests,docs,tools}/*" = ["E402"]
+"backend/common/proto/*" = ["F401", "F541"]
+
+
+[format]
+# 5. Use single quotes in `ruff format`.
+quote-style = "single"
