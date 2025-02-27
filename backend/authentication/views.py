@@ -70,7 +70,7 @@ def create_user(request):
                 return JsonResponse({"error": "Invalid gender selection"}, status=400)
 
             # Create and save the user
-            user = User.objects.create(
+            User.objects.create(
                 email=email,
                 password=make_password(password),  # ✅ Ensure password is hashed
                 first_name=first_name,
