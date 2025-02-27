@@ -3,13 +3,9 @@ import random
 import string
 from unittest.mock import MagicMock
 import grpc
-from backend.common.proto import community_pb2 #, community_pb2_grpc
+from backend.common.proto import community_pb2
 from backend.community.services.community_crud import Community_CRUD_Service
 from backend.tests.custom_test_assertions import CustomTestCase
-
-from backend.community.crud.view import get_community_data
-from backend.community.crud.update import update_community
-from backend.community.crud.delete import delete_community
 
 
 def generate_random_string(length=10):

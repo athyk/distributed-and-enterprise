@@ -8,7 +8,7 @@ def verify_string(string: any, min_len: int, max_len: int) -> Union[bool, str]:
     s_len = len(string)
     s_type = type(string)
 
-    if s_type != str:
+    if s_type is not str:
         return False, f'Variable Expected Was str | Received: {s_type} | Data: {string}'
     
     if s_len < min_len:
@@ -27,7 +27,7 @@ def verify_integer(integer: any, min: int, max: int) -> Union[bool, str]:
 
     i_type = type(integer)
 
-    if i_type != int:
+    if i_type is not int:
         return False, f'Variable Expected Was int | Received: {i_type} | Data: {integer}'
     
     if integer < min:
@@ -46,7 +46,7 @@ def verify_boolean(boolean: any) -> Union[bool, str]:
 
     b_type = type(boolean)
 
-    if b_type != bool:
+    if b_type is not bool:
         return False, f'Variable Expected Was bool | Received: {b_type} | Data: {boolean}'
     
     return True, ""
@@ -60,7 +60,7 @@ def verify_list(lst: any, min_len: int, max_len: int) -> Union[bool, str]:
     l_len = len(lst)
     lst_type = type(lst)
 
-    if lst_type != list:
+    if lst_type is not list:
         return False, f'Variable Expected Was list | Received: {lst_type} | Data: {lst}'
     
     if l_len < min_len:
