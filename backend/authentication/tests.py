@@ -1,4 +1,8 @@
+from django.db import IntegrityError
+from django.forms import ValidationError
 from django.test import TestCase
+
+from backend.authentication.models import User
 
 # Create your tests here.
 class UserModelTest(TestCase):
