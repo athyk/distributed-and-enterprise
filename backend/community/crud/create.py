@@ -1,12 +1,19 @@
-from backend.common.files.data_verify import verify_string, verify_boolean, verify_list, verify_integer
+from backend.common.utils import verify_string, verify_boolean, verify_list, verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityUser
 
 from backend.community.crud.local_functions import add_tags, add_degrees
 
 from math import inf as INFINITY
+from typing import Union
 
-def create_community(name, description, public, tags, degrees, user_id):
+
+def create_community(name: str, description: str, public: bool, tags: list, degrees: list, user_id: int) -> Union[bool, int, list]:
+    '''
+    This function verifies incoming data and creates a new community
+    If any errors arise then relevant error messages are returned.
+    '''
+
     name_verify, name_error = verify_string(name, 4, 64)
     description_verify, description_error = verify_string(description, 4, 511)
     public_verify, public_error = verify_boolean(public)

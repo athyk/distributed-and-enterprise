@@ -244,3 +244,6 @@ fabric.properties
 .idea/inspectionProfiles/Project_Default.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/distributed-and-enterprise.iml
+
+#Docker File
+docker-compose-unedited.yml

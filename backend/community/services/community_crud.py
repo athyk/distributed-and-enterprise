@@ -7,7 +7,16 @@ from backend.community.crud.update import update_community
 from backend.community.crud.delete import delete_community
 
 class Community_CRUD_Service(community_pb2_grpc.CommunityServicer):
+    '''
+    This class holds all the grpc requests on the server side and returns the relevant data.
+    '''
+
     def CommunityCreate(self, request: community_pb2.CommunityCreateRequest, context: grpc.ServicerContext) -> community_pb2.CommunityIDResponse:
+        '''
+        This function verifies incoming data and creates a new community.
+        If any errors arise then relevant error messages are returned.
+        '''
+        
         print("CommunityCreate Request Made:")
         print(request)
 
@@ -21,6 +30,11 @@ class Community_CRUD_Service(community_pb2_grpc.CommunityServicer):
 
 
     def CommunityView(self, request: community_pb2.CommunityViewRequest, context: grpc.ServicerContext) -> community_pb2.CommunityDataResponse:
+        '''
+        This function verifies incoming data and fetches the specified community data.
+        If any errors arise then relevant error messages are returned.
+        '''
+        
         print("CommunityView Request Made:")
         print(request)
 
@@ -43,6 +57,11 @@ class Community_CRUD_Service(community_pb2_grpc.CommunityServicer):
     
 
     def CommunityUpdate(self, request: community_pb2.CommunityUpdateRequest, context: grpc.ServicerContext) -> community_pb2.BasicCommunityResponse:
+        '''
+        This function verifies incoming data and updates the specified community data.
+        If any errors arise then relevant error messages are returned.
+        '''
+        
         print("CommunityUpdate Request Made:")
         print(request)
 
@@ -56,6 +75,11 @@ class Community_CRUD_Service(community_pb2_grpc.CommunityServicer):
     
 
     def CommunityDelete(self, request: community_pb2.CommunityDeleteRequest, context: grpc.ServicerContext) -> community_pb2.BasicCommunityResponse:
+        '''
+        This function verifies incoming data and deletes the specified community.
+        If any errors arise then relevant error messages are returned.
+        '''
+        
         print("CommunityDelete Request Made:")
         print(request)
 

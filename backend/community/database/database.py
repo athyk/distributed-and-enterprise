@@ -8,21 +8,19 @@ import os
 
 
 
-DATABASE_NAME = os.environ.get('COMMUNITY_DB_NAME')
+DATABASE_NAME = os.environ.get('COMMUNITY_DB_NAME') or 'community_db'
 
-DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME')
-DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD')
+DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME') or 'unihub'
+DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'hVvBgjrKY5wx9dv56Zadbi4AKbFK'
 
-DATABASE_HOST = os.environ.get('DATABASE_HOST')
-DATABASE_PORT = os.environ.get('DATABASE_PORT')
+DATABASE_HOST = os.environ.get('DATABASE_HOST') or '127.0.0.1'
+DATABASE_PORT = os.environ.get('DATABASE_PORT') or '5432'
 
 
 GENERAL_DATABASE_URL = f'postgresql+psycopg2://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}'
 
 COMMUNITY_DATABASE_URL = GENERAL_DATABASE_URL + f'/{DATABASE_NAME}'
 POSTGRESS_DATABASE_URL = GENERAL_DATABASE_URL + '/postgres'
-
-print(COMMUNITY_DATABASE_URL)
 
 # Create engine
 engine = create_engine(COMMUNITY_DATABASE_URL, pool_pre_ping=True)

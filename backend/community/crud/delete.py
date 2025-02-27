@@ -1,11 +1,17 @@
-from backend.common.files.data_verify import verify_integer
+from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityUser, CommunityTag, CommunityDegree
 
 from math import inf as INFINITY
+from typing import Union
 
 
-def delete_community(community_id, user_id):
+def delete_community(community_id: int, user_id: int) -> Union[bool, list]:
+    '''
+    This function verifies incoming data and deletes the specified community
+    If any errors arise then relevant error messages are returned.
+    '''
+
     community_verify, community_error = verify_integer(community_id, 1, INFINITY)
     user_verify, user_error = verify_integer(user_id, 1, INFINITY)
 
@@ -24,11 +30,11 @@ def delete_community(community_id, user_id):
         ).first()
 
         if not role_result:
-            return False, 'User Or Community Does Not Exist'
+            return False, ['User Or Community Does Not Exist']
         
         else:
             if role_result[0] != 'Admin':
-                return False, 'User Does Not Have The Required Permission To Perform Requested Action'
+                return False, ['User Does Not Have The Required Permission To Perform Requested Action']
 
         tag_result = session.query(CommunityTag).filter(
                 Community.id == community_id,
@@ -61,4 +67,4 @@ def delete_community(community_id, user_id):
 
         session.commit()
 
-        return True, ''
+        return True, ['Community Successfully Deleted']

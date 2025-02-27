@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import community_pb2 as community__pb2
+from backend.common.proto import community_pb2 as community__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__

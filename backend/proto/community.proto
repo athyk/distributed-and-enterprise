@@ -8,15 +8,16 @@ message CommunityCreateRequest {
     string description = 2;
     // public is for restricting access to users when false
     bool public = 3;
-    // tags is a flag to indicate if the message is from a bot.
+    // tags is a list of tag names
     repeated string tags = 4;
-    // degrees is a flag to indicate if the message is from a bot.
+    // degrees is a list of degree names
     repeated string degrees = 5;
     // user_id is the user who is performing the operation
     int32 user_id = 6;
 }
 
 // CommunityUpdateRequest is the request message for the CommunityCreate method.
+// All of the data whether changed or not must be sent.
 message CommunityUpdateRequest {
     // id is the community unique identification
     int32 id = 1;
@@ -26,9 +27,9 @@ message CommunityUpdateRequest {
     string description = 3;
     // public is for restricting access to users when false
     bool public = 4;
-    // tags is a flag to indicate if the message is from a bot.
+    // tags is a list of tag names
     repeated string tags = 5;
-    // degrees is a flag to indicate if the message is from a bot.
+    // degrees is a list of degree names
     repeated string degrees = 6;
     // user_id is the user who is performing the operation
     int32 user_id = 7;
@@ -48,7 +49,7 @@ message CommunityDeleteRequest {
     int32 user_id = 2;
 }
 
-// BasicCommunityResponse is the response message for the CommunityCreate method from the chat service.
+// BasicCommunityResponse is the response message for the CommunityUpdate and CommunityDelete method from the Community service.
 //
 // It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
 message BasicCommunityResponse {
@@ -60,7 +61,7 @@ message BasicCommunityResponse {
     repeated string error_message = 3;
 }
 
-// BasicCommunityResponse is the response message for the CommunityCreate method from the chat service.
+// CommunityIDResponse is the response message for the CommunityCreate method from the Community service.
 //
 // It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
 message CommunityIDResponse {
@@ -74,7 +75,7 @@ message CommunityIDResponse {
     int32 id = 4;
 }
 
-// BasicCommunityResponse is the response message for the CommunityCreate method from the chat service.
+// CommunityDataResponse is the response message for the CommunityView method from the Community service.
 //
 // It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
 message CommunityDataResponse {
@@ -90,19 +91,19 @@ message CommunityDataResponse {
     string description = 5;
     // public is for restricting access to users when false
     bool public_community = 6;
-    // tags is a flag to indicate if the message is from a bot.
+    // tags is a list of tag names
     repeated string tags = 7;
-    // degrees is a flag to indicate if the message is from a bot.
+    // degrees is a list of degree names
     repeated string degrees = 8;
 }
 
 service Community {
     // CommunityCreate creates a new community
     rpc CommunityCreate(CommunityCreateRequest) returns (CommunityIDResponse) {}
-    // CommunityUpdate creates a new community
+    // CommunityUpdate updates a specified community
     rpc CommunityUpdate(CommunityUpdateRequest) returns (BasicCommunityResponse) {}
-    // CommunityView creates a new community
+    // CommunityView fetches a specified community data
     rpc CommunityView(CommunityViewRequest) returns (CommunityDataResponse) {}
-    // CommunityDelete creates a new community
+    // CommunityDelete deletes a specified community
     rpc CommunityDelete(CommunityDeleteRequest) returns (BasicCommunityResponse) {}
 }
