@@ -6,6 +6,11 @@ from backend.auth.database.models import User
 
 
 def user_login(email: str, password: str) -> tuple[bool, int, list]:
+    """
+    This function with the given data logs in the user if the account is verified.
+    If any errors arise then relevant error messages are returned.
+    """
+
     email_verify, email_error = verify_string(email, 4, 64)
     password_verify, password_error = verify_string(password, 8, 32)
 

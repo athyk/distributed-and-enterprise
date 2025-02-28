@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Text, ForeignKey, Integer
+from sqlalchemy import Column, String, Boolean, DateTime, Date, Text, ForeignKey, Integer
 from sqlalchemy.orm import declarative_base
 from datetime import datetime
 
@@ -15,15 +15,18 @@ class User(Base):
 
     first_name = Column(Text, nullable=False)
     last_name = Column(Text, nullable=False)
-    nickname = Column(String(50), nullable=True)
 
     gender = Column(String(20), nullable=True)
+    date_of_birth = Column(Date, default=lambda: datetime.utcnow().date(), nullable=False)
     picture_url = Column(Text, nullable=True)
 
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.utcnow(), nullable=False)
+    updated_at = Column(DateTime, nullable=True)
 
     degree = Column(Integer, ForeignKey('degree.id'), nullable=False)
+
+    year_of_study = Column(Integer, nullable=False)
+    grad_year = Column(Date, default=lambda: datetime.utcnow().date(), nullable=False)
 
 
 class Degree(Base):

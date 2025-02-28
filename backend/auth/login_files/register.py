@@ -1,73 +1,84 @@
-from backend.common.utils import verify_string, verify_boolean, verify_list, verify_integer
-from backend.community.database.database import get_db
-from werkzeug.security import check_password_hash
+from backend.common.utils import verify_string, verify_list, verify_integer
+from backend.auth.database.database import get_db
+from werkzeug.security import generate_password_hash
+from datetime import datetime
 
-from backend.auth.database.models import User
-
-
-def register_user(email: str, password: str) -> tuple[bool, int, list]:
-
+from backend.auth.database.models import User, Degree
+from backend.auth.login_files.local_functions import add_tags
 
 
+def register_user(
+        email: str,
+        password: str,
+        first_name: str,
+        last_name: str,
+        dob: str,
+        gender: str,
+        degree: str,
+        year_of_study: int,
+        grad_year: str,
+        tags: list
+        ) -> tuple[bool, int, list]:
 
+    email_verify,         email_error         = verify_string(email, 4, 64)
+    password_verify,      password_error      = verify_string(password, 8, 32)
+    first_name_verify,    first_name_error    = verify_string(first_name, 2, 48)
+    last_name_verify,     last_name_error     = verify_string(last_name, 2, 48)
+    dob_verify,           dob_error           = verify_string(dob, 10, 10)
+    gender_verify,        gender_error        = verify_string(gender, 4, 12)
+    degree_verify,        degree_error        = verify_string(degree, 4, 128)
+    year_of_study_verify, year_of_study_error = verify_integer(year_of_study, 1, 9)
+    grad_year_verify,     grad_year_error     = verify_string(grad_year, 10, 10)
+    tag_verify,           tag_error           = verify_list(tags, 4, 32)
 
+    if False in [email_verify, password_verify, first_name_verify, last_name_verify ,dob_verify,
+                 gender_verify, degree_verify, year_of_study_verify, grad_year_verify, tag_verify]:
 
+        all_errors = [email_error, password_error, first_name_error, last_name_error, dob_error,
+                      gender_error, degree_error, year_of_study_error, grad_year_error, tag_error]
 
+        error_messages = [item for item in all_errors if item.strip()]
 
+        return False, -1, error_messages
 
+    with get_db() as session:
+        user = session.query(User).filter(User.email == email).first()
 
-
-
-
-
-
-
-
-
-if request.method == "POST":
+        if user:
+            return False, -1, ['Email Already In Use']
+        
         try:
-            data = json.loads(request.body.decode("utf-8"))
+            dob_obj = datetime.strptime(dob, "%Y-%m-%d").date()
+            grad_year_obj = datetime.strptime(grad_year, "%Y-%m-%d").date()
+        
+        except Exception:
+            return False, -1, ['Dates Not Formatted Correctly']
+        
 
-            email = data.get("email")
-            first_name = data.get("first_name")
-            last_name = data.get("last_name")
-            password = data.get("password")
-            password2 = data.get("password2")
-            gender = data.get("gender")
-            nickname = data.get("nickname")  
+        degree_id = session.query(Degree.id).filter(Degree.name == degree).first()
 
-            # Validate required fields
-            if not all([email, first_name, last_name, password, password2, gender]):
-           
-                return JsonResponse({"error": "All fields are required"}, status=400)
+        if degree_id is None:
+            return False, -1, ['Degree Provided Does Not Exist']
 
-            # Validate password match
-            if password != password2:
-                return JsonResponse({"error": "Passwords do not match"}, status=400)
+        hashed_password = generate_password_hash(password)
 
-            # Validate email uniqueness
-            if User.objects.filter(email=email).exists():
-                return JsonResponse({"error": "User with this email already exists"}, status=400)
+        new_user = User(
+            email=email,
+            password=hashed_password,
+            first_name=first_name,
+            last_name=last_name,
+            dob=dob_obj,
+            gender=gender,
+            degree=degree_id,
+            year_of_study=year_of_study,
+            grad_year=grad_year_obj
+        )
 
-            # Validate gender choice
-            if gender not in dict(User.GENDER_CHOICES):
-                return JsonResponse({"error": "Invalid gender selection"}, status=400)
+        session.add(new_user)
+        session.commit()
 
-            # Create and save the user
-            User.objects.create(
-                email=email,
-                password=make_password(password),  # ✅ Ensure password is hashed
-                first_name=first_name,
-                last_name=last_name,
-                nickname=nickname,
-                gender=gender,
-            )
+        further_non_critical_errors = ['User Successfully Created. Email Verification Required.']
 
-            return JsonResponse({"message": "User created successfully."}, status=201)
+        further_non_critical_errors = add_tags(session, tags, new_user.id, further_non_critical_errors)
 
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format"}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
-    return JsonResponse({"error": "Invalid request method"}, status=405)
+        return True, new_user.id, further_non_critical_errors

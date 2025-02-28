@@ -11,6 +11,7 @@ from backend.common.proto import authentication_pb2_grpc, authentication_pb2
 from backend.auth.database.database import engine, Base, confirm_database_exists
 
 from backend.auth.login_files.login import user_login
+from backend.auth.login_files.register import register_user
 
 
 class AuthenticationService(authentication_pb2_grpc.AuthServicer):
@@ -23,13 +24,29 @@ class AuthenticationService(authentication_pb2_grpc.AuthServicer):
         print("RegisterUser Request Made:")
         print(request)
 
-        # add functions here
+        success, user_id, error_messsage = register_user(
+            request.email,
+            request.password,
+            request.first_name,
+            request.last_name,
+            request.dob,
+            request.gender,
+            request.degree,
+            request.year_of_study,
+            request.grad_year,
+            request.tag
+        )
+
+        http_code = 201
+
+        if not success:
+            http_code = 400
 
         return authentication_pb2.AuthenticationResponse(
-            success=True,
-            http_status=200,
-            error_message=[],
-            user_id=-1
+            success=success,
+            http_status=http_code,
+            error_message=error_messsage,
+            user_id=user_id
         )
 
 
