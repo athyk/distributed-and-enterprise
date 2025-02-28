@@ -10,7 +10,7 @@ from concurrent import futures
 from backend.common.proto import authentication_pb2_grpc, authentication_pb2
 
 
-class Authentication(authentication_pb2_grpc.AuthServicer):
+class AuthenticationService(authentication_pb2_grpc.AuthServicer):
     def RegisterUser(self, request: authentication_pb2.RegistrationRequest, context: grpc.ServicerContext) -> authentication_pb2.AuthenticationResponse:
         
         # add functions here
@@ -52,17 +52,13 @@ class Authentication(authentication_pb2_grpc.AuthServicer):
         )
 
 
-
-
-
-
 def serve():
     port = os.environ.get('AUTH_PORT', '50053')
     max_workers = int(os.environ.get('AUTH_MAX_WORKERS', 10))
 
     print(f"Starting server on port {port} with {max_workers} workers")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
-    authentication_pb2_grpc.add_AuthenticationServicer_to_server(Service(), server)
+    authentication_pb2_grpc.add_AuthenticationServicer_to_server(AuthenticationService(), server)
     server.add_insecure_port('[::]:' + port)
     server.start()
     server.wait_for_termination()
