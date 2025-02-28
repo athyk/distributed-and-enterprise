@@ -12,7 +12,14 @@ from backend.common.proto import authentication_pb2_grpc, authentication_pb2
 
 class AuthenticationService(authentication_pb2_grpc.AuthServicer):
     def RegisterUser(self, request: authentication_pb2.RegistrationRequest, context: grpc.ServicerContext) -> authentication_pb2.AuthenticationResponse:
-        
+        '''
+        This grpc request gets the relevant data and registers the user into the website.
+        If any errors arise then relevant error messages are returned.
+        '''
+
+        print("RegisterUser Request Made:")
+        print(request)
+
         # add functions here
         
         return authentication_pb2.AuthenticationResponse(
@@ -23,7 +30,14 @@ class AuthenticationService(authentication_pb2_grpc.AuthServicer):
         )
 
     def LoginUser(self, request: authentication_pb2.LoginRequest, context: grpc.ServicerContext) -> authentication_pb2.AuthenticationResponse:
-        
+        '''
+        This grpc request gets the relevant data and logs the user into the website.
+        If any errors arise then relevant error messages are returned.
+        '''
+
+        print("LoginUser Request Made:")
+        print(request)
+
         # add functions here
         
         return authentication_pb2.AuthenticationResponse(
@@ -34,7 +48,14 @@ class AuthenticationService(authentication_pb2_grpc.AuthServicer):
         )
 
     def SendEmailRequest(self, request: authentication_pb2.EmailAuthRequest, context: grpc.ServicerContext) -> authentication_pb2.EmailAuthSent:
-        
+        '''
+        This grpc request sends an email to the user for them to verify their account.
+        If any errors arise then relevant error messages are returned.
+        '''
+
+        print("SendEmailRequest Request Made:")
+        print(request)
+
         # add functions here
         
         return authentication_pb2.EmailAuthSent(
@@ -43,7 +64,14 @@ class AuthenticationService(authentication_pb2_grpc.AuthServicer):
         )
 
     def EmailConfirmationRequest(self, request: authentication_pb2.EmailAuthVerify, context: grpc.ServicerContext) -> authentication_pb2.EmailVerifiedResponse:
-        
+        '''
+        This grpc request verifies the users account with the code provided by the user.
+        If any errors arise then relevant error messages are returned.
+        '''
+
+        print("EmailConfirmationRequest Request Made:")
+        print(request)
+
         # add functions here
         
         return authentication_pb2.EmailVerifiedResponse(
