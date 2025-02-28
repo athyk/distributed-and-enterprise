@@ -2,10 +2,10 @@ from backend.community.database.models import Tag, Degree, CommunityDegree, Comm
 
 
 def add_tags(session, tags, community_id, further_non_critical_errors):
-    '''
+    """
     This function searches for the tags provided and connects them to -
     the Community in the CommunityTag table
-    '''
+    """
 
     for tag in tags:
         result = session.query(Tag.id).filter(Tag.name == tag).first()
@@ -26,10 +26,10 @@ def add_tags(session, tags, community_id, further_non_critical_errors):
 
 
 def add_degrees(session, degrees, community_id, further_non_critical_errors):
-    '''
+    """
     This function searches for the degrees provided and connects them to -
     the Community in the CommunityDegree table
-    '''
+    """
 
     for degree in degrees:
         result = session.query(Degree.id).filter(Degree.name == degree).first()

@@ -5,14 +5,13 @@ from backend.community.database.models import Community, CommunityUser
 from backend.community.crud.local_functions import add_tags, add_degrees
 
 from math import inf as INFINITY
-from typing import Union
 
 
-def create_community(name: str, description: str, public: bool, tags: list, degrees: list, user_id: int) -> Union[bool, int, list]:
-    '''
+def create_community(name: str, description: str, public: bool, tags: list, degrees: list, user_id: int) -> tuple[bool, int, list]:
+    """
     This function verifies incoming data and creates a new community
     If any errors arise then relevant error messages are returned.
-    '''
+    """
 
     name_verify, name_error = verify_string(name, 4, 64)
     description_verify, description_error = verify_string(description, 4, 511)

@@ -6,8 +6,6 @@ from sqlalchemy.sql import text
 
 import os
 
-
-
 DATABASE_NAME = os.environ.get('COMMUNITY_DB_NAME') or 'community_db'
 
 DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME') or 'unihub'
@@ -16,11 +14,10 @@ DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'hVvBgjrKY5wx9dv56Zad
 DATABASE_HOST = os.environ.get('DATABASE_HOST') or '127.0.0.1'
 DATABASE_PORT = os.environ.get('DATABASE_PORT') or '5432'
 
-
 GENERAL_DATABASE_URL = f'postgresql+psycopg2://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}'
 
 COMMUNITY_DATABASE_URL = GENERAL_DATABASE_URL + f'/{DATABASE_NAME}'
-POSTGRESS_DATABASE_URL = GENERAL_DATABASE_URL + '/postgres'
+POSTGRES_DATABASE_URL = GENERAL_DATABASE_URL + '/postgres'
 
 # Create engine
 engine = create_engine(COMMUNITY_DATABASE_URL, pool_pre_ping=True)
@@ -30,6 +27,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base class for models
 Base = declarative_base()
+
 
 # Dependency to get DB session
 @contextmanager
@@ -41,9 +39,8 @@ def get_db():
         db.close()
 
 
-
 def confirm_database_exists(database_name=DATABASE_NAME):
-    checking_engine = create_engine(POSTGRESS_DATABASE_URL, isolation_level="AUTOCOMMIT")
+    checking_engine = create_engine(POSTGRES_DATABASE_URL, isolation_level="AUTOCOMMIT")
 
     print(f'Checking If Database ({database_name}) Exists')
 
@@ -54,34 +51,5 @@ def confirm_database_exists(database_name=DATABASE_NAME):
         if not exists:
             conn.execute(text(f"CREATE DATABASE {database_name}"))
             print(f'Database ({database_name}) Previously Not Existing Now Created')
-        
         else:
             print(f'Database ({database_name}) Exists')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

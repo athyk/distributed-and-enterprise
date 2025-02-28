@@ -1,9 +1,7 @@
-from typing import Union
-
-def verify_string(string: any, min_len: int, max_len: int) -> Union[bool, str]:
-    '''
+def verify_string(string: any, min_len: int, max_len: int) -> tuple[bool, str]:
+    """
     This function checks to see if the given variable is a string within the specified length range
-    '''
+    """
 
     s_len = len(string)
     s_type = type(string)
@@ -20,10 +18,10 @@ def verify_string(string: any, min_len: int, max_len: int) -> Union[bool, str]:
     return True, ""
 
 
-def verify_integer(integer: any, min: int, max: int) -> Union[bool, str]:
-    '''
+def verify_integer(integer: any, min: int, max: int) -> tuple[bool, str]:
+    """
     This function checks to see if the given variable is an integer within the specified range
-    '''
+    """
 
     i_type = type(integer)
 
@@ -39,10 +37,10 @@ def verify_integer(integer: any, min: int, max: int) -> Union[bool, str]:
     return True, ""
 
 
-def verify_boolean(boolean: any) -> Union[bool, str]:
-    '''
+def verify_boolean(boolean: any) -> tuple[bool, str]:
+    """
     This function checks to see if the given variable is a boolean
-    '''
+    """
 
     b_type = type(boolean)
 
@@ -52,10 +50,10 @@ def verify_boolean(boolean: any) -> Union[bool, str]:
     return True, ""
 
 
-def verify_list(lst: any, min_len: int, max_len: int) -> Union[bool, str]:
-    '''
+def verify_list(lst: any, min_len: int, max_len: int) -> tuple[bool, str]:
+    """
     This function checks to see if the given variable is a list within the specified length range
-    '''
+    """
 
     l_len = len(lst)
     lst_type = type(lst)

@@ -36,7 +36,6 @@ class TestCommunityCRUDService(CustomTestCase):
         self.assertGreaterTraceless(response.id, 0)
         self.assertEqualTraceless(response.error_message[0], "Community Successfully Created")
 
-
     def test_community_create_failure(self):
         service = Community_CRUD_Service()
         request = community_pb2.CommunityCreateRequest(
@@ -57,7 +56,6 @@ class TestCommunityCRUDService(CustomTestCase):
         self.assertEqualTraceless(response.error_message, ['Minimum String Len Expected: 4 | Received: 0 | Data: ',
                                                            'Minimum String Len Expected: 4 | Received: 0 | Data: '])
         
-
     def test_community_view_success(self):
         service = Community_CRUD_Service()
         request = community_pb2.CommunityViewRequest(
@@ -76,7 +74,6 @@ class TestCommunityCRUDService(CustomTestCase):
         self.assertEqualTraceless(response.tags, [])
         self.assertEqualTraceless(response.degrees, [])
 
-    
     def test_community_view_failure(self):
         service = Community_CRUD_Service()
         request = community_pb2.CommunityViewRequest(id=2)
@@ -92,7 +89,6 @@ class TestCommunityCRUDService(CustomTestCase):
         self.assertFalseTraceless(response.public_community)
         self.assertEqualTraceless(response.tags, [])
         self.assertEqualTraceless(response.degrees, [])
-
 
     def test_community_update_success(self):
         service = Community_CRUD_Service()
@@ -113,7 +109,6 @@ class TestCommunityCRUDService(CustomTestCase):
         self.assertEqualTraceless(response.http_status, 200)
         self.assertEqualTraceless(response.error_message, ['Community Successfully Updated'])
 
-    
     def test_community_update_failure(self):
         service = Community_CRUD_Service()
         request = community_pb2.CommunityUpdateRequest(
@@ -133,7 +128,6 @@ class TestCommunityCRUDService(CustomTestCase):
         self.assertEqualTraceless(response.http_status, 400)
         self.assertEqualTraceless(response.error_message, ['User Or Community Does Not Exist'])
 
-
     def test_community_delete_success(self):
         service = Community_CRUD_Service()
         request = community_pb2.CommunityDeleteRequest(
@@ -148,7 +142,6 @@ class TestCommunityCRUDService(CustomTestCase):
         self.assertEqualTraceless(response.http_status, 200)
         self.assertEqualTraceless(response.error_message, ['Community Successfully Deleted'])
 
-    
     def test_community_delete_failure(self):
         service = Community_CRUD_Service()
         request = community_pb2.CommunityDeleteRequest(

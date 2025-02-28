@@ -3,14 +3,13 @@ from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityUser, CommunityTag, CommunityDegree
 
 from math import inf as INFINITY
-from typing import Union
 
 
-def delete_community(community_id: int, user_id: int) -> Union[bool, list]:
-    '''
+def delete_community(community_id: int, user_id: int) -> tuple[bool, list]:
+    """
     This function verifies incoming data and deletes the specified community
     If any errors arise then relevant error messages are returned.
-    '''
+    """
 
     community_verify, community_error = verify_integer(community_id, 1, INFINITY)
     user_verify, user_error = verify_integer(user_id, 1, INFINITY)

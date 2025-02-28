@@ -7,11 +7,12 @@ from backend.community.crud.local_functions import add_tags, add_degrees
 from math import inf as INFINITY
 from typing import Union
 
-def update_community(community_id: int, name: str, description: str, public: bool, tags: list, degrees: list, user_id: int) -> Union[bool, list]:
-    '''
+
+def update_community(community_id: int, name: str, description: str, public: bool, tags: list, degrees: list, user_id: int) -> tuple[bool, list]:
+    """
     This function verifies incoming data and updates the specified community
     If any errors arise then relevant error messages are returned.
-    '''
+    """
 
     community_verify, community_error = verify_integer(community_id, 1, INFINITY)
     name_verify, name_error = verify_string(name, 4, 64)
@@ -111,12 +112,12 @@ def update_community(community_id: int, name: str, description: str, public: boo
 
 
 def remove_duplicate_from_two_lists(list1, list2):
-    '''
+    """
     This function takes in two lists and removes the elements that occur in both from both lists.
 
-    However if 7 appears once in list1 and then twice in list2 then 7 will only be removed from -
+    However, if 7 appears once in list1 and then twice in list2 then 7 will only be removed from -
     both lists once, thus leaving a 7 in list2
-    '''
+    """
 
     final_list1 = list1
     final_list2 = list2

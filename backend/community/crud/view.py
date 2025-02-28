@@ -3,13 +3,13 @@ from backend.community.database.database import get_db
 from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag
 
 from math import inf as INFINITY
-from typing import Union
 
-def get_community_data(community_id: int) -> Union[bool, list, str, str, bool, list, list]:
-    '''
+
+def get_community_data(community_id: int) -> tuple[bool, list, str, str, bool, list, list]:
+    """
     This function verifies incoming data and returns the specified community data
     If any errors arise then relevant error messages are returned.
-    '''
+    """
 
     community_verify, community_error = verify_integer(community_id, 1, INFINITY)
 

@@ -3,7 +3,6 @@ from backend.community.database.database import Base
 from datetime import datetime
 
 
-
 class Community(Base):
     __tablename__ = 'community'
     
