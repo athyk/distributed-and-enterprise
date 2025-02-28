@@ -8,6 +8,9 @@ from concurrent import futures
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
 from backend.common.proto import authentication_pb2_grpc, authentication_pb2
+from backend.auth.database.database import engine, Base, confirm_database_exists
+
+from backend.auth.login_files.login import user_login
 
 
 class AuthenticationService(authentication_pb2_grpc.AuthServicer):
@@ -20,13 +23,18 @@ class AuthenticationService(authentication_pb2_grpc.AuthServicer):
         print("RegisterUser Request Made:")
         print(request)
 
-        # add functions here
+        success, user_id, error_messsage = user_login(request.email, request.password)
+
+        http_code = 201
+
+        if not success:
+            http_code = 400
         
         return authentication_pb2.AuthenticationResponse(
-            success=True,
-            http_status=200,
-            error_message=[],
-            user_id=-1
+            success=success,
+            http_status=http_code,
+            error_message=error_messsage,
+            user_id=user_id
         )
 
     def LoginUser(self, request: authentication_pb2.LoginRequest, context: grpc.ServicerContext) -> authentication_pb2.AuthenticationResponse:
@@ -84,11 +92,28 @@ def serve():
     port = os.environ.get('AUTH_PORT', '50053')
     max_workers = int(os.environ.get('AUTH_MAX_WORKERS', 10))
 
-    print(f"Starting server on port {port} with {max_workers} workers")
+    print('--------------------------- Server Starting -------------------------\n')
+
+    print(f'Port: {port}')
+    print(f'Max Workers Assigned: {max_workers}')
+
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
     authentication_pb2_grpc.add_AuthenticationServicer_to_server(AuthenticationService(), server)
     server.add_insecure_port('[::]:' + port)
     server.start()
+
+    print('\n--------------------------- Server Started --------------------------\n')
+
+    print('----------------- Internal Server Setup Initialising ----------------\n')
+
+    confirm_database_exists()
+
+    print('\nCreating All Tables')
+    Base.metadata.create_all(engine)
+    print('Tables Created')
+
+    print('\n------------------ Internal Server Setup Completed ------------------')
+
     server.wait_for_termination()
 
 
