@@ -19,8 +19,8 @@ message RegistrationRequest {
     // degree is the users current degree
     string degree = 7;
     // year_of_study is the current users year of study
-    string year_of_study = 8;
-    // grad_ear is the expected graduation of the user
+    int32 year_of_study = 8;
+    // grad_year is the expected graduation of the user
     string grad_year = 9;
     // tag is a list of tags that the user applied to themselves
     repeated string tag = 10;

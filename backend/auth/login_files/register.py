@@ -19,6 +19,10 @@ def register_user(
         grad_year: str,
         tags: list
         ) -> tuple[bool, int, list]:
+    """
+    This function takes in data and registers a user into the database.
+    If any errors arise then relevant error messages are returned.
+    """
 
     email_verify,         email_error         = verify_string(email, 4, 64)
     password_verify,      password_error      = verify_string(password, 8, 32)
@@ -46,10 +50,10 @@ def register_user(
 
         if user:
             return False, -1, ['Email Already In Use']
-        
+
         try:
-            dob_obj = datetime.strptime(dob, "%Y-%m-%d").date()
-            grad_year_obj = datetime.strptime(grad_year, "%Y-%m-%d").date()
+            dob_obj = datetime.strptime(dob, "%d-%m-%Y").date()
+            grad_year_obj = datetime.strptime(grad_year, "%d-%m-%Y").date()
         
         except Exception:
             return False, -1, ['Dates Not Formatted Correctly']
@@ -78,7 +82,6 @@ def register_user(
         session.commit()
 
         further_non_critical_errors = ['User Successfully Created. Email Verification Required.']
-
         further_non_critical_errors = add_tags(session, tags, new_user.id, further_non_critical_errors)
 
         return True, new_user.id, further_non_critical_errors

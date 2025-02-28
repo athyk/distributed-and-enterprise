@@ -24,10 +24,10 @@ class RegistrationRequest(_message.Message):
     dob: str
     gender: str
     degree: str
-    year_of_study: str
+    year_of_study: int
     grad_year: str
     tag: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, email: _Optional[str] = ..., password: _Optional[str] = ..., first_name: _Optional[str] = ..., last_name: _Optional[str] = ..., dob: _Optional[str] = ..., gender: _Optional[str] = ..., degree: _Optional[str] = ..., year_of_study: _Optional[str] = ..., grad_year: _Optional[str] = ..., tag: _Optional[_Iterable[str]] = ...) -> None: ...
+    def __init__(self, email: _Optional[str] = ..., password: _Optional[str] = ..., first_name: _Optional[str] = ..., last_name: _Optional[str] = ..., dob: _Optional[str] = ..., gender: _Optional[str] = ..., degree: _Optional[str] = ..., year_of_study: _Optional[int] = ..., grad_year: _Optional[str] = ..., tag: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class AuthenticationResponse(_message.Message):
     __slots__ = ("success", "http_status", "error_message", "user_id")
