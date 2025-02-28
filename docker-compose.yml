@@ -39,6 +39,7 @@ services:
     container_name: auth-service
     ports:
       - ${AUTH_PORT}:${AUTH_PORT}
+    env_file: .env
   django-backend:
     build:
         context: .
