@@ -244,6 +244,8 @@ fabric.properties
 .idea/inspectionProfiles/Project_Default.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/distributed-and-enterprise.iml
+/frontend/.svelte-kit
+/frontend/node_modules
 
 #Docker File
 docker-compose-unedited.yml

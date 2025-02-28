@@ -32,29 +32,13 @@ services:
     env_file: .env
     logging:
       driver: none
-  chat-service:
+  auth-service:
     build:
         context: .
-        dockerfile: backend/chat/Dockerfile
-    container_name: chat-service
+        dockerfile: backend/auth/Dockerfile
+    container_name: auth-service
     ports:
-      - ${CHAT_PORT}:${CHAT_PORT}
-    depends_on:
-      - db
-      - redis
-    env_file: .env
-
-  community-service:
-    build:
-        context: .
-        dockerfile: backend/community/Dockerfile
-    container_name: community-service
-    ports:
-      - ${COMMUNITY_PORT}:${COMMUNITY_PORT}
-    depends_on:
-      - db
-      - redis
-    env_file: .env
+      - ${AUTH_PORT}:${AUTH_PORT}
   django-backend:
     build:
         context: .
@@ -69,17 +53,6 @@ services:
       - chat-service
       - community-service
     env_file: .env
-  svelte-frontend:
-    build:
-      context: ./frontend
-    container_name: svelte-frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-    depends_on:
-      - django-backend
-    working_dir: /app
 volumes:
   postgres_data:
   minio_data:
