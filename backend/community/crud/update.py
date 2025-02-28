@@ -5,8 +5,6 @@ from backend.community.database.models import Community, Tag, Degree, CommunityD
 from backend.community.crud.local_functions import add_tags, add_degrees
 
 from math import inf as INFINITY
-from typing import Union
-
 
 def update_community(community_id: int, name: str, description: str, public: bool, tags: list, degrees: list, user_id: int) -> tuple[bool, list]:
     """
