@@ -10,10 +10,19 @@ from django.views.decorators.csrf import csrf_exempt
 from backend.common.proto import authentication_pb2, authentication_pb2_grpc
 
 
+@csrf_exempt
 def register_user(request: WSGIRequest):
     """
     Sends a request to the community server with the relevant data to delete a community
     """
+
+    print('registering')
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    
+    if not request.body:
+        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
     data = json.loads(request.body)
 
@@ -40,10 +49,19 @@ def register_user(request: WSGIRequest):
     })
 
 
+@csrf_exempt
 def login_user(request: WSGIRequest):
     """
     Sends a request to the authorisation server with the relevant data to log in to an account
     """
+
+    print('logging in')
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    
+    if not request.body:
+        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
     data = json.loads(request.body)
 
@@ -61,10 +79,17 @@ def login_user(request: WSGIRequest):
     })
 
 
+@csrf_exempt
 def send_email_verification_code(request: WSGIRequest):
     """
     Sends a request to the authorisation server to send an email to the user to verify account
     """
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    
+    if not request.body:
+        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
     data = json.loads(request.body)
 
@@ -81,10 +106,17 @@ def send_email_verification_code(request: WSGIRequest):
     })
 
 
+@csrf_exempt
 def verify_email_and_account(request: WSGIRequest):
     """
     Sends a request to the authorisation server to verify the account
     """
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+    
+    if not request.body:
+        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
     data = json.loads(request.body)
 
@@ -92,7 +124,7 @@ def verify_email_and_account(request: WSGIRequest):
     stub = authentication_pb2_grpc.AuthenticationStub(channel)
     response: authentication_pb2.EmailVerifiedResponse = stub.EmailConfirmationRequest(authentication_pb2.EmailAuthVerify(
         email=data['email'],
-        otp=otp,
+        otp=data['otp'],
         id=data['id']
     ))
 
