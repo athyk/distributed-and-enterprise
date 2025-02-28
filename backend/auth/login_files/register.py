@@ -33,7 +33,7 @@ def register_user(
     degree_verify,        degree_error        = verify_string(degree, 4, 128)
     year_of_study_verify, year_of_study_error = verify_integer(year_of_study, 1, 9)
     grad_year_verify,     grad_year_error     = verify_string(grad_year, 10, 10)
-    tag_verify,           tag_error           = verify_list(tags, 4, 32)
+    tag_verify,           tag_error           = verify_list(tags, 0, 5)
 
     if False in [email_verify, password_verify, first_name_verify, last_name_verify ,dob_verify,
                  gender_verify, degree_verify, year_of_study_verify, grad_year_verify, tag_verify]:
@@ -44,9 +44,15 @@ def register_user(
         error_messages = [item for item in all_errors if item.strip()]
 
         return False, -1, error_messages
+    
+    print('Verify')
 
     with get_db() as session:
+        print('searching')
         user = session.query(User).filter(User.email == email).first()
+
+        print('User searched')
+        print(user)
 
         if user:
             return False, -1, ['Email Already In Use']
@@ -58,8 +64,9 @@ def register_user(
         except Exception:
             return False, -1, ['Dates Not Formatted Correctly']
         
-
         degree_id = session.query(Degree.id).filter(Degree.name == degree).first()
+
+        print('degree searched')
 
         if degree_id is None:
             return False, -1, ['Degree Provided Does Not Exist']
@@ -71,11 +78,15 @@ def register_user(
             password=hashed_password,
             first_name=first_name,
             last_name=last_name,
-            dob=dob_obj,
+            date_of_birth=dob_obj,
             gender=gender,
-            degree=degree_id,
+            degree=degree_id[0],
             year_of_study=year_of_study,
-            grad_year=grad_year_obj
+            grad_year=grad_year_obj,
+            created_at=datetime.utcnow(),
+            updated_at=None,
+            picture_url=None,
+            two_fa_secret=None
         )
 
         session.add(new_user)

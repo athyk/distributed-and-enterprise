@@ -14,7 +14,7 @@ from backend.auth.login_files.login import user_login
 from backend.auth.login_files.register import register_user
 
 
-class AuthenticationService(authentication_pb2_grpc.AuthServicer):
+class AuthenticationService(authentication_pb2_grpc.AuthenticationServicer):
     def RegisterUser(self, request: authentication_pb2.RegistrationRequest, context: grpc.ServicerContext) -> authentication_pb2.AuthenticationResponse:
         """
         This grpc request gets the relevant data and registers the user into the website.
@@ -34,7 +34,7 @@ class AuthenticationService(authentication_pb2_grpc.AuthServicer):
             request.degree,
             request.year_of_study,
             request.grad_year,
-            request.tag
+            list(request.tag)
         )
 
         http_code = 201

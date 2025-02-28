@@ -1,13 +1,12 @@
 from sqlalchemy import Column, String, Boolean, DateTime, Date, Text, ForeignKey, Integer
-from sqlalchemy.orm import declarative_base
+from backend.auth.database.database import Base
 from datetime import datetime
 
-Base = declarative_base()
 
 class User(Base):
-    tablename = "users"
+    __tablename__ = "user"
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     email = Column(Text, unique=True, nullable=False)
     password = Column(Text, nullable=False)
     two_fa_secret = Column(Text, nullable=True)
@@ -30,22 +29,22 @@ class User(Base):
 
 
 class Degree(Base):
-    tablename = "degree"
+    __tablename__ = "degree"
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
 
 class Tag(Base):
-    tablename = "tag"
+    __tablename__ = "tag"
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     name = Column(Text, unique=True, nullable=False)
 
 
 class UserTag(Base):
-    tablename = "user_tag"
+    __tablename__ = "user_tag"
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     degree_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)

@@ -1,5 +1,5 @@
-from backend.common.utils import verify_string, verify_boolean, verify_list, verify_integer
-from backend.community.database.database import get_db
+from backend.common.utils import verify_string
+from backend.auth.database.database import get_db
 from werkzeug.security import check_password_hash
 
 from backend.auth.database.models import User

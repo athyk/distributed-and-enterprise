@@ -6,7 +6,7 @@ from sqlalchemy.sql import text
 
 import os
 
-DATABASE_NAME = os.environ.get('AUTHENTICATION_DB_NAME') or 'authentication_db'
+DATABASE_NAME = os.environ.get('AUTHENTICATION_DB_NAME') or 'authorisation_db'
 
 DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME') or 'unihub'
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'hVvBgjrKY5wx9dv56Zadbi4AKbFK'
@@ -16,11 +16,11 @@ DATABASE_PORT = os.environ.get('DATABASE_PORT') or '5432'
 
 GENERAL_DATABASE_URL = f'postgresql+psycopg2://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}'
 
-COMMUNITY_DATABASE_URL = GENERAL_DATABASE_URL + f'/{DATABASE_NAME}'
+AUTHORISATION_DATABASE_URL = GENERAL_DATABASE_URL + f'/{DATABASE_NAME}'
 POSTGRES_DATABASE_URL = GENERAL_DATABASE_URL + '/postgres'
 
 # Create engine
-engine = create_engine(COMMUNITY_DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(AUTHORISATION_DATABASE_URL, pool_pre_ping=True)
 
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
