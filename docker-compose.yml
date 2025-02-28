@@ -43,6 +43,18 @@ services:
       - db
       - redis
     env_file: .env
+
+  community-service:
+    build:
+        context: .
+        dockerfile: backend/community/Dockerfile
+    container_name: community-service
+    ports:
+      - ${COMMUNITY_PORT}:${COMMUNITY_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
   django-backend:
     build:
         context: .
@@ -55,6 +67,7 @@ services:
       - minio
       - redis
       - chat-service
+      - community-service
     env_file: .env
   svelte-frontend:
     build:
