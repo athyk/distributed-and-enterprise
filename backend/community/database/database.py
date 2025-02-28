@@ -11,8 +11,8 @@ DATABASE_NAME = os.environ.get('COMMUNITY_DB_NAME') or 'community_db'
 DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME') or 'unihub'
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'hVvBgjrKY5wx9dv56Zadbi4AKbFK'
 
-DATABASE_HOST = os.environ.get('DATABASE_HOST')# or '127.0.0.1'
-DATABASE_PORT = os.environ.get('DATABASE_PORT')# or '5432'
+DATABASE_HOST = os.environ.get('DATABASE_HOST') or '127.0.0.1'
+DATABASE_PORT = os.environ.get('DATABASE_PORT') or '5432'
 
 GENERAL_DATABASE_URL = f'postgresql+psycopg2://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}'
 
