@@ -60,7 +60,7 @@ message EmailAuthRequest {
     bool skip = 2;
 }
 
-// EmailAuthRequest is the request message for the Authentication method.
+// EmailAuthSent is the request message for the Authentication method.
 message EmailAuthSent {
     // sent is to verify to the user that the email was sent successfully
     bool sent = 1;
@@ -71,14 +71,16 @@ message EmailAuthSent {
 
 // EmailAuthVerify is the request message for the Authentication method.
 message EmailAuthVerify {
+    // email is what is sent for the server to verify the email
+    string email = 1;
     // otp is the six digit number sent by the user
-    int32 otp = 1;
+    int32 otp = 2;
     // id is the key for the email authentication
-    string id = 2;
+    string id = 3;
 }
 
 
-// EmailAuthRequest is the request message for the Authentication method.
+// EmailVerifiedResponse is the request message for the Authentication method.
 message EmailVerifiedResponse {
     // verified represents in boolean if the email was verified
     bool verified = 1;

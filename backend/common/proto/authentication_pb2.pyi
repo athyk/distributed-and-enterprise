@@ -66,12 +66,14 @@ class EmailAuthSent(_message.Message):
     def __init__(self, sent: bool = ..., error_message: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class EmailAuthVerify(_message.Message):
-    __slots__ = ("otp", "id")
+    __slots__ = ("email", "otp", "id")
+    EMAIL_FIELD_NUMBER: _ClassVar[int]
     OTP_FIELD_NUMBER: _ClassVar[int]
     ID_FIELD_NUMBER: _ClassVar[int]
+    email: str
     otp: int
     id: str
-    def __init__(self, otp: _Optional[int] = ..., id: _Optional[str] = ...) -> None: ...
+    def __init__(self, email: _Optional[str] = ..., otp: _Optional[int] = ..., id: _Optional[str] = ...) -> None: ...
 
 class EmailVerifiedResponse(_message.Message):
     __slots__ = ("verified", "error_message")
