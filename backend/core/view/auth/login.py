@@ -4,7 +4,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from backend.common.proto.auth_pb2 import *
+from backend.common.proto.auth_pb2 import LoginRequest, LoginResponse
 from backend.common.services import AuthClient
 
 
@@ -41,10 +41,10 @@ def login_user(request: WSGIRequest):
 
         data = json.loads(request.body)
         if 'email' not in data:
-            return JsonResponse({'success': False, 'error_message': f'Key: email Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+            return JsonResponse({'success': False, 'error_message': 'Key: email Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
         if 'password' not in data:
-            return JsonResponse({'success': False, 'error_message': f'Key: password Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+            return JsonResponse({'success': False, 'error_message': 'Key: password Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
         print(e)
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)

@@ -1,6 +1,4 @@
-import string
 import uuid
-import re
 
 
 def generate_id() -> tuple[str, bool]:

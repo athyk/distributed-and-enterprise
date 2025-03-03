@@ -1,12 +1,11 @@
 import http
 import json
-import traceback
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from backend.common.proto.auth_pb2 import *
+from backend.common.proto.auth_pb2 import LoginVerificationResponse, LoginVerificationRequest
 from backend.common.services import AuthClient
 
 
@@ -39,10 +38,10 @@ def verify(request: WSGIRequest):
         data = json.loads(request.body)
 
         if 'user_id' not in data:
-            return JsonResponse({'success': False, 'error_message': f'Key: user_id Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+            return JsonResponse({'success': False, 'error_message': 'Key: user_id Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
         if 'otp' not in data:
-            return JsonResponse({'success': False, 'error_message': f'Key: otp Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+            return JsonResponse({'success': False, 'error_message': 'Key: otp Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
         print(e)
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)

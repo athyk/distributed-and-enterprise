@@ -127,7 +127,7 @@ class AuthService(auth_pb2_grpc.AuthServicer):
                     otp_required=False,
                 )
 
-            # if the user hasn't verified their email, they can't login.
+            # If the user hasn't verified their email, they can't login.
             # incase the email was not sent, through this request it will be resent
 
             # In here email 2fa code can be generated, sent, and stored for later verification
