@@ -6,7 +6,7 @@ from sqlalchemy.sql import text
 
 import os
 
-DATABASE_NAME = os.environ.get('AUTHENTICATION_DB_NAME') or 'authorisation_db'
+DATABASE_NAME = os.environ.get('AUTH_DB_NAME') or 'authorisation_db'
 
 DATABASE_USERNAME = os.environ.get('DATABASE_USERNAME') or 'unihub'
 DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD') or 'hVvBgjrKY5wx9dv56Zadbi4AKbFK'

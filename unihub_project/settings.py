@@ -14,6 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from backend.common.files import StorageClient
+from backend.common.services import AuthClient
 
 load_dotenv()
 
@@ -76,38 +77,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "unihub_project.wsgi.application"
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-              'ENGINE': 'django.db.backends.postgresql',  #
-        "NAME": os.environ.get("DATABASE_NAME", "unihub"),
-        "USER": os.environ.get("DATABASE_USERNAME", "root"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
-        "HOST": os.environ.get("DATABASE_HOST", "127.0.0.1"),
-        "PORT": os.environ.get("DATABASE_PORT", 5432),
-        "CONN_MAX_AGE": 300,
-        "OPTIONS": {
-            "client_encoding": "UTF8",
-        },
-    }
-}
-
-# Cache using django_redis
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            'CONNECTION_POOL_KWARGS': {
-                'max_connections': 100,
-                'retry_on_timeout': True,
-            }
-        }
-    }
-}
+# Database (Removed as all DB operations are done in SQLAlchemy)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -156,3 +126,5 @@ S3_ENDPOINT_URL = os.environ.get("MINIO_ENDPOINT", "http://minio:9000")
 S3_URL = os.environ.get("S3_URL", "http://localhost:9000")
 
 StorageClient.initialise(S3_ENDPOINT_URL, S3_ACCESS_KEY_ID, S3_ACCESS_KEY, S3_BUCKET_NAME, S3_URL)
+
+AuthClient.initialise("auth-service:" + os.environ.get('AUTH_PORT', '50053'))

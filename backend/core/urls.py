@@ -1,8 +1,11 @@
 from django.urls import path
+
+from .view.auth.verify import verify
+from .view.auth.login import login_user
+from .view.auth.register import register_user
 from .views import ping1, ping5, ping10, chat_message
 
 from backend.core.view.community.community_crud import community_crud_paths, community_creation
-from backend.core.view.authentication.authentication import login_user, register_user, send_email_verification_code, verify_email_and_account
 
 
 urlpatterns = [
@@ -13,8 +16,9 @@ urlpatterns = [
     path('chat/message/', chat_message),
     path('community/<int:community_id>', community_crud_paths),
     path('community/', community_creation),
-    path('authorisation/login', login_user),
-    path('authorisation/register', register_user),
-    path('authorisation/email/send-code', send_email_verification_code),
-    path('authorisation/email/verify', verify_email_and_account),
+
+    path('auth/login', login_user),
+    path('auth/login/verify', verify),
+    path('auth/register', register_user),
+    path('auth/register/verify', verify),
 ]
