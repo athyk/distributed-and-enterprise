@@ -2,7 +2,7 @@
 	let email = '';
 	let password = '';
 
-	import Input from '$lib/components/FormInputButton/Input.svelte';
+	import Input from '$components/FormInput/Input.svelte';
 
 	function handleLogin() {
 		console.log('Email:', email);

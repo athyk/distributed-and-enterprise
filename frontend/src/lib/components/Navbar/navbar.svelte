@@ -14,9 +14,8 @@
 
 <nav class="bg-gray-800 p-4">
 	<div class="container mx-auto flex items-center justify-between">
-		<a href="/" class="text-lg font-semibold text-white">UniHub</a>
-		<!-- svelte-ignore a11y_consider_explicit_label -->
-		<button class="text-white md:hidden" on:click={toggleMenu}>
+		<a href="/" class="text-[35px] font-semibold text-white">UniHub</a>
+		<button class="text-white md:hidden" on:click={toggleMenu} aria-label="Toggle menu">
 			<svg
 				class="h-6 w-6"
 				fill="none"
@@ -34,7 +33,7 @@
 		</button>
 		<div class="hidden space-x-4 md:flex">
 			{#each Object.keys(urls) as url}
-				<a href={urls[url]} class="text-gray-300 hover:text-white">{url}</a>
+				<a href={urls[url]} class="text-gray-300 text-[20px] hover:text-white">{url}</a>
 			{/each}
 		</div>
 	</div>

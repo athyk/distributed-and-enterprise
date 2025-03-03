@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Input from '$lib/components/FormInputButton/Input.svelte';
+	import Input from '$components/FormInput/Input.svelte';
 
 	let email = '';
 
