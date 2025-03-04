@@ -4,6 +4,7 @@
 	import Page1 from './Pages/page1.svelte';
 	import Page2 from './Pages/page2.svelte';
 	import Page3 from './Pages/page3.svelte';
+	import Page4 from './Pages/page4.svelte';
 
 	let email = '';
 	let password = '';
@@ -19,6 +20,8 @@
 	let graduationYear = '';
 
 	let tags = '';
+
+	let otp: string[] = [];
 
 	let step = 1;
 	let maxstep = 4;
@@ -87,7 +90,7 @@
 			<Page3 bind:degree bind:degreeYear bind:graduationYear bind:tags bind:pageInputs={page3Inputs} />
 		{/if}
 		{#if step === 4}
-			<h1>Code Stuff</h1>
+			<Page4 bind:otp={otp} />
 		{/if}
 
 		<div class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
