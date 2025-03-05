@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware"
 ]
 
 ROOT_URLCONF = "unihub_project.urls"
@@ -81,7 +83,7 @@ WSGI_APPLICATION = "unihub_project.wsgi.application"
 
 DATABASES = {
     "default": {
-              'ENGINE': 'django.db.backends.postgresql',  #
+        'ENGINE': 'django.db.backends.postgresql',  #
         "NAME": os.environ.get("DATABASE_NAME", "unihub"),
         "USER": os.environ.get("DATABASE_USERNAME", "root"),
         "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
@@ -156,3 +158,7 @@ S3_ENDPOINT_URL = os.environ.get("MINIO_ENDPOINT", "http://minio:9000")
 S3_URL = os.environ.get("S3_URL", "http://localhost:9000")
 
 StorageClient.initialise(S3_ENDPOINT_URL, S3_ACCESS_KEY_ID, S3_ACCESS_KEY, S3_BUCKET_NAME, S3_URL)
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]

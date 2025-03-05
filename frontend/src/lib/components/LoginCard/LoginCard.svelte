@@ -2,12 +2,26 @@
 	let email = '';
 	let password = '';
 
-	import Input from '$components/FormInput/Input.svelte';
+	import { post } from '$lib/Api/post';
 
-	function handleLogin() {
-		console.log('Email:', email);
-		console.log('Password:', password);
+	import Input from '$components/FormInput/Input.svelte';
+	import type { response } from '$lib/Api/types';
+
+
+	async function handleLogin() {
+		let data = {
+			email: email,
+			password: password
+		};
+		let response =  await post('authorisation/register', data) as response;
+		console.log(response);
+		if (response.http_status === 201) {
+			localStorage.setItem('loggedIn', 'true');
+			alert('Login Successful');
+			window.location.href = '/';
+		}
 	}
+
 </script>
 
 <div class="w-full p-8 md:mx-auto md:w-1/2">

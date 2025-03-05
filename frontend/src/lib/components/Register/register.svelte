@@ -5,6 +5,8 @@
 	import Page2 from './Pages/page2.svelte';
 	import Page3 from './Pages/page3.svelte';
 	import Page4 from './Pages/page4.svelte';
+	import { post } from '$lib/Api/post';
+	import type { response } from '$lib/Api/types';
 
 	let email = '';
 	let password = '';
@@ -32,6 +34,16 @@
 
 	let pageInputs = [page1Inputs, page2Inputs, page3Inputs];
 
+	function checkPassword(password:string, passwordConfirm:string) {
+		if (password === passwordConfirm) {
+			return true;
+		}else{
+			page1Inputs[1].setErrorMessage("Password doesn't match");
+			page1Inputs[2].setErrorMessage("Password doesn't match");
+			return false;
+		}
+	}
+
 	function checkPageValidity() {
 		let valid = true;
 		pageInputs[step - 1].forEach((input) => {
@@ -42,10 +54,7 @@
 		});
 		console.log('Page Valid: ', valid);
 		if (step === 1 && valid) {
-			valid = password === passwordConfirm;
-			console.log('Password Match: ', valid);
-			page1Inputs[1].setErrorMessage("Password doesn't match");
-			page1Inputs[2].setErrorMessage("Password doesn't match");
+			valid = checkPassword(password, passwordConfirm);
 		}
 		console.log('Password Valid: ', valid);
 		if (valid) {
@@ -55,21 +64,31 @@
 		return valid;
 	}
 
-	function handleSubmit() {
+	async function handleSubmit() {
+		dob = dob.split('-').reverse().join('-');
+		graduationYear = "30-06-" + graduationYear;
 		let data = {
-			email,
-			password,
-			passwordConfirm,
-			fName,
-			lName,
-			dob,
-			gender,
-			degree,
-			degreeYear,
-			graduationYear,
-			tags
-		};
+			"email": email,
+			"password": password,
+			"first_name": fName,
+			"last_name": lName,
+			"dob": dob,
+			"gender": gender,
+			"degree": degree,
+			"year_of_study": degreeYear,
+			"grad_year": graduationYear,
+			"tag":[]
+		}
 		console.log(data);
+		let response = await post('authorisation/register', data) as response;
+		if (response.http_status === 201) {
+			localStorage.setItem('loggedIn', 'true');
+			alert('Registration Successful');
+			window.location.href = '/';
+		}else {
+			console.log(response);
+			alert('Registration Failed' + response.error_message);
+		}
 	}
 </script>
 
@@ -82,7 +101,12 @@
 		{/if}
 
 		{#if step === 2}
-			<Page2 bind:fName bind:lName bind:dob bind:pageInputs={page2Inputs} />
+			<Page2
+				bind:fName
+				bind:lName
+				bind:dob
+				bind:gender
+				bind:pageInputs={page2Inputs} />
 		{/if}
 
 		{#if step === 3}
@@ -94,9 +118,9 @@
 				bind:pageInputs={page3Inputs}
 			/>
 		{/if}
-		{#if step === 4}
+		<!-- {#if step === 4}
 			<Page4 bind:otp />
-		{/if}
+		{/if} -->
 
 		<div class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
 			{#if step === 1}

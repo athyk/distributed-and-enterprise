@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import authentication_pb2 as authentication__pb2
+import backend.common.proto.authentication_pb2 as authentication__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__

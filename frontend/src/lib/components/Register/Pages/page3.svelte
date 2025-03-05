@@ -40,7 +40,7 @@
 	maxValue={2030}
 	bind:this={pageInputs[2]}
 />
-<Input
+<!-- <Input
 	Name="Tags"
 	placeholder="Enter your tags"
 	type="text"
@@ -48,4 +48,4 @@
 	showLabel={true}
 	bind:value={tags}
 	bind:this={pageInputs[3]}
-/>
+/> -->
