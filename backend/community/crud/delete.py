@@ -1,6 +1,7 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityUser, CommunityTag, CommunityDegree
+from backend.community.utils import check_if_user_is_in_private_community, does_user_have_required_role
 
 from math import inf as INFINITY
 
@@ -22,18 +23,15 @@ def delete_community(community_id: int, user_id: int) -> tuple[bool, list]:
         return False, error_messages
     
     with get_db() as session:
-        role_result = session.query(CommunityUser.role).filter(
-            Community.id == community_id,
-            Community.id == CommunityUser.community_id,
-            CommunityUser.user_id == user_id
-        ).first()
+        success, message = check_if_user_is_in_private_community(session, community_id, user_id)
 
-        if not role_result:
-            return False, ['User Or Community Does Not Exist']
+        if not success:
+            return success, message
         
-        else:
-            if role_result[0] != 'Admin':
-                return False, ['User Does Not Have The Required Permission To Perform Requested Action']
+        success, message = does_user_have_required_role(session, community_id, user_id, ['Admin'])
+        
+        if not success:
+            return success, message
 
         tag_result = session.query(CommunityTag).filter(
                 Community.id == community_id,

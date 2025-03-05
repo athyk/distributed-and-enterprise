@@ -40,7 +40,6 @@ def edit_announcement(announcement_id: int, community_id: int, user_id: int, tit
         
         if not success:
             return success, message
-        
 
         row = session.query(Announcement).filter_by(
             id=announcement_id,

@@ -49,7 +49,7 @@ def create_announcement(community_id: int, user_id: int, title: str, description
         session.commit()
 
         new_announcement_id = new_announcement.id
-        further_non_critical_errors = ['Community Successfully Created']
+        further_non_critical_errors = ['Community Announcement Successfully Created']
 
         further_non_critical_errors = add_tags(session, tags, new_announcement_id, further_non_critical_errors)
 

@@ -4,6 +4,7 @@ from backend.common.proto import community_announcement_pb2_grpc, community_anno
 from backend.community.announcements.create import create_announcement
 from backend.community.announcements.view import get_community_announcements
 from backend.community.announcements.edit import edit_announcement
+from backend.community.announcements.delete import delete_announcement
 
 
 class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAnnouncementServicer):
@@ -74,6 +75,24 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
         print(request)
 
         success, message = edit_announcement(request.announcement_id, request.community_id, request.user_id, request.title, request.description, list(request.tags))
+        http_code = 201
+
+        if not success:
+            http_code = 400
+        
+        return community_announcement_pb2.CommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message)
+    
+
+    def CommunityDeleteAnnouncement(self, request: community_announcement_pb2.CommunityAnnouncementDeleteRequest, context: grpc.ServicerContext) -> community_announcement_pb2.CommunityAnnouncementResponse:
+        '''
+        This function verifies incoming data and updates a community announcement.
+        If any errors arise then relevant error messages are returned.
+        '''
+        
+        print("CommunityDeleteAnnouncement Request Made:")
+        print(request)
+
+        success, message = delete_announcement(request.announcement_id, request.community_id, request.user_id)
         http_code = 201
 
         if not success:

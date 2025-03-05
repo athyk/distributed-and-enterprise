@@ -32,17 +32,6 @@ services:
     env_file: .env
     logging:
       driver: none
-  chat-service:
-    build:
-        context: .
-        dockerfile: backend/chat/Dockerfile
-    container_name: chat-service
-    ports:
-      - ${CHAT_PORT}:${CHAT_PORT}
-    depends_on:
-      - db
-      - redis
-    env_file: .env
 
   community-service:
     build:
@@ -66,7 +55,6 @@ services:
       - db
       - minio
       - redis
-      - chat-service
       - community-service
     env_file: .env
   svelte-frontend:
