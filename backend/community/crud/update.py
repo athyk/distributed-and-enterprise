@@ -3,6 +3,7 @@ from backend.community.database.database import get_db
 from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag, CommunityUser
 
 from backend.community.crud.local_functions import add_tags, add_degrees
+from backend.community.utils import remove_duplicate_from_two_lists
 
 from math import inf as INFINITY
 
@@ -106,25 +107,3 @@ def update_community(community_id: int, name: str, description: str, public: boo
         session.commit()
 
         return True, further_non_critical_errors
-
-
-def remove_duplicate_from_two_lists(list1, list2):
-    """
-    This function takes in two lists and removes the elements that occur in both from both lists.
-
-    However, if 7 appears once in list1 and then twice in list2 then 7 will only be removed from -
-    both lists once, thus leaving a 7 in list2
-    """
-
-    final_list1 = list1
-    final_list2 = list2
-
-    for item1 in list1:
-        for item2 in list2:
-            if item1 == item2:
-                final_list1.remove(item1)
-                final_list2.remove(item2)
-
-                return remove_duplicate_from_two_lists(final_list1, final_list2)
-
-    return final_list1, final_list2

@@ -1,10 +1,10 @@
 from backend.community.database.models import Tag, AnnouncementTag
 
 
-def add_tags(session: any, tags: list, community_id: int, further_non_critical_errors: list) -> list:
+def add_tags(session: any, tags: list, announcement_id: int, further_non_critical_errors: list) -> list:
     """
     This function searches for the tags provided and connects them to -
-    the Community in the CommunityTag table
+    the Announcement in the AnnouncementTag table
     """
 
     for tag in tags:
@@ -16,10 +16,12 @@ def add_tags(session: any, tags: list, community_id: int, further_non_critical_e
 
         else:
             append_tag = AnnouncementTag(
-                community_id=community_id,
+                announcement_id=announcement_id,
                 tag_id=result[0]
             )
 
             session.add(append_tag)
-    
+
+    session.commit()
+
     return further_non_critical_errors

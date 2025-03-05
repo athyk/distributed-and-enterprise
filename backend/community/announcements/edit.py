@@ -1,8 +1,8 @@
 from backend.common.utils import verify_string, verify_list, verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Announcement
+from backend.community.database.models import Announcement, AnnouncementTag, Tag
 
-from backend.community.utils import check_if_user_is_in_private_community, does_user_have_required_role
+from backend.community.utils import check_if_user_is_in_private_community, does_user_have_required_role, remove_duplicate_from_two_lists
 from backend.community.announcements.local_functions import add_tags
 
 from math import inf as INFINITY
@@ -62,8 +62,30 @@ def edit_announcement(announcement_id: int, community_id: int, user_id: int, tit
             community_id=community_id
             ).first()
         
-        further_non_critical_errors = ['Community Announcement Successfully Changed']
+        current_tags = []
 
+        tag_result = session.query(Tag.name).filter(
+            Announcement.id == announcement_id,
+            Announcement.id == AnnouncementTag.announcement_id,
+            AnnouncementTag.tag_id == Tag.id
+        ).all()
+
+        for tag in tag_result:
+            current_tags.append(str(tag[0]))
+
+        current_tags, tags = remove_duplicate_from_two_lists(current_tags, tags)
+
+        for tag in current_tags:
+            tag_result = session.query(AnnouncementTag).filter(
+                Announcement.id == announcement_id,
+                Announcement.id == AnnouncementTag.announcement_id,
+                AnnouncementTag.tag_id == Tag.id,
+                Tag.name == tag
+            ).first()
+
+            session.delete(tag_result)
+
+        further_non_critical_errors = ['Community Announcement Successfully Changed']
         further_non_critical_errors = add_tags(session, tags, announcement_id, further_non_critical_errors)
 
-        return True, []
+        return True, further_non_critical_errors

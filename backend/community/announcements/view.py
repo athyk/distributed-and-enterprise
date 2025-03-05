@@ -55,7 +55,7 @@ def get_community_announcements(community_id: int, user_id: int, offset: int, li
             tags = []
 
             for tag in announcement_tag_result:
-                tags.append(tag)
+                tags.append(tag[0])
 
             reformed_announcement = {
                 "id": announcement[0],
