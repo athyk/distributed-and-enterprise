@@ -4,7 +4,7 @@
 
 <h1 class="mt-4 mb-3 text-2xl font-bold">Enter the code sent to your email</h1>
 <div class="flex flex-row justify-center">
-	{#each { length: 6 } as _, i}
+	{#each Array.from({ length: 6 }) as _, i}
 		<input
 			type="text"
 			class="mt-2 mr-2 w-[45px] rounded-md border px-4 py-2 focus:ring-1 focus:ring-blue-600 focus:outline-none"
