@@ -17,7 +17,7 @@ message CommunityAnnouncementCreateRequest {
 
 // CommunityAnnouncementUpdateRequest is the request message for the CommunityUpdateAnnouncement method.
 message CommunityAnnouncementUpdateRequest {
-    // announcement_id is used to specify what community the announcement belongs to
+    // announcement_id is used to specify what announcement to get
     int32 announcement_id = 1;
     // community_id is used to specify what community the announcement belongs to
     int32 community_id = 2;
@@ -46,9 +46,30 @@ message CommunityAnnouncementViewSelectRequest {
 }
 
 
+// CommunityAnnouncementGlobalRequest is the request message for the CommunityViewSelectAnnouncement method.
+message CommunityAnnouncementGlobalRequest {
+    // offset is the position to start fetching announcement data in date order
+    // this is to skip fetching more recent announcements when already fetched
+    int32 offset = 1;
+    // limit is the number of announcements to fetch from the offset
+    int32 limit = 2;
+}
+
+
+// CommunityAnnouncementViewSelectRequest is the request message for the CommunityViewSelectAnnouncement method.
+message CommunityAnnouncementViewSelectOneRequest {
+    // announcement_id is used to specify what announcement to get
+    int32 announcement_id = 1;
+    // community_id is used to specify what community the announcement belongs to
+    int32 community_id = 2;
+    // user_id is used to check if the user is in the community only if community is private
+    int32 user_id = 3;
+}
+
+
 // CommunityAnnouncementDeleteRequest is the request message for the CommunityDeleteSelectAnnouncement method.
 message CommunityAnnouncementDeleteRequest {
-    // announcement_id is used to specify what community the announcement belongs to
+    // announcement_id is used to specify what announcement to get
     int32 announcement_id = 1;
     // community_id is used to specify what community the announcement belongs to
     int32 community_id = 2;
@@ -68,7 +89,7 @@ message CommunityAnnouncementResponse {
 }
 
 
-// CommunityAnnouncementData is the message to get all announcement data for a specified
+// CommunityAnnouncementData is the message to get all announcement data for a specified community
 message CommunityAnnouncementData {
     // id is the announcement identification
     int32 id = 1;
@@ -88,6 +109,19 @@ message CommunityAnnouncementData {
     string edit_uploaded = 8;
 }
 
+// SingleCommunityAnnouncementResponse is the response to return one fetched announcement
+// It uses the CommunityAnnouncementData object to return data in an orderly fashion
+message SingleCommunityAnnouncementResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+    // announcement is the announcement in the format of the CommunityAnnouncementData message
+    optional CommunityAnnouncementData announcement = 4;
+}
+
 
 // AllCommunityAnnouncementResponse is the response to return multiple of the fetched announcements
 // It uses the CommunityAnnouncementData object to return data in an orderly fashion
@@ -103,13 +137,52 @@ message AllCommunityAnnouncementResponse {
 }
 
 
+// GlobalCommunityAnnouncementResponse is the message to get all announcement data
+message GlobalCommunityAnnouncementData {
+    // id is the announcement identification
+    int32 id = 1;
+    // community_id is used to specify what community the announcement belongs to
+    int32 community_id = 2;
+    // title is the announcement title used to summarise and define the announcement
+    string title = 3;
+    // description is the short paragraph regarding the announcement
+    string description = 4;
+    // tags is a list of tag names
+    repeated string tags = 5;
+    // user_id is the identification of the user who made the announcement
+    int32 user_id = 6;
+    // uploaded is when the announcement was first made
+    string uploaded = 7;
+    // edit_user_id is the identification of the user who last modified the announcement
+    int32 edit_user_id = 8;
+    // edit_uploaded is when the last change was made to the announcement
+    string edit_uploaded = 9;
+}
+
+
+message GlobalCommunityAnnouncementResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+    // announcements is a list of announcements in the format of the GlobalCommunityAnnouncementData message
+    repeated GlobalCommunityAnnouncementData global_announcements = 4;
+}
+
+
 service CommunityAnnouncement {
     // CommunityCreateAnnouncement creates a new community announcement
     rpc CommunityCreateAnnouncement(CommunityAnnouncementCreateRequest) returns (CommunityAnnouncementResponse) {}
     // CommunityUpdateAnnouncement updates a specified community announcement
     rpc CommunityUpdateAnnouncement(CommunityAnnouncementUpdateRequest) returns (CommunityAnnouncementResponse) {}
-    // CommunityViewSelectAnnouncement fetches a specified community number of announcements
+    // CommunityViewSelectAnnouncement fetches a specified number of announcements from a community
     rpc CommunityViewSelectAnnouncement(CommunityAnnouncementViewSelectRequest) returns (AllCommunityAnnouncementResponse) {}
+    // CommunityViewGlobalAnnouncement fetches a specified number of announcements
+    rpc CommunityViewGlobalAnnouncement(CommunityAnnouncementGlobalRequest) returns (GlobalCommunityAnnouncementResponse) {}
+    // CommunityViewSelectOneAnnouncement fetches a specified community number of announcements
+    rpc CommunityViewSelectOneAnnouncement(CommunityAnnouncementViewSelectOneRequest) returns (SingleCommunityAnnouncementResponse) {}
     // CommunityDeleteAnnouncement deletes a specified community announcement
     rpc CommunityDeleteAnnouncement(CommunityAnnouncementDeleteRequest) returns (CommunityAnnouncementResponse) {}
 }

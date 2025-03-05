@@ -49,6 +49,16 @@ class CommunityAnnouncementStub(object):
                 request_serializer=community__announcement__pb2.CommunityAnnouncementViewSelectRequest.SerializeToString,
                 response_deserializer=community__announcement__pb2.AllCommunityAnnouncementResponse.FromString,
                 _registered_method=True)
+        self.CommunityViewGlobalAnnouncement = channel.unary_unary(
+                '/CommunityAnnouncement/CommunityViewGlobalAnnouncement',
+                request_serializer=community__announcement__pb2.CommunityAnnouncementGlobalRequest.SerializeToString,
+                response_deserializer=community__announcement__pb2.GlobalCommunityAnnouncementResponse.FromString,
+                _registered_method=True)
+        self.CommunityViewSelectOneAnnouncement = channel.unary_unary(
+                '/CommunityAnnouncement/CommunityViewSelectOneAnnouncement',
+                request_serializer=community__announcement__pb2.CommunityAnnouncementViewSelectOneRequest.SerializeToString,
+                response_deserializer=community__announcement__pb2.SingleCommunityAnnouncementResponse.FromString,
+                _registered_method=True)
         self.CommunityDeleteAnnouncement = channel.unary_unary(
                 '/CommunityAnnouncement/CommunityDeleteAnnouncement',
                 request_serializer=community__announcement__pb2.CommunityAnnouncementDeleteRequest.SerializeToString,
@@ -74,7 +84,21 @@ class CommunityAnnouncementServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def CommunityViewSelectAnnouncement(self, request, context):
-        """CommunityViewSelectAnnouncement fetches a specified community number of announcements
+        """CommunityViewSelectAnnouncement fetches a specified number of announcements from a community
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CommunityViewGlobalAnnouncement(self, request, context):
+        """CommunityViewGlobalAnnouncement fetches a specified number of announcements
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CommunityViewSelectOneAnnouncement(self, request, context):
+        """CommunityViewSelectOneAnnouncement fetches a specified community number of announcements
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -104,6 +128,16 @@ def add_CommunityAnnouncementServicer_to_server(servicer, server):
                     servicer.CommunityViewSelectAnnouncement,
                     request_deserializer=community__announcement__pb2.CommunityAnnouncementViewSelectRequest.FromString,
                     response_serializer=community__announcement__pb2.AllCommunityAnnouncementResponse.SerializeToString,
+            ),
+            'CommunityViewGlobalAnnouncement': grpc.unary_unary_rpc_method_handler(
+                    servicer.CommunityViewGlobalAnnouncement,
+                    request_deserializer=community__announcement__pb2.CommunityAnnouncementGlobalRequest.FromString,
+                    response_serializer=community__announcement__pb2.GlobalCommunityAnnouncementResponse.SerializeToString,
+            ),
+            'CommunityViewSelectOneAnnouncement': grpc.unary_unary_rpc_method_handler(
+                    servicer.CommunityViewSelectOneAnnouncement,
+                    request_deserializer=community__announcement__pb2.CommunityAnnouncementViewSelectOneRequest.FromString,
+                    response_serializer=community__announcement__pb2.SingleCommunityAnnouncementResponse.SerializeToString,
             ),
             'CommunityDeleteAnnouncement': grpc.unary_unary_rpc_method_handler(
                     servicer.CommunityDeleteAnnouncement,
@@ -192,6 +226,60 @@ class CommunityAnnouncement(object):
             '/CommunityAnnouncement/CommunityViewSelectAnnouncement',
             community__announcement__pb2.CommunityAnnouncementViewSelectRequest.SerializeToString,
             community__announcement__pb2.AllCommunityAnnouncementResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CommunityViewGlobalAnnouncement(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/CommunityAnnouncement/CommunityViewGlobalAnnouncement',
+            community__announcement__pb2.CommunityAnnouncementGlobalRequest.SerializeToString,
+            community__announcement__pb2.GlobalCommunityAnnouncementResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CommunityViewSelectOneAnnouncement(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/CommunityAnnouncement/CommunityViewSelectOneAnnouncement',
+            community__announcement__pb2.CommunityAnnouncementViewSelectOneRequest.SerializeToString,
+            community__announcement__pb2.SingleCommunityAnnouncementResponse.FromString,
             options,
             channel_credentials,
             insecure,
