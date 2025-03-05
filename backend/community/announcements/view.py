@@ -1,6 +1,6 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Announcement, AnnouncementTag, Tag, Community, CommunityUser
+from backend.community.database.models import Announcement, AnnouncementTag, Tag, Community
 from backend.community.utils import check_if_user_is_in_private_community
 
 from math import inf as INFINITY
@@ -150,7 +150,7 @@ def get_global_community_announcements(offset: int, limit: int) -> tuple[bool, l
             Announcement.datetime, Announcement.last_edited_user_id, Announcement.edit_datetime, Announcement.community_id
         ).filter(
             Announcement.community_id == Community.id,
-            Community.public == True
+            Community.public
         ).order_by(
             Announcement.datetime.desc()
         ).limit(limit).offset(offset).all()
