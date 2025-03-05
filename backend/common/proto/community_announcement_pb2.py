@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1c\x63ommunity_announcement.proto\"}\n\"CommunityAnnouncementCreateRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x08\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x0c\n\x04tags\x18\x05 \x03(\t\"\x96\x01\n\"CommunityAnnouncementUpdateRequest\x12\x17\n\x0f\x61nnouncement_id\x18\x01 \x01(\x08\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x08\x12\x0f\n\x07user_id\x18\x03 \x01(\x05\x12\r\n\x05title\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\x0c\n\x04tags\x18\x06 \x03(\t\"]\n&CommunityAnnouncementViewSelectRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x08\x12\x0e\n\x06offset\x18\x02 \x01(\x05\x12\r\n\x05limit\x18\x03 \x01(\x05\"d\n\"CommunityAnnouncementDeleteRequest\x12\x17\n\x0f\x61nnouncement_id\x18\x01 \x01(\x08\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x08\x12\x0f\n\x07user_id\x18\x03 \x01(\x05\"\\\n\x1d\x43ommunityAnnouncementResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"\xa9\x01\n\x19\x43ommunityAnnouncementData\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05title\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0c\n\x04tags\x18\x04 \x03(\t\x12\x0f\n\x07user_id\x18\x05 \x01(\x05\x12\x10\n\x08uploaded\x18\x06 \x01(\t\x12\x14\n\x0c\x65\x64it_user_id\x18\x07 \x01(\x05\x12\x15\n\redit_uploaded\x18\x08 \x01(\t\"U\n AllCommunityAnnouncementResponse\x12\x31\n\rannouncements\x18\x01 \x03(\x0b\x32\x1a.CommunityAnnouncementData2\xba\x03\n\x15\x43ommunityAnnouncement\x12\x64\n\x1b\x43ommunityCreateAnnouncement\x12#.CommunityAnnouncementCreateRequest\x1a\x1e.CommunityAnnouncementResponse\"\x00\x12\x64\n\x1b\x43ommunityUpdateAnnouncement\x12#.CommunityAnnouncementUpdateRequest\x1a\x1e.CommunityAnnouncementResponse\"\x00\x12o\n\x1f\x43ommunityViewSelectAnnouncement\x12\'.CommunityAnnouncementViewSelectRequest\x1a!.AllCommunityAnnouncementResponse\"\x00\x12\x64\n\x1b\x43ommunityDeleteAnnouncement\x12#.CommunityAnnouncementDeleteRequest\x1a\x1e.CommunityAnnouncementResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x1c\x63ommunity_announcement.proto\"}\n\"CommunityAnnouncementCreateRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x05\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x0c\n\x04tags\x18\x05 \x03(\t\"\x96\x01\n\"CommunityAnnouncementUpdateRequest\x12\x17\n\x0f\x61nnouncement_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\x0f\n\x07user_id\x18\x03 \x01(\x05\x12\r\n\x05title\x18\x04 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x05 \x01(\t\x12\x0c\n\x04tags\x18\x06 \x03(\t\"n\n&CommunityAnnouncementViewSelectRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x05\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\x0e\n\x06offset\x18\x03 \x01(\x05\x12\r\n\x05limit\x18\x04 \x01(\x05\"d\n\"CommunityAnnouncementDeleteRequest\x12\x17\n\x0f\x61nnouncement_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\x0f\n\x07user_id\x18\x03 \x01(\x05\"\\\n\x1d\x43ommunityAnnouncementResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"\xa9\x01\n\x19\x43ommunityAnnouncementData\x12\n\n\x02id\x18\x01 \x01(\x05\x12\r\n\x05title\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x0c\n\x04tags\x18\x04 \x03(\t\x12\x0f\n\x07user_id\x18\x05 \x01(\x05\x12\x10\n\x08uploaded\x18\x06 \x01(\t\x12\x14\n\x0c\x65\x64it_user_id\x18\x07 \x01(\x05\x12\x15\n\redit_uploaded\x18\x08 \x01(\t\"\x92\x01\n AllCommunityAnnouncementResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\x12\x31\n\rannouncements\x18\x04 \x03(\x0b\x32\x1a.CommunityAnnouncementData2\xba\x03\n\x15\x43ommunityAnnouncement\x12\x64\n\x1b\x43ommunityCreateAnnouncement\x12#.CommunityAnnouncementCreateRequest\x1a\x1e.CommunityAnnouncementResponse\"\x00\x12\x64\n\x1b\x43ommunityUpdateAnnouncement\x12#.CommunityAnnouncementUpdateRequest\x1a\x1e.CommunityAnnouncementResponse\"\x00\x12o\n\x1f\x43ommunityViewSelectAnnouncement\x12\'.CommunityAnnouncementViewSelectRequest\x1a!.AllCommunityAnnouncementResponse\"\x00\x12\x64\n\x1b\x43ommunityDeleteAnnouncement\x12#.CommunityAnnouncementDeleteRequest\x1a\x1e.CommunityAnnouncementResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -36,15 +36,15 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_COMMUNITYANNOUNCEMENTUPDATEREQUEST']._serialized_start=160
   _globals['_COMMUNITYANNOUNCEMENTUPDATEREQUEST']._serialized_end=310
   _globals['_COMMUNITYANNOUNCEMENTVIEWSELECTREQUEST']._serialized_start=312
-  _globals['_COMMUNITYANNOUNCEMENTVIEWSELECTREQUEST']._serialized_end=405
-  _globals['_COMMUNITYANNOUNCEMENTDELETEREQUEST']._serialized_start=407
-  _globals['_COMMUNITYANNOUNCEMENTDELETEREQUEST']._serialized_end=507
-  _globals['_COMMUNITYANNOUNCEMENTRESPONSE']._serialized_start=509
-  _globals['_COMMUNITYANNOUNCEMENTRESPONSE']._serialized_end=601
-  _globals['_COMMUNITYANNOUNCEMENTDATA']._serialized_start=604
-  _globals['_COMMUNITYANNOUNCEMENTDATA']._serialized_end=773
-  _globals['_ALLCOMMUNITYANNOUNCEMENTRESPONSE']._serialized_start=775
-  _globals['_ALLCOMMUNITYANNOUNCEMENTRESPONSE']._serialized_end=860
-  _globals['_COMMUNITYANNOUNCEMENT']._serialized_start=863
-  _globals['_COMMUNITYANNOUNCEMENT']._serialized_end=1305
+  _globals['_COMMUNITYANNOUNCEMENTVIEWSELECTREQUEST']._serialized_end=422
+  _globals['_COMMUNITYANNOUNCEMENTDELETEREQUEST']._serialized_start=424
+  _globals['_COMMUNITYANNOUNCEMENTDELETEREQUEST']._serialized_end=524
+  _globals['_COMMUNITYANNOUNCEMENTRESPONSE']._serialized_start=526
+  _globals['_COMMUNITYANNOUNCEMENTRESPONSE']._serialized_end=618
+  _globals['_COMMUNITYANNOUNCEMENTDATA']._serialized_start=621
+  _globals['_COMMUNITYANNOUNCEMENTDATA']._serialized_end=790
+  _globals['_ALLCOMMUNITYANNOUNCEMENTRESPONSE']._serialized_start=793
+  _globals['_ALLCOMMUNITYANNOUNCEMENTRESPONSE']._serialized_end=939
+  _globals['_COMMUNITYANNOUNCEMENT']._serialized_start=942
+  _globals['_COMMUNITYANNOUNCEMENT']._serialized_end=1384
 # @@protoc_insertion_point(module_scope)

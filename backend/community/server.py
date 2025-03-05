@@ -7,11 +7,12 @@ from concurrent import futures
 #
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
-from backend.common.proto import community_pb2_grpc
+from backend.common.proto import community_pb2_grpc, community_announcement_pb2_grpc
 from backend.community.database.database import engine, Base, confirm_database_exists
 
 # All community services that will be run goes here
 from backend.community.services.community_crud import Community_CRUD_Service
+from backend.community.services.community_announcements import Community_Announcement_Service
 
 def serve():
     port = os.environ.get('COMMUNITY_PORT', '50052')
@@ -22,8 +23,17 @@ def serve():
     print(f'Port: {port}')
     print(f'Max Workers Assigned: {max_workers}')
 
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
+    server = grpc.server(
+        futures.ThreadPoolExecutor(max_workers=max_workers),
+        options=[('grpc.max_message_length', 50 * 1024 * 1024)]
+    )
+
     community_pb2_grpc.add_CommunityServicer_to_server(Community_CRUD_Service(), server)
+    print('Service Added: CRUD-Service')
+
+    community_announcement_pb2_grpc.add_CommunityAnnouncementServicer_to_server(Community_Announcement_Service(), server)
+    print('Service Added: Announcement-Service')
+
     server.add_insecure_port('[::]:' + port)
     server.start()
 

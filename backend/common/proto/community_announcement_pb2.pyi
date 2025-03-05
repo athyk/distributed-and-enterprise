@@ -12,12 +12,12 @@ class CommunityAnnouncementCreateRequest(_message.Message):
     TITLE_FIELD_NUMBER: _ClassVar[int]
     DESCRIPTION_FIELD_NUMBER: _ClassVar[int]
     TAGS_FIELD_NUMBER: _ClassVar[int]
-    community_id: bool
+    community_id: int
     user_id: int
     title: str
     description: str
     tags: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, community_id: bool = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
+    def __init__(self, community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class CommunityAnnouncementUpdateRequest(_message.Message):
     __slots__ = ("announcement_id", "community_id", "user_id", "title", "description", "tags")
@@ -27,33 +27,35 @@ class CommunityAnnouncementUpdateRequest(_message.Message):
     TITLE_FIELD_NUMBER: _ClassVar[int]
     DESCRIPTION_FIELD_NUMBER: _ClassVar[int]
     TAGS_FIELD_NUMBER: _ClassVar[int]
-    announcement_id: bool
-    community_id: bool
+    announcement_id: int
+    community_id: int
     user_id: int
     title: str
     description: str
     tags: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, announcement_id: bool = ..., community_id: bool = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
+    def __init__(self, announcement_id: _Optional[int] = ..., community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class CommunityAnnouncementViewSelectRequest(_message.Message):
-    __slots__ = ("community_id", "offset", "limit")
+    __slots__ = ("community_id", "user_id", "offset", "limit")
     COMMUNITY_ID_FIELD_NUMBER: _ClassVar[int]
+    USER_ID_FIELD_NUMBER: _ClassVar[int]
     OFFSET_FIELD_NUMBER: _ClassVar[int]
     LIMIT_FIELD_NUMBER: _ClassVar[int]
-    community_id: bool
+    community_id: int
+    user_id: int
     offset: int
     limit: int
-    def __init__(self, community_id: bool = ..., offset: _Optional[int] = ..., limit: _Optional[int] = ...) -> None: ...
+    def __init__(self, community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., offset: _Optional[int] = ..., limit: _Optional[int] = ...) -> None: ...
 
 class CommunityAnnouncementDeleteRequest(_message.Message):
     __slots__ = ("announcement_id", "community_id", "user_id")
     ANNOUNCEMENT_ID_FIELD_NUMBER: _ClassVar[int]
     COMMUNITY_ID_FIELD_NUMBER: _ClassVar[int]
     USER_ID_FIELD_NUMBER: _ClassVar[int]
-    announcement_id: bool
-    community_id: bool
+    announcement_id: int
+    community_id: int
     user_id: int
-    def __init__(self, announcement_id: bool = ..., community_id: bool = ..., user_id: _Optional[int] = ...) -> None: ...
+    def __init__(self, announcement_id: _Optional[int] = ..., community_id: _Optional[int] = ..., user_id: _Optional[int] = ...) -> None: ...
 
 class CommunityAnnouncementResponse(_message.Message):
     __slots__ = ("success", "http_status", "error_message")
@@ -86,7 +88,13 @@ class CommunityAnnouncementData(_message.Message):
     def __init__(self, id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ..., user_id: _Optional[int] = ..., uploaded: _Optional[str] = ..., edit_user_id: _Optional[int] = ..., edit_uploaded: _Optional[str] = ...) -> None: ...
 
 class AllCommunityAnnouncementResponse(_message.Message):
-    __slots__ = ("announcements",)
+    __slots__ = ("success", "http_status", "error_message", "announcements")
+    SUCCESS_FIELD_NUMBER: _ClassVar[int]
+    HTTP_STATUS_FIELD_NUMBER: _ClassVar[int]
+    ERROR_MESSAGE_FIELD_NUMBER: _ClassVar[int]
     ANNOUNCEMENTS_FIELD_NUMBER: _ClassVar[int]
+    success: bool
+    http_status: int
+    error_message: _containers.RepeatedScalarFieldContainer[str]
     announcements: _containers.RepeatedCompositeFieldContainer[CommunityAnnouncementData]
-    def __init__(self, announcements: _Optional[_Iterable[_Union[CommunityAnnouncementData, _Mapping]]] = ...) -> None: ...
+    def __init__(self, success: bool = ..., http_status: _Optional[int] = ..., error_message: _Optional[_Iterable[str]] = ..., announcements: _Optional[_Iterable[_Union[CommunityAnnouncementData, _Mapping]]] = ...) -> None: ...
