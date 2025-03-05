@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+// CommunityAnnouncementCreateRequest is the request message for the CommunityCreateAnnouncement method.
+message CommunityAnnouncementCreateRequest {
+    // community_id is used to specify what community the announcement belongs to
+    bool community_id = 1;
+    // user_id is the user who is performing the operation
+    int32 user_id = 2;
+    // title is the announcement title used to summarise and define the announcement
+    string title = 3;
+    // description is the short paragraph regarding the announcement
+    string description = 4;
+    // tags is a list of tag names
+    repeated string tags = 5;
+}
+
+
+// CommunityAnnouncementUpdateRequest is the request message for the CommunityUpdateAnnouncement method.
+message CommunityAnnouncementUpdateRequest {
+    // announcement_id is used to specify what community the announcement belongs to
+    bool announcement_id = 1;
+    // community_id is used to specify what community the announcement belongs to
+    bool community_id = 2;
+    // user_id is the user who is performing the operation
+    int32 user_id = 3;
+    // title is the announcement title used to summarise and define the announcement
+    string title = 4;
+    // description is the short paragraph regarding the announcement
+    string description = 5;
+    // tags is a list of tag names
+    repeated string tags = 6;
+}
+
+
+// CommunityAnnouncementViewSelectRequest is the request message for the CommunityViewSelectAnnouncement method.
+message CommunityAnnouncementViewSelectRequest {
+    // community_id is used to specify what community the announcement belongs to
+    bool community_id = 1;
+    // offset is the position to start fetching announcement data in date order
+    // this is to skip fetching more recent announcements when already fetched
+    int32 offset = 2;
+    // limit is the number of announcements to fetch from the offset
+    int32 limit = 3;
+}
+
+
+// CommunityAnnouncementDeleteRequest is the request message for the CommunityDeleteSelectAnnouncement method.
+message CommunityAnnouncementDeleteRequest {
+    // announcement_id is used to specify what community the announcement belongs to
+    bool announcement_id = 1;
+    // community_id is used to specify what community the announcement belongs to
+    bool community_id = 2;
+    // user_id is the user who is performing the operation
+    int32 user_id = 3;
+}
+
+
+// CommunityAnnouncementResponse is the response message for the CommunityDeleteSelectAnnouncement method.
+message CommunityAnnouncementResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+}
+
+
+// CommunityAnnouncementData is the message to get all announcement data for a specified
+message CommunityAnnouncementData {
+    // id is the announcement identification
+    int32 id = 1;
+    // title is the announcement title used to summarise and define the announcement
+    string title = 2;
+    // description is the short paragraph regarding the announcement
+    string description = 3;
+    // tags is a list of tag names
+    repeated string tags = 4;
+    // user_id is the identification of the user who made the announcement
+    int32 user_id = 5;
+    // uploaded is when the announcement was first made
+    string uploaded = 6;
+    // edit_user_id is the identification of the user who last modified the announcement
+    int32 edit_user_id = 7;
+    // edit_uploaded is when the last change was made to the announcement
+    string edit_uploaded = 8;
+}
+
+
+// AllCommunityAnnouncementResponse is the response to return multiple of the fetched announcements
+// It uses the CommunityAnnouncementData object to return data in an orderly fashion
+message AllCommunityAnnouncementResponse {
+    // announcements is a list of announcements in the format of the CommunityAnnouncementData message
+    repeated CommunityAnnouncementData announcements = 1;
+}
+
+
+service CommunityAnnouncement {
+    // CommunityCreateAnnouncement creates a new community announcement
+    rpc CommunityCreateAnnouncement(CommunityAnnouncementCreateRequest) returns (CommunityAnnouncementResponse) {}
+    // CommunityUpdateAnnouncement updates a specified community announcement
+    rpc CommunityUpdateAnnouncement(CommunityAnnouncementUpdateRequest) returns (CommunityAnnouncementResponse) {}
+    // CommunityViewSelectAnnouncement fetches a specified community number of announcements
+    rpc CommunityViewSelectAnnouncement(CommunityAnnouncementViewSelectRequest) returns (AllCommunityAnnouncementResponse) {}
+    // CommunityDeleteAnnouncement deletes a specified community announcement
+    rpc CommunityDeleteAnnouncement(CommunityAnnouncementDeleteRequest) returns (CommunityAnnouncementResponse) {}
+}
