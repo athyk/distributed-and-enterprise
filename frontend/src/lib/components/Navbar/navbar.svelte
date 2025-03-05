@@ -33,7 +33,7 @@
 		</button>
 		<div class="hidden space-x-4 md:flex">
 			{#each Object.keys(urls) as url}
-				<a href={urls[url]} class="text-gray-300 text-[20px] hover:text-white">{url}</a>
+				<a href={urls[url]} class="text-[20px] text-gray-300 hover:text-white">{url}</a>
 			{/each}
 		</div>
 	</div>

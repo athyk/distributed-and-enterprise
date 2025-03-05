@@ -73,8 +73,7 @@
 	}
 </script>
 
-
-<div class="w-full p-8 md:w-1/2 md:mx-auto">
+<div class="w-full p-8 md:mx-auto md:w-1/2">
 	<h2 class="text-center text-2xl font-semibold text-gray-700">Register</h2>
 	<p class="text-center text-xl text-gray-600">Fill in User Info</p>
 	<form on:submit|preventDefault={handleSubmit}>
@@ -87,10 +86,16 @@
 		{/if}
 
 		{#if step === 3}
-			<Page3 bind:degree bind:degreeYear bind:graduationYear bind:tags bind:pageInputs={page3Inputs} />
+			<Page3
+				bind:degree
+				bind:degreeYear
+				bind:graduationYear
+				bind:tags
+				bind:pageInputs={page3Inputs}
+			/>
 		{/if}
 		{#if step === 4}
-			<Page4 bind:otp={otp} />
+			<Page4 bind:otp />
 		{/if}
 
 		<div class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
@@ -100,15 +105,18 @@
 				>
 			{/if}
 			{#if step > 1}
-				<Button type="button" text="Previous Step" on:click={() => (step = Math.max(1, step - 1))} />
+				<Button
+					type="button"
+					text="Previous Step"
+					on:click={() => (step = Math.max(1, step - 1))}
+				/>
 			{/if}
 
 			{#if step === maxstep}
-				<Button/>
+				<Button />
 			{:else}
 				<Button type="button" text="Next Step" onClick={checkPageValidity} />
 			{/if}
-
 		</div>
 	</form>
 </div>
