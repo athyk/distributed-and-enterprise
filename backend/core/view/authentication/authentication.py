@@ -41,6 +41,8 @@ def register_user(request: WSGIRequest):
         tag=data['tag']
     ))
 
+    request.session["user_id"] = response.user_id
+
     return JsonResponse({
         'success': response.success,
         'http_status': response.http_status,
@@ -71,6 +73,8 @@ def login_user(request: WSGIRequest):
         email=data['email'],
         password=data['password']
     ))
+
+    request.session["user_id"] = response.user_id
 
     return JsonResponse({
         'success': response.success,
