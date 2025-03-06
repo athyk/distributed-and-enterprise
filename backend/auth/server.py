@@ -12,6 +12,7 @@ from backend.auth.database.database import engine, Base, confirm_database_exists
 
 from backend.auth.services.authentication_service import AuthenticationService, DataFetchingService
 
+os.environ["GRPC_DNS_RESOLVER"] = "native"
 
 def serve():
     port = os.environ.get('AUTH_PORT', '50053')
