@@ -1,6 +1,7 @@
 services:
   db:
-    image: postgres:17
+    image: postgres:17 
+    container_name: db
     ports:
       - ${DATABASE_PORT}:${DATABASE_PORT}
     volumes:
@@ -66,6 +67,7 @@ services:
       - db
       - minio
       - redis
+      - auth-service
       - chat-service
       - community-service
     env_file: .env
@@ -80,6 +82,17 @@ services:
     depends_on:
       - django-backend
     working_dir: /app
+  auth-service:
+    build:
+        context: .
+        dockerfile: backend/auth/Dockerfile
+    container_name: auth-service
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
 volumes:
   postgres_data:
   minio_data:
