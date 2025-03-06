@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+
+// RegistrationRequest is the request message for the Authentication method.
+// It contains the message and a flag to indicate if the message is from a bot.
+message RegistrationRequest {
+    // email is the username for the account
+    string email = 1;
+    // password is the password for the account
+    string password = 2;
+    // first_name self explanatory
+    string first_name = 3;
+    // last_name self explanatory
+    string last_name = 4;
+    // dob is date of birth
+    string dob = 5;
+    // gender self explanatory
+    string gender = 6;
+    // degree is the users current degree
+    string degree = 7;
+    // year_of_study is the current users year of study
+    int32 year_of_study = 8;
+    // grad_year is the expected graduation of the user
+    string grad_year = 9;
+    // tag is a list of tags that the user applied to themselves
+    repeated string tag = 10;
+}
+
+
+// AuthenticationResponse is the response message for the Authentication method from the chat service.
+//
+// It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
+message AuthenticationResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+    // user_id is the id to return when auth is complete
+    int32 user_id = 4;
+}
+
+
+// LoginRequest is the request message for the Authentication method.
+// It contains the message and a flag to indicate if the message is from a bot.
+message LoginRequest {
+    // email is the username for the account
+    string email = 1;
+    // password is the password for the account
+    string password = 2;
+}
+
+
+// EmailAuthRequest is the request message for the Authentication method.
+message EmailAuthRequest {
+    // email is what is sent for the server to send an email to the user to verify
+    string email = 1;
+    // skip is for debugging to circumvent the email verification
+    bool skip = 2;
+}
+
+// EmailAuthSent is the request message for the Authentication method.
+message EmailAuthSent {
+    // sent is to verify to the user that the email was sent successfully
+    bool sent = 1;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 2;
+}
+
+
+// EmailAuthVerify is the request message for the Authentication method.
+message EmailAuthVerify {
+    // email is what is sent for the server to verify the email
+    string email = 1;
+    // otp is the six digit number sent by the user
+    int32 otp = 2;
+    // id is the key for the email authentication
+    string id = 3;
+}
+
+
+// EmailVerifiedResponse is the request message for the Authentication method.
+message EmailVerifiedResponse {
+    // verified represents in boolean if the email was verified
+    bool verified = 1;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 2;
+}
+
+
+service Authentication {
+    // RegisterUser registers a user with the provided data.
+    rpc RegisterUser(RegistrationRequest) returns (AuthenticationResponse) {}
+    // LoginUser logs in a user with the provided data.
+    rpc LoginUser(LoginRequest) returns (AuthenticationResponse) {}
+    // SendEmailRequest sends a request to an email for validation
+    rpc SendEmailRequest(EmailAuthRequest) returns (EmailAuthSent) {}
+    // EmailConfirmationRequest sends a request to validate the email with the given code
+    rpc EmailConfirmationRequest(EmailAuthVerify) returns (EmailVerifiedResponse) {}
+}
