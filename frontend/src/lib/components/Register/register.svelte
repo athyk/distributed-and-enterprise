@@ -1,10 +1,13 @@
 <script lang="ts">
 	import Input from '$components/FormInput/Input.svelte';
 	import Button from '$components/SubmitButton/button.svelte';
+	import { post } from '$lib/Api/post';
 	import Page1 from './Pages/page1.svelte';
 	import Page2 from './Pages/page2.svelte';
 	import Page3 from './Pages/page3.svelte';
 	import Page4 from './Pages/page4.svelte';
+	import type { response } from '$lib/Api/types';
+	import Popup from '$components/ErrorPopUp/popup.svelte';
 
 	let email = '';
 	let password = '';
@@ -13,13 +16,13 @@
 	let fName = '';
 	let lName = '';
 	let dob = '';
-	let gender = '';
+	let gender: string[] =  [];
 
-	let degree = '';
+	let degree: string[] =  [];
 	let degreeYear = '';
 	let graduationYear = '';
 
-	let tags = '';
+	let tags: string[] =  [];
 
 	let otp: string[] = [];
 
@@ -32,11 +35,15 @@
 
 	let pageInputs = [page1Inputs, page2Inputs, page3Inputs];
 
+	let errorMessage = '';
+
 	function checkPageValidity() {
 		let valid = true;
+		console.log(pageInputs[step - 1]);
 		pageInputs[step - 1].forEach((input) => {
+			console.log(input);
 			if (!input.reportValidity()) {
-				console.log('Not VALID!!!! :(');
+				console.log('Invalid');
 				valid = false;
 			}
 		});
@@ -55,27 +62,52 @@
 		return valid;
 	}
 
-	function handleSubmit() {
+	async function handleSubmit() {
+		dob = dob.split('-').reverse().join('-');
+		graduationYear = "30-06-" + graduationYear;
+
 		let data = {
-			email,
-			password,
-			passwordConfirm,
-			fName,
-			lName,
-			dob,
-			gender,
-			degree,
-			degreeYear,
-			graduationYear,
-			tags
-		};
+			"email": email,
+			"password": password,
+			"first_name": fName,
+			"last_name": lName,
+			"dob":dob,
+			"gender": gender[0],
+			"degree":degree[0],
+			"year_of_study": degreeYear,
+			"grad_year":graduationYear,
+			"tag": tags
+		}
 		console.log(data);
+
+		try {
+			let response = await post('authorisation/register', data) as response;
+			console.log(response);
+			if (response.http_status === 201) {
+				alert('Registration Successful');
+				step = 1;
+			} else if (response.http_status === 400) {
+				if (response.error_message.includes('Email Already Exists')) {
+					errorMessage = 'Email Already Exists';
+				} else {
+					errorMessage = response.error_message.join(', ');
+				}
+			} else {
+				errorMessage = 'An error occurred';
+			}
+		} catch (error) {
+			console.error(error);
+			errorMessage = 'An unexpected error occurred';
+		}
+
+
 	}
 </script>
 
-
+{step}
 <div class="w-full p-8 md:w-1/2 md:mx-auto">
 	<h2 class="text-center text-2xl font-semibold text-gray-700">Register</h2>
+	<Popup bind:errorMessage />
 	<p class="text-center text-xl text-gray-600">Fill in User Info</p>
 	<form on:submit|preventDefault={handleSubmit}>
 		{#if step === 1}
@@ -83,7 +115,7 @@
 		{/if}
 
 		{#if step === 2}
-			<Page2 bind:fName bind:lName bind:dob bind:pageInputs={page2Inputs} />
+			<Page2 bind:fName bind:lName bind:dob bind:gender bind:pageInputs={page2Inputs} />
 		{/if}
 
 		{#if step === 3}
@@ -100,7 +132,7 @@
 				>
 			{/if}
 			{#if step > 1}
-				<Button type="button" text="Previous Step" on:click={() => (step = Math.max(1, step - 1))} />
+				<Button type="button" text="Previous Step" onClick={() => (step = Math.max(1, step - 1))} />
 			{/if}
 
 			{#if step === maxstep}

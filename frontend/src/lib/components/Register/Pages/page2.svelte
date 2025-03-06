@@ -1,12 +1,13 @@
 <script lang="ts">
 	import Input from '$components/FormInput/Input.svelte';
+	import SearchBox from '$components/SearchBox/searchBox.svelte';
 
 	export let fName = '';
 	export let lName = '';
 	export let dob = '';
-	export let gender = '';
-
+	export let gender: string[] = [];
 	export let pageInputs: Input[] = [];
+
 </script>
 
 <Input
@@ -36,12 +37,13 @@
 	bind:value={dob}
 	bind:this={pageInputs[2]}
 />
-<Input
-	Name="Gender"
-	placeholder="Enter your Gender"
-	type="text"
+
+<SearchBox
+	data={["Male","Female"]}
+	maxItems={1}
 	showLabel={true}
-	required={true}
-	bind:value={gender}
+	Name="Gender"
+	placeholder="Select your Gender"
+	bind:chosenItems={gender}
 	bind:this={pageInputs[3]}
 />
