@@ -16,11 +16,6 @@ def register_user(request: WSGIRequest):
     Sends a request to the authentication server with the relevant data to register a new user.
     """
 
-    try:
-        print(request.session["user_id"])
-    except:
-        pass
-
     if request.method != 'POST':
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
     
