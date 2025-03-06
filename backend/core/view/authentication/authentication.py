@@ -13,10 +13,8 @@ from backend.common.proto import authentication_pb2, authentication_pb2_grpc
 @csrf_exempt
 def register_user(request: WSGIRequest):
     """
-    Sends a request to the community server with the relevant data to delete a community
+    Sends a request to the authentication server with the relevant data to register a new user.
     """
-
-    print('registering')
 
     if request.method != 'POST':
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)

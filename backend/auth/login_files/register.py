@@ -6,6 +6,8 @@ from datetime import datetime
 from backend.auth.database.models import User, Degree
 from backend.auth.login_files.local_functions import add_tags
 
+from math import inf as INFINITY
+
 
 def register_user(
         email: str,
@@ -25,9 +27,9 @@ def register_user(
     """
 
     email_verify,         email_error         = verify_string(email, 4, 64)
-    password_verify,      password_error      = verify_string(password, 8, 32)
-    first_name_verify,    first_name_error    = verify_string(first_name, 2, 48)
-    last_name_verify,     last_name_error     = verify_string(last_name, 2, 48)
+    password_verify,      password_error      = verify_string(password, 8, INFINITY)
+    first_name_verify,    first_name_error    = verify_string(first_name, 2, INFINITY)
+    last_name_verify,     last_name_error     = verify_string(last_name, 2, INFINITY)
     dob_verify,           dob_error           = verify_string(dob, 10, 10)
     gender_verify,        gender_error        = verify_string(gender, 4, 12)
     degree_verify,        degree_error        = verify_string(degree, 4, 128)
