@@ -1,8 +1,11 @@
 from django.urls import path
 from .views import ping1, ping5, ping10, chat_message
 
-from backend.core.community_views.community_crud_views import community_crud_paths, community_creation
 from backend.core.view.community.announcements import community_announcement_paths, community_announcement_action_paths, community_global_announcement_view
+from backend.core.view.community.community_crud import community_crud_paths, community_creation
+from backend.core.view.authentication.authentication import login_user, register_user, send_email_verification_code, verify_email_and_account
+from backend.core.view.data_fetching.fetch_data_lists import fetch_degrees, fetch_tags
+
 
 urlpatterns = [
     path('ping/', ping1),
@@ -15,4 +18,10 @@ urlpatterns = [
     path('community/announcements',community_global_announcement_view),
     path('community/<int:community_id>/announcements',community_announcement_paths),
     path('community/<int:community_id>/announcements/<int:announcement_id>',community_announcement_action_paths),
+    path('authorisation/login', login_user),
+    path('authorisation/register', register_user),
+    path('authorisation/email/send-code', send_email_verification_code),
+    path('authorisation/email/verify', verify_email_and_account),
+    path('degrees', fetch_degrees),
+    path('tags', fetch_tags),
 ]
