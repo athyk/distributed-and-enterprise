@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -155,3 +156,7 @@ S3_ENDPOINT_URL = os.environ.get("MINIO_ENDPOINT", "http://minio:9000")
 S3_URL = os.environ.get("S3_URL", "http://localhost:9000")
 
 StorageClient.initialise(S3_ENDPOINT_URL, S3_ACCESS_KEY_ID, S3_ACCESS_KEY, S3_BUCKET_NAME, S3_URL)
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
