@@ -24,7 +24,7 @@ class AuthenticationService(authentication_pb2_grpc.AuthenticationServicer):
         print("RegisterUser Request Made:")
         print(request)
 
-        success, user_id, error_messsage = register_user(
+        success, user_id, error_message = register_user(
             request.email,
             request.password,
             request.first_name,
@@ -45,7 +45,7 @@ class AuthenticationService(authentication_pb2_grpc.AuthenticationServicer):
         return authentication_pb2.AuthenticationResponse(
             success=success,
             http_status=http_code,
-            error_message=error_messsage,
+            error_message=error_message,
             user_id=user_id
         )
 

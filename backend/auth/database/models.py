@@ -46,5 +46,5 @@ class UserTag(Base):
     __tablename__ = "user_tag"
 
     id = Column(Integer, primary_key=True)
-    degree_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    tag_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
