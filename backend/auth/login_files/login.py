@@ -1,6 +1,7 @@
 from backend.common.utils import verify_string
 from backend.auth.database.database import get_db
 from werkzeug.security import check_password_hash
+from math import inf as INFINITY
 
 from backend.auth.database.models import User
 
@@ -11,8 +12,8 @@ def user_login(email: str, password: str) -> tuple[bool, int, list]:
     If any errors arise then relevant error messages are returned.
     """
 
-    email_verify, email_error = verify_string(email, 4, 64)
-    password_verify, password_error = verify_string(password, 8, 32)
+    email_verify, email_error = verify_string(email, 4, 255) # Cannot exceed 255 rfc3696
+    password_verify, password_error = verify_string(password, 8, INFINITY)
 
     if False in [email_verify, password_verify]:
 
