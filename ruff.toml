@@ -5,7 +5,7 @@ ignore = ["E501"]
 [lint.per-file-ignores]
 "__init__.py" = ["E402"]
 "**/{tests,docs,tools}/*" = ["E402"]
-"backend/common/proto/*" = ["F401", "F541"]
+"backend/common/proto/*" = ["F401", "F541", "E402"]
 
 
 [format]

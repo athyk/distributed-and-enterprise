@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import chat_pb2 as chat__pb2
+import backend.common.proto.chat_pb2 as chat__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
