@@ -26,7 +26,7 @@ def register_user(
     If any errors arise then relevant error messages are returned.
     """
 
-    email_verify,         email_error         = verify_string(email, 4, 64)
+    email_verify,         email_error         = verify_string(email, 4, 255) # Cannot exceed 255 rfc3696
     password_verify,      password_error      = verify_string(password, 8, INFINITY)
     first_name_verify,    first_name_error    = verify_string(first_name, 2, INFINITY)
     last_name_verify,     last_name_error     = verify_string(last_name, 2, INFINITY)
