@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Input from '$components/FormInput/Input.svelte';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
-	import { post } from '$lib/Api/post';
-	import type { response } from '$lib/Api/types';
+	import { post } from '$lib/api/post';
+	import type { response } from '$lib/api/apiType';
 	import Page4 from '$components/Register/Pages/page4.svelte';
 	import Button from '$components/SubmitButton/button.svelte';
 

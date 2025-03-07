@@ -11,7 +11,8 @@ const config = {
 		adapter: adapter(),
 		prerender: { entries: [] },
 		alias: {
-			$components: 'src/lib/components'
+			$components: 'src/lib/components',
+			$lib: 'src/lib'
 		}
 	}
 };

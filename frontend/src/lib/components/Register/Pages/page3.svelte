@@ -2,7 +2,7 @@
 	import Input from '$components/FormInput/Input.svelte';
 	import SearchBox from '$components/SearchBox/searchBox.svelte';
 	import { get } from '$lib/api/get';
-	import type { response } from '$lib/api/types';
+	import type { response } from '$lib/api/apiType';
 
 	export let degree: string[] = [];
 	export let degreeYear = '';

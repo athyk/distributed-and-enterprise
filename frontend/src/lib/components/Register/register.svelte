@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Input from '$components/FormInput/Input.svelte';
 	import Button from '$components/SubmitButton/button.svelte';
-	import { post } from '$lib/Api/post';
+	import { post } from '$lib/api/post';
+	import type { response } from '$lib/api/apiType';
 	import Page1 from './Pages/page1.svelte';
 	import Page2 from './Pages/page2.svelte';
 	import Page3 from './Pages/page3.svelte';
 	import Page4 from './Pages/page4.svelte';
-	import type { response } from '$lib/Api/types';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 
 	let email = '';
