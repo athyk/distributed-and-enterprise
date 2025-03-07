@@ -9,7 +9,7 @@ export async function get<T>(url: string): Promise<T> {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to fetch');
+            throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
         }
 
         return response.json();
