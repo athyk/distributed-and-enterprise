@@ -9,11 +9,16 @@
 	export let graduationYear = '';
 	export let tags: string[] = [];
 
+
+	let tagsDataPromise = getTags();
+	let degreesDataPromise = getDegrees();
+
 	export let pageInputs: Input[] = [];
 
 	async function getDegrees(){
 		let response = await get('degrees') as response;
 		if(response.http_status === 200){
+			console.log(response.data);
 			return response.data;
 		}
 	}
@@ -21,6 +26,7 @@
 	async function getTags(){
 		let response = await get('tags') as response;
 		if(response.http_status === 200){
+			console.log(response.data);
 			return response.data;
 		}
 	}
@@ -28,7 +34,7 @@
 </script>
 
 <SearchBox
-	data={getDegrees()}
+	dataPromise={degreesDataPromise}
 	maxItems={1}
 	showLabel={true}
 	Name="Degree"
@@ -62,7 +68,7 @@
 />
 
 <SearchBox
-	data={getTags()}
+	dataPromise={tagsDataPromise}
 	maxItems={5}
 	showLabel={true}
 	Name="Tags"

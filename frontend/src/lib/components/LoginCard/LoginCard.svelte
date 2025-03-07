@@ -3,10 +3,15 @@
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 	import { post } from '$lib/Api/post';
 	import type { response } from '$lib/Api/types';
+	import Page4 from '$components/Register/Pages/page4.svelte';
+	import Button from '$components/SubmitButton/button.svelte';
 
 	let email = '';
 	let password = '';
 	let errorMessage = '';
+
+	let showOtpPage = false;
+	let otp: string[] = [];
 
 
 
@@ -26,8 +31,9 @@
 			} else if (response.http_status === 400) {
 				if (response.error_message[0] === 'Invalid Email Or Password') {
 					errorMessage = 'Invalid Email Or Password';
-				} else if (response.error_message[0] === 'Email Not Verified') {
+				} else if (response.error_message[0] === 'Account Not Verified By Email') {
 					errorMessage = 'Email Not Verified';
+					showOtpPage = true;
 				} else {
 					errorMessage = response.error_message.join(', ');
 				}
@@ -42,35 +48,40 @@
 
 </script>
 
-<h1>E:{errorMessage}</h1>
-
 <div class="w-full p-8 md:w-1/2 md:mx-auto">
-	<Popup bind:errorMessage />
-	<h2 class="text-center text-2xl font-semibold text-gray-700">Login</h2>
-	<p class="text-center text-xl text-gray-600">Welcome back!</p>
-	<form on:submit|preventDefault={handleLogin}>
-		<Input
-			Name="Email"
-			placeholder="Enter your email"
-			type="email"
-			showLabel={true}
-			bind:value={email}
-		/>
-		<Input
-			Name="Password"
-			placeholder="Enter your password"
-			type="password"
-			showLabel={true}
-			bind:value={password}
-		/>
-		<div
-			class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0"
-		>
-			<button type="submit" class="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-900"
-				>Login</button
-			>
-			<a href="/register" class="text-sm text-gray-600 hover:text-gray-900">Not got an Account?</a
-			>
+	{#if showOtpPage}
+		<Page4 bind:otp={otp} />
+		<div class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
+			<Button text="Verify" />
 		</div>
-	</form>
+	{:else}
+		<Popup bind:errorMessage />
+		<h2 class="text-center text-2xl font-semibold text-gray-700">Login</h2>
+		<p class="text-center text-xl text-gray-600">Welcome back!</p>
+		<form on:submit|preventDefault={handleLogin}>
+			<Input
+				Name="Email"
+				placeholder="Enter your email"
+				type="email"
+				showLabel={true}
+				bind:value={email}
+			/>
+			<Input
+				Name="Password"
+				placeholder="Enter your password"
+				type="password"
+				showLabel={true}
+				bind:value={password}
+			/>
+			<div
+				class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0"
+			>
+				<button type="submit" class="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-900"
+					>Login</button
+				>
+				<a href="/register" class="text-sm text-gray-600 hover:text-gray-900">Not got an Account?</a
+				>
+			</div>
+		</form>
+	{/if}
 </div>

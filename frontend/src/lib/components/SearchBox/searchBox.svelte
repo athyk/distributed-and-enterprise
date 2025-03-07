@@ -1,16 +1,31 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
     export let Name = "Search Box";
     export let showLabel = false;
     export let data: any[] = [];
     export let chosenItems: string[] = [];
     export let maxItems = 1;
     export let placeholder = "Search...";
+    export let dataPromise: Promise<any[]> | null = null;
 
     let filterData: string[] = data;
 
     let showDropdown = false;
 
-
+    onMount(async () => {
+        try {
+            if (dataPromise === null) {
+                if (data.length > 0) {
+                    filterData = data;
+                }
+                return;
+            }
+            data = await dataPromise;
+            filterData = data;
+        } catch (error) {
+            console.error("Failed to fetch data:", error);
+        }
+    });
 
 	function filterItems(event: Event) {
 		const target = event.target as HTMLInputElement;
@@ -66,6 +81,8 @@
     export function setErrorMessage(message: string) {
         console.log("Setting error message: ", message);
     }
+    
+    $: console.log("Data Given: ", data);
 
 </script>
 
