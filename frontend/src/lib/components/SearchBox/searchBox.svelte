@@ -2,11 +2,11 @@
     import { onMount } from 'svelte';
     export let Name = "Search Box";
     export let showLabel = false;
-    export let data: any[] = [];
+    export let data: string[] = [];
     export let chosenItems: string[] = [];
     export let maxItems = 1;
     export let placeholder = "Search...";
-    export let dataPromise: Promise<any[]> | null = null;
+    export let dataPromise: Promise<string[]> | null = null;
 
     let filterData: string[] = data;
 

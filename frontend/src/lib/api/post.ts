@@ -1,5 +1,5 @@
-let base_url =  'http://localhost:8000/'
-export async function post<T>(url: string, data: any): Promise<T> {
+const base_url =  'http://localhost:8000/'
+export async function post<T>(url: string, data: Record<string, unknown>): Promise<T> {
     try {
         const response = await fetch(base_url+url, {
             method: 'POST',
@@ -16,6 +16,6 @@ export async function post<T>(url: string, data: any): Promise<T> {
         return response.json();
     }
     catch (error) {
-        throw new Error('Failed to fetch');
+        throw new Error('Failed to fetch' + error);
     }
 }

@@ -1,4 +1,4 @@
-let base_url =  'http://localhost:8000/'
+const base_url =  'http://localhost:8000/'
 export async function get<T>(url: string): Promise<T> {
     try {
         const response = await fetch(base_url+url, {
@@ -15,6 +15,6 @@ export async function get<T>(url: string): Promise<T> {
         return response.json();
     }
     catch (error) {
-        throw new Error('Failed to fetch');
+        throw new Error('Failed to fetch: ' + error);
     }
 }
