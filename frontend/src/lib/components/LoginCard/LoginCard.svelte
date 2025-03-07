@@ -13,15 +13,13 @@
 	let showOtpPage = false;
 	let otp: string[] = [];
 
-
-
 	async function handleLogin(event: Event) {
 		event.preventDefault();
 		let data = {
 			email: email,
 			password: password
 		};
-		let response =  await post('authorisation/login', data) as response;
+		let response = (await post('authorisation/login', data)) as response;
 		try {
 			console.log(response);
 			if (response.http_status === 201) {
@@ -45,12 +43,11 @@
 			console.error(error);
 		}
 	}
-
 </script>
 
-<div class="w-full p-8 md:w-1/2 md:mx-auto">
+<div class="w-full p-8 md:mx-auto md:w-1/2">
 	{#if showOtpPage}
-		<Page4 bind:otp={otp} />
+		<Page4 bind:otp />
 		<div class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
 			<Button text="Verify" />
 		</div>

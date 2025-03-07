@@ -7,7 +7,6 @@
 	export let dob = '';
 	export let gender: string[] = [];
 	export let pageInputs: Input[] = [];
-
 </script>
 
 <Input
@@ -39,7 +38,7 @@
 />
 
 <SearchBox
-	data={["Male","Female"]}
+	data={['Male', 'Female']}
 	maxItems={1}
 	showLabel={true}
 	Name="Gender"

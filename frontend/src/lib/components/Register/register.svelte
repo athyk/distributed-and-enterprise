@@ -16,13 +16,13 @@
 	let fName = '';
 	let lName = '';
 	let dob = '';
-	let gender: string[] =  [];
+	let gender: string[] = [];
 
-	let degree: string[] =  [];
+	let degree: string[] = [];
 	let degreeYear = '';
 	let graduationYear = '';
 
-	let tags: string[] =  [];
+	let tags: string[] = [];
 
 	let otp: string[] = [];
 
@@ -64,24 +64,24 @@
 
 	async function handleSubmit() {
 		dob = dob.split('-').reverse().join('-');
-		graduationYear = "30-06-" + graduationYear;
+		graduationYear = '30-06-' + graduationYear;
 
 		let data = {
-			"email": email,
-			"password": password,
-			"first_name": fName,
-			"last_name": lName,
-			"dob":dob,
-			"gender": gender[0],
-			"degree":degree[0],
-			"year_of_study": degreeYear,
-			"grad_year":graduationYear,
-			"tag": tags
-		}
+			email: email,
+			password: password,
+			first_name: fName,
+			last_name: lName,
+			dob: dob,
+			gender: gender[0],
+			degree: degree[0],
+			year_of_study: degreeYear,
+			grad_year: graduationYear,
+			tag: tags
+		};
 		console.log(data);
 
 		try {
-			let response = await post('authorisation/register', data) as response;
+			let response = (await post('authorisation/register', data)) as response;
 			console.log(response);
 			if (response.http_status === 201) {
 				alert('Registration Successful');
@@ -99,13 +99,11 @@
 			console.error(error);
 			errorMessage = 'An unexpected error occurred';
 		}
-
-
 	}
 </script>
 
 {step}
-<div class="w-full p-8 md:w-1/2 md:mx-auto">
+<div class="w-full p-8 md:mx-auto md:w-1/2">
 	<h2 class="text-center text-2xl font-semibold text-gray-700">Register</h2>
 	<Popup bind:errorMessage />
 	<p class="text-center text-xl text-gray-600">Fill in User Info</p>
@@ -119,10 +117,16 @@
 		{/if}
 
 		{#if step === 3}
-			<Page3 bind:degree bind:degreeYear bind:graduationYear bind:tags bind:pageInputs={page3Inputs} />
+			<Page3
+				bind:degree
+				bind:degreeYear
+				bind:graduationYear
+				bind:tags
+				bind:pageInputs={page3Inputs}
+			/>
 		{/if}
 		{#if step === 4}
-			<Page4 bind:otp={otp} />
+			<Page4 bind:otp />
 		{/if}
 
 		<div class="mt-4 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
@@ -136,11 +140,10 @@
 			{/if}
 
 			{#if step === maxstep}
-				<Button/>
+				<Button />
 			{:else}
 				<Button type="button" text="Next Step" onClick={checkPageValidity} />
 			{/if}
-
 		</div>
 	</form>
 </div>

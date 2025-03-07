@@ -1,5 +1,4 @@
 <script lang="ts">
-
 </script>
 
 <div style="text-align: center;">
