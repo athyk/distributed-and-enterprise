@@ -2,17 +2,18 @@ import os
 import grpc
 from concurrent import futures
 
+from backend.accounts.services.rpc import AccountsServicer
 # If paths are not resolved correctly, you may copy the files `chat_pb2.py`, `chat_pb2_grpc.py`, and `chat_pb2.pyi`
 # to this folder and replace the below import statement. Ensure those moved files are not committed to the repository.
 #
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
-from backend.common.proto import authentication_pb2_grpc, data_fetching_pb2_grpc
-from backend.auth.database.database import engine, Base, confirm_database_exists
-
-from backend.auth.services.authentication_service import AuthenticationService, DataFetchingService
+from backend.common.proto import accounts_pb2_grpc
+from backend.accounts.database.database import engine, Base, confirm_database_exists
+from backend.common.services import AccountsClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
+
 
 def serve():
     port = os.environ.get('AUTH_PORT', '50053')
@@ -24,14 +25,19 @@ def serve():
     print(f'Max Workers Assigned: {max_workers}')
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
-    authentication_pb2_grpc.add_AuthenticationServicer_to_server(AuthenticationService(), server)
-    data_fetching_pb2_grpc.add_DataFetchServicer_to_server(DataFetchingService(), server)
+    accounts_pb2_grpc.add_AccountsServicer_to_server(AccountsServicer(), server)
     server.add_insecure_port('[::]:' + port)
     server.start()
 
     print('\n--------------------------- Server Started --------------------------\n')
 
     print('----------------- Internal Server Setup Initialising ----------------\n')
+
+    print("Initialising Helper Clients")
+    AccountsClient.initialise(
+        "auth-service:" + os.environ.get('AUTH_PORT', '50053'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
 
     confirm_database_exists()
 

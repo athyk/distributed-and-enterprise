@@ -85,7 +85,7 @@ services:
   auth-service:
     build:
         context: .
-        dockerfile: backend/auth/Dockerfile
+        dockerfile: backend/accounts/Dockerfile
     container_name: auth-service
     ports:
       - ${AUTH_PORT}:${AUTH_PORT}

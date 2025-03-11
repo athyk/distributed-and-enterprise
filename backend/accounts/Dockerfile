@@ -36,4 +36,4 @@ USER appuser
 EXPOSE 50053
 
 ENV PYTHONPATH=/app/backend/common/proto
-CMD ["python", "-m", "backend.auth.server"]
+CMD ["python", "-m", "backend.accounts.server"]
