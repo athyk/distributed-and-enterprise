@@ -59,6 +59,7 @@ services:
       - chat-service
       - community-service
       - tag-service
+      - degree-service
     env_file: .env
   svelte-frontend:
     build:
@@ -78,6 +79,17 @@ services:
     container_name: tag-service
     ports:
       - ${TAG_PORT}:${TAG_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+  degree-service:
+    build:
+      context: .
+      dockerfile: backend/degree/Dockerfile
+    container_name: degree-service
+    ports:
+      - ${DEGREE_PORT}:${DEGREE_PORT}
     depends_on:
       - db
       - redis

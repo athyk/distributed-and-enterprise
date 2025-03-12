@@ -14,7 +14,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from backend.common.files import StorageClient
-from backend.common.services import AccountsClient, TagsClient
+from backend.common.services import AccountsClient, TagsClient, DegreesClient
 
 load_dotenv()
 
@@ -103,6 +103,7 @@ S3_URL = os.environ.get("S3_URL", "http://localhost:9000")
 StorageClient.initialise(S3_ENDPOINT_URL, S3_ACCESS_KEY_ID, S3_ACCESS_KEY, S3_BUCKET_NAME, S3_URL)
 AccountsClient.initialise("account-service:" + os.environ.get('ACC_PORT', '50053'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 TagsClient.initialise("tag-service:" + os.environ.get('TAG_PORT', '50054'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+DegreesClient.initialise("degree-service:" + os.environ.get('DEGREE_PORT', '50055'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

@@ -10,7 +10,7 @@ from backend.tag.services.rpc import TagServicer
 # But if any issues happen, use the docker compose command to run the server.
 from backend.common.proto import tag_pb2_grpc
 from backend.tag.database.database import engine, Base, confirm_database_exists
-from backend.common.services import AccountsClient, TagsClient
+from backend.common.services import AccountsClient, TagsClient, DegreesClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
@@ -42,6 +42,11 @@ def serve():
 
     TagsClient.initialise(
         "tag-service:" + os.environ.get('TAG_PORT', '50054'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    DegreesClient.initialise(
+        "degree-service:" + os.environ.get('DEGREE_PORT', '50055'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 

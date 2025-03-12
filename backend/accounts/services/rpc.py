@@ -7,9 +7,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from backend.accounts.database.database import get_db
 from backend.accounts.database.models import User, UserTag
-from backend.common.proto import accounts_pb2_grpc, accounts_pb2
+from backend.common.proto import accounts_pb2_grpc, accounts_pb2, degree_pb2
 from backend.common.proto import tag_pb2
-from backend.common.services import TagsClient
+from backend.common.services import TagsClient, DegreesClient
 from backend.common.utils import verify_string, verify_integer, verify_list
 
 
@@ -68,7 +68,16 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                     error_message=['Email Already In Use'],
                 )
 
-            # TODO: validate degree id
+            degree_client = DegreesClient()
+            degree = degree_client.get(degree_pb2.DegreeGetRequest(id=req.degree_id))
+            if not degree.success:
+                return accounts_pb2.LoginResponse(
+                    success=False,
+                    http_status=400,
+                    error_message=['Degree Not Found'],
+                )
+
+            # Could always store degree name for response
 
             user = User(
                 email=req.email,

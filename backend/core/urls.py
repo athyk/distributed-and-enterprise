@@ -1,5 +1,7 @@
 from django.urls import path
 
+from .view.degrees.list import list_degrees
+from .view.degrees.tags import degree_paths
 from .view.tags.list import list_tags
 from .view.tags.tags import tag_paths
 from .views import chat_message
@@ -17,4 +19,6 @@ urlpatterns = [
     path('auth/register', register_user),
     path('tags/', tag_paths),
     path('tags/list/', list_tags),
+    path('degrees/', degree_paths),
+    path('degrees/list/', list_degrees),
 ]
