@@ -221,7 +221,7 @@ class AccountsClient:
         return True
 
     # noinspection PyMethodMayBeStatic
-    def user_to_json(self, user: accounts_pb2.User) -> dict:
+    def user_to_json(self, user: accounts_pb2.User, email_verify_id: str="") -> dict:
         """
         Format the user object into a dictionary for use in a JSON response.
 
@@ -244,4 +244,5 @@ class AccountsClient:
             "rank": user.rank,
             "created_at": user.created_at,
             "updated_at": user.updated_at,
+            "email_verify_id": email_verify_id,
         }

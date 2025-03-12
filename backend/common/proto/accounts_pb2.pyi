@@ -68,32 +68,36 @@ class RegistrationRequest(_message.Message):
     def __init__(self, email: _Optional[str] = ..., password: _Optional[str] = ..., first_name: _Optional[str] = ..., last_name: _Optional[str] = ..., date_of_birth: _Optional[str] = ..., gender: _Optional[str] = ..., degree_id: _Optional[int] = ..., year_of_study: _Optional[int] = ..., grad_date: _Optional[str] = ..., tags: _Optional[_Iterable[int]] = ..., skip_email: bool = ..., rank: _Optional[str] = ...) -> None: ...
 
 class LoginRequest(_message.Message):
-    __slots__ = ("email", "password", "skip_email", "otp")
+    __slots__ = ("email", "password", "skip_email", "otp", "email_verify_id")
     EMAIL_FIELD_NUMBER: _ClassVar[int]
     PASSWORD_FIELD_NUMBER: _ClassVar[int]
     SKIP_EMAIL_FIELD_NUMBER: _ClassVar[int]
     OTP_FIELD_NUMBER: _ClassVar[int]
+    EMAIL_VERIFY_ID_FIELD_NUMBER: _ClassVar[int]
     email: str
     password: str
     skip_email: bool
     otp: str
-    def __init__(self, email: _Optional[str] = ..., password: _Optional[str] = ..., skip_email: bool = ..., otp: _Optional[str] = ...) -> None: ...
+    email_verify_id: str
+    def __init__(self, email: _Optional[str] = ..., password: _Optional[str] = ..., skip_email: bool = ..., otp: _Optional[str] = ..., email_verify_id: _Optional[str] = ...) -> None: ...
 
 class LoginResponse(_message.Message):
-    __slots__ = ("success", "http_status", "error_message", "user_id", "user", "otp_required")
+    __slots__ = ("success", "http_status", "error_message", "user_id", "user", "otp_required", "email_id")
     SUCCESS_FIELD_NUMBER: _ClassVar[int]
     HTTP_STATUS_FIELD_NUMBER: _ClassVar[int]
     ERROR_MESSAGE_FIELD_NUMBER: _ClassVar[int]
     USER_ID_FIELD_NUMBER: _ClassVar[int]
     USER_FIELD_NUMBER: _ClassVar[int]
     OTP_REQUIRED_FIELD_NUMBER: _ClassVar[int]
+    EMAIL_ID_FIELD_NUMBER: _ClassVar[int]
     success: bool
     http_status: int
     error_message: _containers.RepeatedScalarFieldContainer[str]
     user_id: int
     user: User
     otp_required: bool
-    def __init__(self, success: bool = ..., http_status: _Optional[int] = ..., error_message: _Optional[_Iterable[str]] = ..., user_id: _Optional[int] = ..., user: _Optional[_Union[User, _Mapping]] = ..., otp_required: bool = ...) -> None: ...
+    email_id: str
+    def __init__(self, success: bool = ..., http_status: _Optional[int] = ..., error_message: _Optional[_Iterable[str]] = ..., user_id: _Optional[int] = ..., user: _Optional[_Union[User, _Mapping]] = ..., otp_required: bool = ..., email_id: _Optional[str] = ...) -> None: ...
 
 class GetRequest(_message.Message):
     __slots__ = ("user_id", "email", "first_name", "last_name", "email_verified", "page", "limit")

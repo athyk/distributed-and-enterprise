@@ -5,10 +5,10 @@ from math import inf
 import grpc
 from werkzeug.security import check_password_hash, generate_password_hash
 
+from backend.accounts.verification.email_verification import verify_email, send_verification_code_email
 from backend.accounts.database.database import get_db
 from backend.accounts.database.models import User, UserTag
-from backend.common.proto import accounts_pb2_grpc, accounts_pb2, degree_pb2
-from backend.common.proto import tag_pb2
+from backend.common.proto import accounts_pb2_grpc, accounts_pb2, degree_pb2, tag_pb2
 from backend.common.services import TagsClient, DegreesClient
 from backend.common.utils import verify_string, verify_integer, verify_list
 
@@ -50,6 +50,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         try:
             dob = datetime.strptime(req.date_of_birth, "%d-%m-%Y").date()
             grad_date = datetime.strptime(req.grad_date, "%d-%m-%Y").date()
+
         except Exception:
             return accounts_pb2.LoginResponse(
                 success=False,
@@ -98,14 +99,18 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
             session.add(user)
             session.commit()
             session.refresh(user)
+
             tag_client = TagsClient()
+
             for tag in req.tags:
                 res = tag_client.create(tag_pb2.TagCreateRequest(id=tag))
+
                 if res.success:  # Never assume the tag was created, do not error out either
                     user_tag = UserTag(user_id=user.id, tag_id=tag)
                     session.add(user_tag)
 
             session.commit()
+
         except Exception:
             traceback.print_exc()
             return accounts_pb2.LoginResponse(
@@ -116,11 +121,21 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
 
         # TODO: Email send logic to verify user
 
+        success, message, email_id = send_verification_code_email(req.email)
+
+        if success:
+            return accounts_pb2.LoginResponse(
+                success=True,
+                http_status=200,
+                user_id=user.id,
+                otp_required=True,
+                email_id=email_id,
+            )
+
         return accounts_pb2.LoginResponse(
-            success=True,
-            http_status=200,
-            user_id=user.id,
-            otp_required=True,
+            success=False,
+            http_status=500,
+            error_message=['Error Sending Out Verification Email', message],
         )
 
     def Login(self, req: accounts_pb2.LoginRequest, context: grpc.ServicerContext) -> accounts_pb2.LoginResponse:
@@ -136,6 +151,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         if False in [email_verify, password_verify]:
             all_errors = [email_error, password_error]
             error_messages = [item for item in all_errors if item.strip()]
+
             return accounts_pb2.LoginResponse(
                 success=False,
                 http_status=400,
@@ -155,10 +171,29 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 error_message=["Invalid email or password."],
             )
 
-        required_otp = "123456"  # TODO: Get OTP from redis for this user id.
-        otp_matches = req.otp == required_otp
+        if user.email_verified or req.skip_email:
+            return accounts_pb2.LoginResponse(
+                success=True,
+                http_status=200,
+                user_id=user.id,
+                user=user.to_dict(),
+                otp_required=False,
+            )
 
-        if otp_matches or req.skip_email:  # User provided an OTP and it's correct
+
+        # req.otp
+
+        success, message = verify_email(req.otp, email_verify_id, req.email)
+
+        if success:  # User provided an OTP and it's correct
+
+            with get_db() as session:
+                user = session.query(User).filter(User.email == req.email).first()
+
+                user.email_verified = True
+
+                session.commit()
+
             return accounts_pb2.LoginResponse(
                 success=True,
                 http_status=200,

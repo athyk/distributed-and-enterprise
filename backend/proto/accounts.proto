@@ -89,7 +89,11 @@ message LoginRequest {
   bool skip_email = 3;
   // otp is the one time password to verify the email.
   // this is a string to allow for any type of OTP, e.g. numbers, letters, symbols.
-  string otp = 4;
+  optional string otp = 4;
+  // email_verify_id is the identification used to ensure that the correct otp is used for the correct email
+  // it is a string as the id is large in size
+  // left optional as it should only be used for verifying an unverified account
+  optional string email_verify_id = 5;
 }
 
 // LoginResponse is the response to a login and registration request, stating if an OTP will be entered by the user and the user object if not.
@@ -112,6 +116,10 @@ message LoginResponse {
   User user = 5;
   // otp_required is a flag to indicate if the user needs to enter an OTP to login.
   bool otp_required = 6;
+  // email_id is the id used to confirm an email
+  //
+  // when paired with the otp value in verification, if valid, will verify the user account
+  optional string email_id = 7;
 }
 
 // GetRequest is the request, containing the filters for the users to be returned.

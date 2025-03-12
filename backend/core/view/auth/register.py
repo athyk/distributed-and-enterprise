@@ -66,7 +66,7 @@ def register_user(request: WSGIRequest):
     # user is filled out but left empty, even if the user is not created.
     # so check id, as it's the only required field.
     if res.user.id != 0:
-        http_res['user'] = client.user_to_json(res.user)
+        http_res['user'] = client.user_to_json(res.user, email_verify_id=res.email_id)
 
     if res.otp_required:
         http_res['otp_required'] = res.otp_required
