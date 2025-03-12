@@ -106,7 +106,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                     session.add(user_tag)
 
             session.commit()
-        except:
+        except Exception:
             traceback.print_exc()
             return accounts_pb2.LoginResponse(
                 success=False,
