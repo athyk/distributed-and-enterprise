@@ -1,5 +1,5 @@
-from sqlalchemy import Column, String, Boolean, DateTime, Date, Text, Integer
-from backend.accounts.database.database import Base
+from sqlalchemy import Column, String, Boolean, DateTime, Date, Text, Integer, ForeignKey
+from backend.accounts.database.database import Base, get_db
 from datetime import datetime, UTC
 
 
@@ -36,6 +36,12 @@ class User(Base):
     # It's updated everytime a field is modified.
     updated_at = Column(DateTime, default=lambda: datetime.now(UTC), nullable=False)
 
+    def get_tags(self, session):
+        """
+        Get all the tags that the user has.
+        """
+        return session.query(UserTag).filter(UserTag.user_id == self.id).all()
+
     def to_dict(self) -> dict:
         """
         Converts the User object to the User object in the proto file.
@@ -56,4 +62,17 @@ class User(Base):
         td.pop('password', None)
         td.pop('two_fa_secret', None)
 
+        with get_db() as session:  # Get the tags for the user, display as a list of tag ids
+            tags = self.get_tags(session)
+            td['tags'] = [tag.tag_id for tag in tags]
+            # Could always convert the tag ids to tag names here if needed or do a dictionary.
+
         return td
+
+
+class UserTag(Base):
+    __tablename__ = "user_tag"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    tag_id = Column(Integer, nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)

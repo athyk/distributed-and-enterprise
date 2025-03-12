@@ -1,3 +1,4 @@
+import traceback
 from datetime import datetime, UTC
 from math import inf
 
@@ -5,8 +6,10 @@ import grpc
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from backend.accounts.database.database import get_db
-from backend.accounts.database.models import User
+from backend.accounts.database.models import User, UserTag
 from backend.common.proto import accounts_pb2_grpc, accounts_pb2
+from backend.common.proto import tag_pb2
+from backend.common.services import TagsClient
 from backend.common.utils import verify_string, verify_integer, verify_list
 
 
@@ -54,9 +57,9 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 error_message=['Dates Not Formatted Correctly'],
             )
 
-        with get_db() as session:
-            # TODO: use AccountsClient to fetch from cache
-            user = session.query(User).filter(User.email == req.email).first()
+        try:
+            with get_db() as session:
+                user = session.query(User).filter(User.email == req.email).first()
 
             if user:
                 return accounts_pb2.LoginResponse(
@@ -85,17 +88,31 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
 
             session.add(user)
             session.commit()
+            session.refresh(user)
+            tag_client = TagsClient()
+            for tag in req.tags:
+                res = tag_client.create(tag_pb2.TagCreateRequest(id=tag))
+                if res.success:  # Never assume the tag was created, do not error out either
+                    user_tag = UserTag(user_id=user.id, tag_id=tag)
+                    session.add(user_tag)
 
-            # TODO: user tags
-
-            # TODO: Email send logic to verify user
-
+            session.commit()
+        except:
+            traceback.print_exc()
             return accounts_pb2.LoginResponse(
-                success=True,
-                http_status=200,
-                user_id=user.id,
-                otp_required=True,
+                success=False,
+                http_status=500,
+                error_message=['An Unknown Error Occurred'],
             )
+
+        # TODO: Email send logic to verify user
+
+        return accounts_pb2.LoginResponse(
+            success=True,
+            http_status=200,
+            user_id=user.id,
+            otp_required=True,
+        )
 
     def Login(self, req: accounts_pb2.LoginRequest, context: grpc.ServicerContext) -> accounts_pb2.LoginResponse:
         """
@@ -175,6 +192,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         It does not return the changes to the user.
         """
         # TODO: Update User
+        # TODO: Update user tags
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -183,6 +201,8 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         """
         Delete allows the deletion of a user.
         """
+        # TODO: Delete User
+        # TODO: Delete user tags
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')

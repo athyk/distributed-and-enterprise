@@ -44,18 +44,6 @@ services:
       - db
       - redis
     env_file: .env
-
-  community-service:
-    build:
-        context: .
-        dockerfile: backend/community/Dockerfile
-    container_name: community-service
-    ports:
-      - ${COMMUNITY_PORT}:${COMMUNITY_PORT}
-    depends_on:
-      - db
-      - redis
-    env_file: .env
   django-backend:
     build:
         context: .
@@ -67,9 +55,10 @@ services:
       - db
       - minio
       - redis
-      - auth-service
+      - account-service
       - chat-service
       - community-service
+      - tag-service
     env_file: .env
   svelte-frontend:
     build:
@@ -82,13 +71,35 @@ services:
     depends_on:
       - django-backend
     working_dir: /app
-  auth-service:
+  tag-service:
+    build:
+      context: .
+      dockerfile: backend/tag/Dockerfile
+    container_name: tag-service
+    ports:
+      - ${TAG_PORT}:${TAG_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+  community-service:
+    build:
+      context: .
+      dockerfile: backend/community/Dockerfile
+    container_name: community-service
+    ports:
+      - ${COMMUNITY_PORT}:${COMMUNITY_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+  account-service:
     build:
         context: .
         dockerfile: backend/accounts/Dockerfile
-    container_name: auth-service
+    container_name: account-service
     ports:
-      - ${AUTH_PORT}:${AUTH_PORT}
+      - ${ACC_PORT}:${ACC_PORT}
     depends_on:
       - db
       - redis

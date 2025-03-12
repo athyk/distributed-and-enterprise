@@ -25,7 +25,7 @@ def register_user(request: WSGIRequest):
     try:
         data = json.loads(request.body)
 
-        if 'skip_email' not in json.loads(request.body):
+        if 'skip_email' not in data:
             data['skip_email'] = False
 
         req = RegistrationRequest(

@@ -15,9 +15,6 @@ class AccountsClient:
 
     This would also handle any additional caching for per operations.
 
-    Validation can be done here as it's all internal, as it's not a security-first project.
-    Since this is still all server side.
-
     Ensuring that only one instance of the client is created, and that the client is thread-safe.
     """
     _instance = None
@@ -62,7 +59,7 @@ class AccountsClient:
         self._reconnect()
 
     def _grpc_call_with_retry(self, grpc_call, *args, **kwargs):
-        max_retries = 3
+        max_retries = 1
         backoff_factor = 0.5
 
         for attempt in range(max_retries):
@@ -110,7 +107,7 @@ class AccountsClient:
         """
         Create/register a new user in the Account service.
         """
-        # TODO: add cache
+        # TODO: add cache - a user is highly likely to be fetched after being created
         return self._grpc_call_with_retry(self._stub.Register, req)
 
     def login(self, req: accounts_pb2.LoginRequest) -> accounts_pb2.LoginResponse:
@@ -120,21 +117,19 @@ class AccountsClient:
         :param req: The LoginRequest object containing the user's details
         :return: The GRPC response from the Account service
         """
-        # TODO: add cache
+        # TODO: remove from cache, as the user may not need to be fetched after login
         return self._grpc_call_with_retry(self._stub.Login, req)
 
     def get(self, req: accounts_pb2.GetRequest) -> accounts_pb2.GetResponse:
         """
         Get a user from the Account service.
         """
-        # TODO: add cache
         return self._grpc_call_with_retry(self._stub.Get, req)
 
     def update(self, req: accounts_pb2.UpdateRequest) -> accounts_pb2.Response:
         """
         Update a user in the Account service.
         """
-        # TODO: update cache
         return self._grpc_call_with_retry(self._stub.Update, req)
 
     def delete(self, req: accounts_pb2.DeleteRequest) -> accounts_pb2.Response:
@@ -203,7 +198,7 @@ class AccountsClient:
             return False
 
         for key in session_keys:
-            self._redis_client.delete(key)
+            self._redis_client.delete_tag(key)
 
         return True
 
@@ -221,7 +216,7 @@ class AccountsClient:
             return False
 
         for key in session_keys:
-            self._redis_client.delete(key)
+            self._redis_client.delete_tag(key)
 
         return True
 

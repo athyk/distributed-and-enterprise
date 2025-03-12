@@ -12,7 +12,7 @@ from ..common.proto import chat_pb2_grpc, chat_pb2
 
 
 @csrf_exempt
-@auth_required(roles_required=['admin'], redirect_user=False)
+@auth_required(roles_required=['user'], redirect_user=False)
 def chat_message(request: WSGIRequest):
     if request.method != 'POST':
         return JsonResponse({'error': 'POST method required'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)

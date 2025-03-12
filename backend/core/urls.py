@@ -1,4 +1,7 @@
 from django.urls import path
+
+from .view.tags.list import list_tags
+from .view.tags.tags import tag_paths
 from .views import chat_message
 
 from backend.core.view.community.community_crud import community_crud_paths, community_creation
@@ -12,4 +15,6 @@ urlpatterns = [
     path('community/', community_creation),
     path('auth/login', login_user),
     path('auth/register', register_user),
+    path('tags/', tag_paths),
+    path('tags/list/', list_tags),
 ]

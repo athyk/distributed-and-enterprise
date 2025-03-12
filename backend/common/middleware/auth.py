@@ -34,7 +34,6 @@ def auth_required(
     def decorator(view_func):
         @wraps(view_func)
         async def _wrapped_view(request: WSGIRequest, *args, **kwargs):
-            print(request.COOKIES)
             user: dict | None = AccountsClient().check_session(request.COOKIES.get('sid'))
 
             redirect_to = redirect_url or settings.LOGIN_URL

@@ -10,7 +10,7 @@ from backend.accounts.services.rpc import AccountsServicer
 # But if any issues happen, use the docker compose command to run the server.
 from backend.common.proto import accounts_pb2_grpc
 from backend.accounts.database.database import engine, Base, confirm_database_exists
-from backend.common.services import AccountsClient
+from backend.common.services import AccountsClient, TagsClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
@@ -35,7 +35,12 @@ def serve():
 
     print("Initialising Helper Clients")
     AccountsClient.initialise(
-        "auth-service:" + os.environ.get('AUTH_PORT', '50053'),
+        "account-service:" + os.environ.get('ACC_PORT', '50053'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    TagsClient.initialise(
+        "tag-service:" + os.environ.get('TAG_PORT', '50054'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 
