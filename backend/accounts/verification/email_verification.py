@@ -1,3 +1,5 @@
+import traceback
+
 import pyotp
 import os
 import uuid
@@ -28,10 +30,13 @@ def load_html_template(file_path, code):
 
 def send_verification_code_email(user_email: str) -> tuple[bool, str, int]:
     """Send Verification Code to email"""
+    try:
+        code, otp_seed, valid = create_otp()
 
-    code, send_id, valid = create_otp()
-
-    if not valid:
+        if not valid:
+            return False, 'System Error Occurred', -1
+    except Exception:
+        traceback.print_exc()
         return False, 'System Error Occurred', -1
 
     try:
@@ -42,21 +47,21 @@ def send_verification_code_email(user_email: str) -> tuple[bool, str, int]:
             subject='UniHub Email Verification',
             html_content=html_template
             )
-
     except Exception:
+        traceback.print_exc()
         return False, 'Unable to create email message', -1
 
     try:
         sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
         sg.send(message)
-
     except Exception:
+        traceback.print_exc()
         return False, 'Verification message failed to send', -1
 
-    return True, "Email sent successfully", str(send_id)
+    return True, "Email sent successfully", otp_seed
 
 
-def verify_email(otp: int, email_verify_id: str, user_email: str) -> tuple[bool, str]:
+def verify_email(otp: str, email_verify_id: str, user_email: str) -> tuple[bool, str]:
     """This function verifies if the code that the user inputted is correct, thus validating their account"""
     hotp = pyotp.HOTP(os.environ.get('OTP_SECRET'))
 

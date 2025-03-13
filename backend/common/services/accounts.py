@@ -220,8 +220,31 @@ class AccountsClient:
 
         return True
 
+    def save_otp(self, user_id: int, otp_seed: str) -> None:
+        """
+        Save the OTP for the user in the cache.
+
+        :param user_id: The user ID to save the OTP for
+        :param otp_seed: The OTP Seed that allows the matching of the OTP
+        """
+        # Save the OTP in the cache, with the user ID as the key
+        self._redis_client.set(
+            name=f"otp:{user_id}",
+            value=otp_seed,
+            ex=300,  # 5 minutes
+        )
+
+    def get_otp(self, user_id: int) -> str | None:
+        """
+        Get the OTP for the user from the cache.
+
+        :param user_id: The user ID to get the OTP for
+        :return: The OTP Seed if it exists, otherwise None
+        """
+        return self._redis_client.get(f"otp:{user_id}")
+
     # noinspection PyMethodMayBeStatic
-    def user_to_json(self, user: accounts_pb2.User, email_verify_id: str="") -> dict:
+    def user_to_json(self, user: accounts_pb2.User) -> dict:
         """
         Format the user object into a dictionary for use in a JSON response.
 
@@ -244,5 +267,4 @@ class AccountsClient:
             "rank": user.rank,
             "created_at": user.created_at,
             "updated_at": user.updated_at,
-            "email_verify_id": email_verify_id,
         }

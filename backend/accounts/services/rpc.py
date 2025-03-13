@@ -9,7 +9,7 @@ from backend.accounts.verification.email_verification import verify_email, send_
 from backend.accounts.database.database import get_db
 from backend.accounts.database.models import User, UserTag
 from backend.common.proto import accounts_pb2_grpc, accounts_pb2, degree_pb2, tag_pb2
-from backend.common.services import TagsClient, DegreesClient
+from backend.common.services import TagsClient, DegreesClient, AccountsClient
 from backend.common.utils import verify_string, verify_integer, verify_list
 
 
@@ -50,7 +50,6 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         try:
             dob = datetime.strptime(req.date_of_birth, "%d-%m-%Y").date()
             grad_date = datetime.strptime(req.grad_date, "%d-%m-%Y").date()
-
         except Exception:
             return accounts_pb2.LoginResponse(
                 success=False,
@@ -110,7 +109,6 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                     session.add(user_tag)
 
             session.commit()
-
         except Exception:
             traceback.print_exc()
             return accounts_pb2.LoginResponse(
@@ -119,9 +117,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 error_message=['An Unknown Error Occurred'],
             )
 
-        # TODO: Email send logic to verify user
-
-        success, message, email_id = send_verification_code_email(req.email)
+        success, message, otp_seed = send_verification_code_email(req.email)
 
         if success:
             return accounts_pb2.LoginResponse(
@@ -129,7 +125,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 http_status=200,
                 user_id=user.id,
                 otp_required=True,
-                email_id=email_id,
+                email_id=str(otp_seed),
             )
 
         return accounts_pb2.LoginResponse(
@@ -180,19 +176,30 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 otp_required=False,
             )
 
+        accounts_client = AccountsClient()
+        email_verify_id = accounts_client.get_otp(user.id)
 
-        # req.otp
+        if not email_verify_id:  # If no otp is in cache.
+            return accounts_pb2.LoginResponse(
+                success=False,
+                http_status=400,
+                error_message=["Email Verification Required"],
+            )
 
         success, message = verify_email(req.otp, email_verify_id, req.email)
 
         if success:  # User provided an OTP and it's correct
-
-            with get_db() as session:
-                user = session.query(User).filter(User.email == req.email).first()
-
-                user.email_verified = True
-
-                session.commit()
+            try:
+                with get_db() as session:
+                    user.email_verified = True
+                    session.commit()
+            except Exception:
+                traceback.print_exc()
+                return accounts_pb2.LoginResponse(
+                    success=False,
+                    http_status=500,
+                    error_message=['An Unknown Error Occurred'],
+                )
 
             return accounts_pb2.LoginResponse(
                 success=True,
@@ -203,8 +210,8 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
             )
 
         # User did not specify an OTP or specified an incorrect one, resend email
+        # TODO: Email resend?
 
-        # TODO: Email send logic as a form of 2fa and always verify the email
         return accounts_pb2.LoginResponse(
             success=True,
             http_status=200,
