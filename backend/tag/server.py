@@ -2,21 +2,22 @@ import os
 import grpc
 from concurrent import futures
 
+from backend.tag.services.rpc import TagServicer
 # If paths are not resolved correctly, you may copy the files `chat_pb2.py`, `chat_pb2_grpc.py`, and `chat_pb2.pyi`
 # to this folder and replace the below import statement. Ensure those moved files are not committed to the repository.
 #
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
-from backend.common.proto import community_pb2_grpc
+from backend.common.proto import tag_pb2_grpc
+from backend.tag.database.database import engine, Base, confirm_database_exists
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
-from backend.community.database.database import engine, Base, confirm_database_exists
 
-# All community services that will be run goes here
-from backend.community.services.community_crud import Community_CRUD_Service
+os.environ["GRPC_DNS_RESOLVER"] = "native"
+
 
 def serve():
-    port = os.environ.get('COMMUNITY_PORT', '50052')
-    max_workers = int(os.environ.get('COMMUNITY_MAX_WORKERS', 10))
+    port = os.environ.get('TAG_PORT', '50054')
+    max_workers = int(os.environ.get('TAG_MAX_WORKERS', 10))
 
     print('--------------------------- Server Starting -------------------------\n')
 
@@ -24,14 +25,16 @@ def serve():
     print(f'Max Workers Assigned: {max_workers}')
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=max_workers))
-    community_pb2_grpc.add_CommunityServicer_to_server(Community_CRUD_Service(), server)
+    tag_pb2_grpc.add_TagsServicer_to_server(TagServicer(), server)
     server.add_insecure_port('[::]:' + port)
     server.start()
 
     print('\n--------------------------- Server Started --------------------------\n')
+
     print('----------------- Internal Server Setup Initialising ----------------\n')
 
     print("Initialising Helper Clients")
+
     AccountsClient.initialise(
         "account-service:" + os.environ.get('ACC_PORT', '50053'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),

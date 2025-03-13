@@ -1,8 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
-
-
 // DataListResponse is the response message for the Authentication method from the chat service.
 //
 // It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
@@ -18,11 +15,16 @@ message DataListResponse {
     repeated string data = 4;
 }
 
+message DegreeRequest {
+}
+
+message TagRequest {
+}
+
 
 service DataFetch {
     // FetchDegrees returns all degrees found
-    rpc FetchDegrees(google.protobuf.Empty) returns (DataListResponse) {}
+    rpc FetchDegrees(DegreeRequest) returns (DataListResponse) {}
     // FetchTags returns all tags found
-    rpc FetchTags(google.protobuf.Empty) returns (DataListResponse) {}
-
+    rpc FetchTags(TagRequest) returns (DataListResponse) {}
 }

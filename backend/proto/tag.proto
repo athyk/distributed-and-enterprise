@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+// Tag is the tag object that is returned, containing all the tag's information.
+message Tag {
+  // id is the tag's unique id.
+  int64 id = 1;
+  // name is the tag's name.
+  string name = 2;
+  // created_at is the time the tag was created in unix time.
+  int64 created_at = 3;
+  // updated_at is the time the tag was last updated in unix time.
+  int64 updated_at = 4;
+  // count is the number of times the tag has been used.
+  int64 count = 5;
+}
+
+// TagRequest is the request for creating a tag.
+message TagCreateRequest {
+  // name is the tag's name.
+  string name = 1;
+  // id is the tag's unique id.
+  //
+  // Specifying the id is optional, if provided, the tag won't be created.
+  int64 id = 2;
+}
+
+message TagCreateResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+  // id is the tag's unique id.
+  int64 id = 4;
+}
+
+message TagDeleteRequest {
+  // id is the tag's unique id.
+  int64 id = 1;
+}
+
+message TagDeleteResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+}
+
+message TagGetRequest {
+  // id is the tag's unique id.
+  int64 id = 1;
+  // name is the tag's name.
+  string name = 2;
+}
+
+message TagGetResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+  // tag is the tag object that was found.
+  Tag tag = 4;
+}
+
+message TagListRequest {
+  // page is the page number to return, starting from 0.
+  int32 page = 1;
+  // limit is the number of tags to return per page. The maximum limit is 50.
+  int32 limit = 2;
+  // name is the tag's name, if provided, it will attempt to find tags that match the name.
+  string name = 3;
+}
+
+message TagListResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+  // tags is the list of tags that were found.
+  repeated Tag tags = 4;
+}
+
+
+service Tags {
+  // Create creates/uses a tag. You can use the tag by name or id.
+  //
+  // If the tag does not exist, it will create the tag.
+  // If the tag exists, it will increment the count of the tag.
+  rpc Create(TagCreateRequest) returns (TagCreateResponse) {}
+  // Delete deletes a tag.
+  rpc Delete(TagDeleteRequest) returns (TagDeleteResponse) {}
+  // Get by id or name.
+  rpc Get(TagGetRequest) returns (TagGetResponse) {}
+  // List returns all tags found, allowing for partial name matching.
+  rpc List(TagListRequest) returns (TagListResponse) {}
+}

@@ -1,0 +1,222 @@
+syntax = "proto3";
+
+// User is the user object that is returned, containing all the user's information.
+//
+// password is not returned in the user object. This is to prevent the password from being sent to the client.
+//
+// This also returns the user's tags, which are the tags that the user has applied to themselves.
+message User {
+  // id is the user's unique id.
+  int64 id = 1;
+  // email is unique and represents the user's email.
+  string email = 2;
+  // email_verified is a int that determines whether a user has a verified their email.
+  //
+  // 0 - ignored, 1 - unverified, 2 - verified
+  //
+  // Int is used over bool, to allow fetching the user's email verification status.
+  int32 email_verified = 3;
+  // first_name is the user's first real name.
+  string first_name = 5;
+  // last_name is the user's last real name.
+  string last_name = 6;
+  // Gender has no length restraint, but is the user's self-identified gender.
+  string gender = 8;
+  // date_of_birth is the date of birth of the user, for example for example 11-01-2025.
+  string date_of_birth = 9;
+  // picture_url is the link to the user's profile picture.
+  //
+  // It's a reference to the picture, not the picture itself.
+  string picture_url = 10;
+  // degree_id is the degree that user is majoring/taking.
+  int64 degree_id = 11;
+  // year_of_study is the year of study of the user, for example 1 is first year, 2 is second year.
+  int32 year_of_study = 12;
+  // grad_date is the date when the user is expected to graduate, for example 11-01-2025.
+  string grad_date = 13;
+  // tags is a list of tag ids that the user applied to themselves.
+  repeated int64 tags = 14;
+  // created_at is the time the user was created in unix time.
+  int64 created_at = 15;
+  // updated_at is the time the user was last updated in unix time.
+  int64 updated_at = 16;
+  // rank is the user's global rank, such as an admin.
+  string rank = 17;
+}
+
+// RegistrationRequest allows the registration/creation of a user.
+message RegistrationRequest {
+  // email is the email of the user
+  string email = 1;
+  // password is the plain text password of the user, hashing is done in the service
+  string password = 2;
+  // first_name of the user
+  string first_name = 3;
+  // last_name of the user
+  string last_name = 4;
+  // date_of_birth is date of birth, for example 11-01-2025.
+  string date_of_birth = 5;
+  // gender is a string in lower case, e.g. male, female, other
+  string gender = 6;
+  // degree_id is the users current degree id
+  int64 degree_id = 7;
+  // year_of_study is the current users year of study
+  // Min value is 1, max value is 8
+  int32 year_of_study = 8;
+  // grad_date is the expected graduation of the user, for example for example 11-01-2025.
+  string grad_date = 9;
+  // tag is a list of tags that the user applied to themselves
+  repeated int64 tags = 10;
+  // skip_email is for debugging to circumvent the email verification, in the case env details not set
+  // TODO: Remove this after "prototype" (basically temporary and only used in development)
+  bool skip_email = 11;
+  // rank is the user's global rank, such as an admin.
+  //
+  // This would allow for the creation of an admin account.
+  string rank = 12;
+}
+
+// LoginRequest is used to log in a user.
+//
+// For development requests provide skip_email = true for the email verification to be skipped.
+message LoginRequest {
+  // email is the username for the account
+  string email = 1;
+  // password is the password for the account
+  string password = 2;
+  // skip_email is for debugging to circumvent the email verification, in the case env details not set
+  // TODO: Remove this after "prototype" (basically temporary and only used in development)
+  bool skip_email = 3;
+  // otp is the one time password to verify the email.
+  // this is a string to allow for any type of OTP, e.g. numbers, letters, symbols.
+  optional string otp = 4;
+  // email_verify_id is the identification used to ensure that the correct otp is used for the correct email
+  // it is a string as the id is large in size
+  // left optional as it should only be used for verifying an unverified account
+  optional string email_verify_id = 5;
+}
+
+// LoginResponse is the response to a login and registration request, stating if an OTP will be entered by the user and the user object if not.
+//
+// As both login and registration are similar, they are combined into one response.
+//
+// TODO: Cookies etc
+message LoginResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+  // user_id is the user id to return to handle the email requests and avoid password being resent.
+  //
+  // This is present in both cases.
+  int64 user_id = 4;
+  // user is the user object that is returned if the user is logged in.
+  User user = 5;
+  // otp_required is a flag to indicate if the user needs to enter an OTP to login.
+  bool otp_required = 6;
+  // email_id is the id used to confirm an email
+  //
+  // when paired with the otp value in verification, if valid, will verify the user account
+  optional string email_id = 7;
+}
+
+// GetRequest is the request, containing the filters for the users to be returned.
+//
+// The filters are optional, at least one filter must be provided.
+//
+// The page and limit are optional, with the default page being 0 and the default limit being 50.
+// TODO: Maybe user id for auditing logging?
+message GetRequest {
+  int64 user_id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  // email_verified is a int that determines whether a user has a verified their email.
+  //
+  // 1 - unverified, 2 - verified
+  //
+  // Int is used over bool, as a get request can be used to get the user's email verification status.
+  int32 email_verified = 5;
+  // page is the page number to return, starting from 0.
+  string page = 6;
+  // limit is the number of users to return per page. The maximum limit is 50.
+  string limit = 7;
+}
+
+// GetResponse is the response for GetRequest showing all users.
+message GetResponse {
+  // users is the list of users that match the filters.
+  repeated User users = 1;
+  // total is the total number of users that match the filters.
+  int32 total = 2;
+}
+
+message UpdateRequest {
+  // user is the user object to update.
+  User user = 1;
+  // is_self is a flag to indicate if the user is updating themselves.
+  //
+  // this would then require the user to have an OTP to delete themselves.
+  //
+  // Otherwise, it's an admin updating a user and an OTP is not yet required.
+  bool is_self = 2;
+  // otp is the one time password to verify the request was made by the user.
+  // this is a string to allow for any type of OTP, e.g. numbers, letters, symbols.
+  string otp = 3;
+}
+
+// DeleteRequest is the request for deleting a user, only the user id is required.
+message DeleteRequest {
+  // user_id is the user id to delete.
+  int64 user_id = 1;
+  // is_self is a flag to indicate if the user is deleting themselves.
+  //
+  // this would then require the user to have an OTP to delete themselves.
+  //
+  // Otherwise, it's an admin deleting a user and an OTP is not yet required.
+  bool is_self = 2;
+  // otp is the one time password to verify the request was made by the user.
+  // this is a string to allow for any type of OTP, e.g. numbers, letters, symbols.
+  string otp = 3;
+}
+
+// Response is the response for general auth, it does not contain any user information.
+message Response {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+}
+
+service Accounts {
+  // Register allows the registration of a user.
+  //
+  // If OTP is not sent, the user will be emailed with the code.
+  // If a valid OTP is sent, the user will be logged in, ensure other fields are correct.
+  rpc Register(RegistrationRequest) returns (LoginResponse) {}
+  // Login allows the login of a user,
+  //
+  // If OTP is not sent, the user will be emailed with the code.
+  // If a valid OTP is sent, the user will be logged in, ensure other fields are correct.
+  rpc Login(LoginRequest) returns (LoginResponse) {}
+  // Get allows the retrieval of a user, containing the filters for the users to be returned.
+  //
+  // The filters are optional, at least one filter must be provided.
+  //
+  // The page and limit are optional, with the default page being 0 and the default limit being 50.
+  //
+  // This is intended for admin or self use.
+  rpc Get(GetRequest) returns (GetResponse) {}
+  // Update allows the updating of a user.
+  //
+  // Send the user object with the total changes to be made. INCLUDE all fields, even if they are not changing.
+  //
+  // It does not return the changes to the user.
+  rpc Update(UpdateRequest) returns (Response) {}
+  // Delete allows the deletion of a user.
+  rpc Delete(DeleteRequest) returns (Response) {}
+}
