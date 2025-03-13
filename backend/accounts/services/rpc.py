@@ -182,7 +182,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         if not email_verify_id:  # If no otp is in cache.
             return accounts_pb2.LoginResponse(
                 success=False,
-                http_status=511,
+                http_status=401,
                 error_message=["Email Verification Required"],
             )
 
