@@ -182,25 +182,14 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         if not email_verify_id:  # If no otp is in cache.
             return accounts_pb2.LoginResponse(
                 success=False,
-                http_status=400,
+                http_status=401,
                 error_message=["Email Verification Required"],
             )
 
+        # Updating user to verified is done in verify_email function
         success, message = verify_email(req.otp, email_verify_id, req.email)
 
         if success:  # User provided an OTP and it's correct
-            try:
-                with get_db() as session:
-                    user.email_verified = True
-                    session.commit()
-            except Exception:
-                traceback.print_exc()
-                return accounts_pb2.LoginResponse(
-                    success=False,
-                    http_status=500,
-                    error_message=['An Unknown Error Occurred'],
-                )
-
             return accounts_pb2.LoginResponse(
                 success=True,
                 http_status=200,
@@ -209,14 +198,12 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 otp_required=False,
             )
 
-        # User did not specify an OTP or specified an incorrect one, resend email
-        # TODO: Email resend?
-
         return accounts_pb2.LoginResponse(
-            success=True,
-            http_status=200,
-            user_id=user.id,
+            success=False,
+            http_status=400,
+            user_id=-1,
             otp_required=True,
+            error_message=[message],
         )
 
     def Get(self, req: accounts_pb2.GetRequest, context: grpc.ServicerContext) -> accounts_pb2.GetResponse:

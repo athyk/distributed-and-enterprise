@@ -66,7 +66,7 @@ def verify_email(otp: str, email_verify_id: str, user_email: str) -> tuple[bool,
     hotp = pyotp.HOTP(os.environ.get('OTP_SECRET'))
 
     if not hotp.verify(otp, int(email_verify_id)):
-        return False, "Invalid Code Sent"
+        return False, "Invalid OTP Code Provided"
 
     with get_db() as session:
         user = session.query(User).filter(User.email == user_email).first()
@@ -74,7 +74,7 @@ def verify_email(otp: str, email_verify_id: str, user_email: str) -> tuple[bool,
         if user is None:
             return False, "User Does Not Exist"
 
-        user.account_verified = True
+        user.email_verified = True
 
         session.commit()
         
