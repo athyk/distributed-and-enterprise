@@ -70,7 +70,7 @@ class Event(Base):
     __tablename__ = 'event'
     
     id = Column(Integer, primary_key=True, autoincrement=True)
-    community_id = Column(Integer, ForeignKey('announcement.id'), nullable=False)
+    community_id = Column(Integer, ForeignKey('community.id'), nullable=False)
     title = Column(String(100), nullable=False)
     description = Column(String(1024), nullable=False)
     location = Column(String(200), nullable=False)
