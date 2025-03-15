@@ -1,6 +1,6 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag
+from backend.community.database.models import Community, CommunityDegree, CommunityTag
 
 from math import inf as INFINITY
 
@@ -30,10 +30,8 @@ def get_community_data(community_id: int) -> tuple[bool, list, str, str, bool, l
         description = result[1]
         public = result[2]
 
-        tag_result = session.query(Tag.name).filter(
-            Community.id == community_id,
-            Community.id == CommunityTag.community_id,
-            CommunityTag.tag_id == Tag.id
+        tag_result = session.query(CommunityTag.tag_id).filter(
+            CommunityTag.community_id == community_id
         ).all()
 
         tags = []
@@ -42,10 +40,8 @@ def get_community_data(community_id: int) -> tuple[bool, list, str, str, bool, l
         for tag in tag_result:
             tags.append(str(tag[0]))
         
-        degree_result = session.query(Degree.name).filter(
-            Community.id == community_id,
-            Community.id == CommunityDegree.community_id,
-            CommunityDegree.degree_id == Degree.id
+        degree_result = session.query(CommunityDegree.degree_id).filter(
+            CommunityDegree.community_id == community_id
         ).all()
 
         for degree in degree_result:
