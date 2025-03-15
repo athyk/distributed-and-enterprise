@@ -1,14 +1,21 @@
 <script lang="ts">
-    export let author = '' as string;
+    export let author: {
+        name: string;
+        profile_image: string;
+        URL: string;
+        DegreeYear?: string;
+        Degree?: string;
+    };
     export let ownPost = false as boolean;
+
     let showdropdown = false;
 </script>
 
-<div class="flex items-center space-x-2 sticky top-0 bg-gray-300 p-2 rounded-t-2xl">
-    <svg height="40" width="40" xmlns="http://www.w3.org/2000/svg">
-        <circle r="20" cx="20" cy="20" fill="black" />
-    </svg>
-    <span class="font-bold">{author}</span>
+<div class="flex items-center space-x-2 top-0 bg-gray-300 p-2 rounded-t-2xl">
+    <a href={author.URL} target="_blank" rel="noopener noreferrer">
+        <img src={author.profile_image} alt="Profile Icon" class="h-11 w-11 rounded-full" />
+    </a>
+    <span class="font-bold">{author.name}</span>
 
     {#if ownPost}
         <span class="flex items-center space-x-2 ml-auto">

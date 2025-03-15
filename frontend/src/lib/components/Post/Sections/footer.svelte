@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { convertTimestamp } from "$lib/utils/unixToSring";
     export let likes = 0 as number;
     export let date = '' as string;
     export let showLikes = true as boolean;
@@ -14,23 +15,9 @@
             liked = true;
         }
     }
-
-    function convertTimestamp(timestamp: string) {
-        const date = new Date(parseInt(timestamp) * 1000);
-        const options: Intl.DateTimeFormatOptions = {
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true,
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric'
-        };
-        let formattedDate = date.toLocaleString('en-GB', options);
-        return formattedDate;
-    }
 </script>
 
-<div class="flex items-center space-x-2 justify-between">
+<div class="flex items-center space-x-2 justify-between mt-3">
     {#if date}
         <span class="text-black text-sm">Posted at {convertTimestamp(date)}</span>
     {/if}
