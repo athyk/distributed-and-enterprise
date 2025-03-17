@@ -258,6 +258,8 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 users = users.join(UserTag).filter(UserTag.tag_id == req.tag_id)
             if req.gender != "":  # Allows lowercase and uppercase
                 users = users.filter(User.gender.ilike(f"%{req.gender}%"))
+            if req.year_of_study != 0:
+                users = users.filter(User.year_of_study == req.year_of_study)
 
             users = users.offset(offset).limit(req.limit).all()
             users_list = [user.to_dict() for user in users]

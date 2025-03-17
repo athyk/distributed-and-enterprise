@@ -31,7 +31,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"email@gmail.com\",\r\n    \"password\":\"password1\",\r\n    \"first_name\":\"Jane\",\r\n    \"last_name\":\"Doe\",\r\n    \"dob\":\"01-01-2000\",\r\n    \"gender\":\"Male\",\r\n    \"degree_id\":1,\r\n    \"year_of_study\": 1,\r\n    \"grad_date\":\"01-01-2000\",\r\n    \"tags\":[1]\r\n}",
+							"raw": "{\r\n    \"email\":\"admin@example.com\",\r\n    \"password\":\"password1\",\r\n    \"first_name\":\"Jane\",\r\n    \"last_name\":\"Doe\",\r\n    \"dob\":\"01-01-2000\",\r\n    \"gender\":\"Male\",\r\n    \"degree_id\":1,\r\n    \"year_of_study\": 1,\r\n    \"grad_date\":\"01-01-2000\",\r\n    \"tags\":[],\r\n    \"skip_email\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -60,7 +60,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"email@gmail.com\",\r\n    \"password\": \"password1\",\r\n    \"otp\": \"123456\"\r\n}",
+							"raw": "{\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"password1\",\r\n    \"skip_email\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -612,6 +612,197 @@
 							"port": "8000",
 							"path": [
 								"degrees",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "@me",
+					"item": [
+						{
+							"name": "Get self",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/users/@me",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete self",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/users/@me",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update self",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user\": {\n        \"email\": \"admin@example.com\",\n        \"first_name\": \"Jane\",\n        \"last_name\": \"Doa\",\n        \"gender\": \"Male\",\n        \"date_of_birth\": \"01-01-2000\",\n        \"degree_id\": 1,\n        \"year_of_study\": 1,\n        \"grad_date\": \"01-01-2000\",\n        \"tags\": []\n    },\n    \"password\": \"\",\n    \"new_password\": \"\",\n    \"otp\": \"\",\n    \"skip_email\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/users/@me",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Search user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/users/?first_name=j&last_name=",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "first_name",
+									"value": "j"
+								},
+								{
+									"key": "last_name",
+									"value": ""
+								},
+								{
+									"key": "age_from",
+									"value": "25",
+									"disabled": true
+								},
+								{
+									"key": "age_to",
+									"value": "26",
+									"disabled": true
+								},
+								{
+									"key": "degree_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "tag_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "MALE",
+									"disabled": true
+								},
+								{
+									"key": "year_of_study",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"id\": 3,\n        \"email\": \"admin@example.com\",\n        \"email_verified\": 1,\n        \"first_name\": \"Jane\",\n        \"last_name\": \"Doa\",\n        \"gender\": \"Male\",\n        \"date_of_birth\": \"01-01-2000\",\n        \"degree_id\": 1,\n        \"year_of_study\": 1,\n        \"grad_date\": \"01-01-2000\",\n        \"tags\": [],\n        \"rank\": \"user\"\n    },\n    \"password\": \"\",\n    \"new_password\": \"\",\n    \"otp\": \"\",\n    \"skip_email\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/users/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/users/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
 								""
 							]
 						}
