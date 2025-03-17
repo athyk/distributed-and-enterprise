@@ -4,7 +4,6 @@ import traceback
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 from backend.common.middleware.auth import auth_required
 from backend.common.proto.accounts_pb2 import DeleteRequest, Response

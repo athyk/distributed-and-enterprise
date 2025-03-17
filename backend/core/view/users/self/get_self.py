@@ -3,7 +3,6 @@ import http
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 
-from backend.common.middleware.auth import auth_required
 from backend.common.proto.accounts_pb2 import GetRequest, GetResponse
 from backend.common.services import AccountsClient
 

@@ -2,7 +2,7 @@ import http
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
-from backend.common.proto.accounts_pb2 import GetRequest, GetResponse, User
+from backend.common.proto.accounts_pb2 import GetRequest, GetResponse
 from backend.common.services import AccountsClient
 
 

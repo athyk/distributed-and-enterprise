@@ -39,7 +39,7 @@ def auth_required(
             redirect_to = redirect_url or settings.LOGIN_URL
             try:
                 user: dict | None = AccountsClient().check_session(request.COOKIES.get('sid'))
-            except Exception as e:
+            except Exception:
                 traceback.print_exc()
                 return redirect_or_return(request, redirect_to)
 
