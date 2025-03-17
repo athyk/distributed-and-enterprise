@@ -297,7 +297,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
             if req.user.email != user.email:
                 return self.update_email(req)
 
-            if req.new_password != "" and not check_password_hash(user.password, req.password):
+            if req.new_password != "" and not check_password_hash(user.password, req.password) and not req.is_self:
                 return accounts_pb2.Response(
                     success=False,
                     http_status=400,  # They are authenticated, but the password is incorrect
