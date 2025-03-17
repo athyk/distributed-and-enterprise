@@ -1,16 +1,24 @@
 import http
-import json
 
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+from backend.common.files import StorageClient
+from backend.common.middleware.auth import auth_required
 from backend.common.proto.accounts_pb2 import UpdateRequest, Response
 from backend.common.services import AccountsClient
 
 
-def update_self_account(request: WSGIRequest):
+@auth_required()
+@csrf_exempt
+def update_profile_picture(request: WSGIRequest):
     """
-    Update the user's own account
+    Update the user's own account profile picture
     """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST method required'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
     client = AccountsClient()
     real_user: dict | None = client.check_session(request.COOKIES.get('sid'))
 
@@ -18,36 +26,28 @@ def update_self_account(request: WSGIRequest):
         return JsonResponse({'success': False, 'error_message': 'Invalid Session'}, status=http.HTTPStatus.UNAUTHORIZED)
 
     try:
-        data = json.loads(request.body)
+        if not request.FILES.get("file"):
+            return JsonResponse({"error": "No file uploaded"}, status=400)
 
-        if 'skip_email' not in data:
-            data['skip_email'] = False
+        file = request.FILES["file"]
+        minio_client = StorageClient()
 
-        if 'otp' not in data:
-            data['otp'] = ""
+        file_url = minio_client.compress_and_upload_image(file)
+        print(file_url)
 
-        if 'password' not in data:
-            data['password'] = ""
+        if not file_url:
+            return JsonResponse({"success": False, "error_message": "Failed to upload file"}, status=500)
 
-        if 'new_password' not in data:
-            data['new_password'] = ""
-
-        user = data['user']
-
-        user["id"] = real_user["id"]
-
-        if "rank" in user:
-            return JsonResponse({'success': False, 'error_message': "Cannot change your account level"}, status=http.HTTPStatus.UNAUTHORIZED)
-
+        data = {
+            "id": real_user["id"],
+            "picture_url": file_url,
+        }
         req = UpdateRequest(
-            user=data['user'],
-            password=data['password'],
-            new_password=data['new_password'],
-            skip_email=data['skip_email'],
-            otp=data['otp'],
-            is_self=True,
+            user=data,
+            is_self=True
         )
-    except Exception:
+    except Exception as e:
+        print(e)
         return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
 
     try:
@@ -60,9 +60,6 @@ def update_self_account(request: WSGIRequest):
     http_res = {
         'success': res.success,
     }
-
-    if res.otp_required:
-        http_res['otp_required'] = True
 
     if len(res.error_message) > 0:
         http_res['error_message'] = list(res.error_message)

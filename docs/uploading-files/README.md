@@ -23,7 +23,7 @@ def upload_file_view(request):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method"}, status=400)
 
-    if not request.FILES.get_tags("file"):
+    if not request.FILES.get("file"):
         return JsonResponse({"error": "No file uploaded"}, status=400)
 
     file = request.FILES["file"]
