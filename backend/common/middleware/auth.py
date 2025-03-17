@@ -1,3 +1,4 @@
+import traceback
 from functools import wraps
 
 from django.core.handlers.wsgi import WSGIRequest
@@ -23,7 +24,8 @@ def auth_required(
     :return:
     """
     def redirect_or_return(request: WSGIRequest, redirect_to: str):
-        if redirect_user:
+        print("redirect", redirect_to)
+        if redirect_user and request.method == 'GET':
             request.session['next_url'] = request.path
             return redirect(redirect_to)
         return JsonResponse(
@@ -33,20 +35,21 @@ def auth_required(
 
     def decorator(view_func):
         @wraps(view_func)
-        async def _wrapped_view(request: WSGIRequest, *args, **kwargs):
-            user: dict | None = AccountsClient().check_session(request.COOKIES.get('sid'))
-
+        def _wrapped_view(request: WSGIRequest, *args, **kwargs):
             redirect_to = redirect_url or settings.LOGIN_URL
+            try:
+                user: dict | None = AccountsClient().check_session(request.COOKIES.get('sid'))
+            except Exception as e:
+                traceback.print_exc()
+                return redirect_or_return(request, redirect_to)
 
             if user is None:
                 print("User is not authenticated or session expired")
                 return redirect_or_return(request, redirect_to)
 
-            allowed = False
-            if roles_required is not None:
-                if user['rank'] in roles_required:
-                    allowed = True
-
+            allowed = True
+            if roles_required is not None and user['rank'] not in roles_required:
+                allowed = False
             if community_roles_required is not None:
                 # TODO: Implement community roles
                 pass
@@ -55,7 +58,6 @@ def auth_required(
                 print("User does not have the required roles")
                 return redirect_or_return(request, redirect_to)
 
-            # view func is the next function to be called
             return view_func(request, *args, **kwargs)
         return _wrapped_view
     return decorator

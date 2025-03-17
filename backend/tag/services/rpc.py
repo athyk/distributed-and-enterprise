@@ -127,9 +127,13 @@ class TagServicer(tag_pb2_grpc.TagsServicer):
         """
         List returns all tags found, allowing for partial name matching.
         """
-        page = req.page if req.page >= 0 else 0
-        limit = req.limit if 0 < req.limit <= 50 else 50
-        offset = page * limit
+        if req.page < 0:
+            req.page = 0
+        if req.limit < 1:
+            req.limit = 1
+        elif req.limit > 50:
+            req.limit = 50
+        offset = req.page * req.limit
 
         with get_db() as session:
             query = session.query(Tag)
@@ -138,7 +142,7 @@ class TagServicer(tag_pb2_grpc.TagsServicer):
                 req.name = req.name.lower()
                 query = query.filter(Tag.name.ilike(f"%{req.name}%"))
 
-            tags = query.order_by(Tag.count.desc()).offset(offset).limit(limit).all()
+            tags = query.order_by(Tag.count.desc()).offset(offset).limit(req.limit).all()
             tag_list = [tag.to_dict() for tag in tags]
 
         return tag_pb2.TagListResponse(

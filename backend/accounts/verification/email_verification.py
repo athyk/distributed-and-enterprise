@@ -68,6 +68,9 @@ def verify_email(otp: str, email_verify_id: str, user_email: str) -> tuple[bool,
     if not hotp.verify(otp, int(email_verify_id)):
         return False, "Invalid OTP Code Provided"
 
+    if user_email == "":  # For new emails that aren't in the database yet
+        return True, "Valid OTP Code, but no email provided"
+
     with get_db() as session:
         user = session.query(User).filter(User.email == user_email).first()
 
