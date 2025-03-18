@@ -198,7 +198,7 @@ class AccountsClient:
             return False
 
         for key in session_keys:
-            self._redis_client.delete_tag(key)
+            self._redis_client.delete(key)
 
         return True
 
@@ -216,7 +216,7 @@ class AccountsClient:
             return False
 
         for key in session_keys:
-            self._redis_client.delete_tag(key)
+            self._redis_client.delete(key)
 
         return True
 

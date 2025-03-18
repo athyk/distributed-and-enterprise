@@ -70,7 +70,6 @@ def register_user(request: WSGIRequest):
 
     if res.otp_required:
         http_res['otp_required'] = res.otp_required
-        client.save_otp(res.user_id, res.email_id)
 
     # DO NOT set session here as the user's email has not been verified, send them over to login.
 

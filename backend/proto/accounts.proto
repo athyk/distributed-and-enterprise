@@ -90,10 +90,6 @@ message LoginRequest {
   // otp is the one time password to verify the email.
   // this is a string to allow for any type of OTP, e.g. numbers, letters, symbols.
   optional string otp = 4;
-  // email_verify_id is the identification used to ensure that the correct otp is used for the correct email
-  // it is a string as the id is large in size
-  // left optional as it should only be used for verifying an unverified account
-  optional string email_verify_id = 5;
 }
 
 // LoginResponse is the response to a login and registration request, stating if an OTP will be entered by the user and the user object if not.
@@ -116,10 +112,6 @@ message LoginResponse {
   User user = 5;
   // otp_required is a flag to indicate if the user needs to enter an OTP to login.
   bool otp_required = 6;
-  // email_id is the id used to confirm an email
-  //
-  // when paired with the otp value in verification, if valid, will verify the user account
-  optional string email_id = 7;
 }
 
 // GetRequest is the request, containing the filters for the users to be returned.
@@ -139,18 +131,42 @@ message GetRequest {
   //
   // Int is used over bool, as a get request can be used to get the user's email verification status.
   int32 email_verified = 5;
+  // age_from is the minimum age of the user to return.
+  //
+  // This is in years.
+  int64 age_from = 6;
+  // age_to is the maximum age of the user to return. Set this to the same as age_from to get a specific age.
+  //
+  // This is in years.
+  int64 age_to = 7;
+  // degree_id is the degree that user is majoring/taking.
+  int64 degree_id = 8;
+  // tag_id is the tag id that the user has applied to themselves.
+  int64 tag_id = 9;
+  // gender is the user's gender like male/female.
+  string gender = 10;
+  // year_of_study is the year of study of the user, for example 1 is first year, 2 is second year.
+  int32 year_of_study = 11;
   // page is the page number to return, starting from 0.
-  string page = 6;
+  int32 page = 12;
   // limit is the number of users to return per page. The maximum limit is 50.
-  string limit = 7;
+  int32 limit = 13;
 }
 
 // GetResponse is the response for GetRequest showing all users.
 message GetResponse {
   // users is the list of users that match the filters.
+  //
+  // There could always be more than one user.
   repeated User users = 1;
   // total is the total number of users that match the filters.
   int32 total = 2;
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 3;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 4;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 5;
 }
 
 message UpdateRequest {
@@ -165,21 +181,25 @@ message UpdateRequest {
   // otp is the one time password to verify the request was made by the user.
   // this is a string to allow for any type of OTP, e.g. numbers, letters, symbols.
   string otp = 3;
+  // skip_email is for debugging to circumvent the email verification, in the case env details not set
+  // TODO: Remove this after "prototype" (basically temporary and only used in development)
+  bool skip_email = 4;
+  // password is the old password for the user.
+  //
+  // Used for the new password to be set.
+  optional string password = 5;
+  // new_password is the new password for the user.
+  //
+  // The new password is set if the old password is correct.
+  optional string new_password = 6;
 }
 
 // DeleteRequest is the request for deleting a user, only the user id is required.
 message DeleteRequest {
   // user_id is the user id to delete.
   int64 user_id = 1;
-  // is_self is a flag to indicate if the user is deleting themselves.
-  //
-  // this would then require the user to have an OTP to delete themselves.
-  //
-  // Otherwise, it's an admin deleting a user and an OTP is not yet required.
-  bool is_self = 2;
-  // otp is the one time password to verify the request was made by the user.
-  // this is a string to allow for any type of OTP, e.g. numbers, letters, symbols.
-  string otp = 3;
+  // No OTP verification to simplify the prototype:
+  // TODO: Add OTP verification
 }
 
 // Response is the response for general auth, it does not contain any user information.
@@ -190,6 +210,8 @@ message Response {
   int32 http_status = 2;
   // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
   repeated string error_message = 3;
+  // otp_required is a flag to indicate if the user needs to enter an OTP to login.
+  bool otp_required = 4;
 }
 
 service Accounts {
