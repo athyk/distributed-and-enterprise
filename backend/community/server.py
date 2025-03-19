@@ -7,8 +7,9 @@ from concurrent import futures
 #
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
-from backend.common.proto import community_pb2_grpc
+from backend.common.proto import community_pb2_grpc, community_announcement_pb2_grpc
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
+from backend.common.services.community.community import CommunityClient
 
 from backend.community.database.database import engine, Base, confirm_database_exists
 
@@ -55,6 +56,11 @@ def serve():
 
     DegreesClient.initialise(
         "degree-service:" + os.environ.get('DEGREE_PORT', '50055'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 
