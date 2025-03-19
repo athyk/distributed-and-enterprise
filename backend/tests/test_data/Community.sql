@@ -3102,3 +3102,12 @@ INSERT INTO public."announcement_tag" (id, announcement_id, tag_id) VALUES
     (463, 184, 91),
     (464, 184, 182),
     (465, 184, 122);
+
+SELECT setval(pg_get_serial_sequence('community', 'id'), COALESCE((SELECT MAX(id) FROM community) + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('community_users', 'id'), COALESCE((SELECT MAX(id) FROM community_users) + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('announcement', 'id'), COALESCE((SELECT MAX(id) FROM announcement) + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('community_degree', 'id'), COALESCE((SELECT MAX(id) FROM community_degree) + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('community_tag', 'id'), COALESCE((SELECT MAX(id) FROM community_tag) + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('event_tag', 'id'), COALESCE((SELECT MAX(id) FROM event_tag) + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('announcement_tag', 'id'), COALESCE((SELECT MAX(id) FROM announcement_tag) + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('event', 'id'), COALESCE((SELECT MAX(id) FROM event) + 1, 1), FALSE);

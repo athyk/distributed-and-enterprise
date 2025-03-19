@@ -608,3 +608,5 @@ INSERT INTO public."degree" (id, name, created_at, updated_at) VALUES
     (607, 'Zero Carbon Buildings (Energy Management and Performance) (Level 6)', '2025-03-13', '2025-03-13'),
     (608, 'Zero Carbon Buildings (Environments and Materials) (Level 4)', '2025-03-13', '2025-03-13'),
     (609, 'Zero Carbon Buildings (Technology and Modelling) (Level 5)', '2025-03-13', '2025-03-13');
+
+SELECT setval(pg_get_serial_sequence('degree', 'id'), COALESCE((SELECT MAX(id) FROM degree) + 1, 1), FALSE);
