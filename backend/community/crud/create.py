@@ -43,10 +43,9 @@ def create_community(name: str, description: str, public: bool, tags: list, degr
         session.commit()
 
         new_community_id = new_community.id
-        further_non_critical_errors = ['Community Successfully Created']
 
-        further_non_critical_errors = add_tags(session, tags, new_community_id)
-        further_non_critical_errors = add_degrees(session, degrees, new_community_id)
+        add_tags(session, tags, new_community_id)
+        add_degrees(session, degrees, new_community_id)
 
         new_admin = CommunityUser(
             community_id=new_community_id,
@@ -57,4 +56,4 @@ def create_community(name: str, description: str, public: bool, tags: list, degr
         session.add(new_admin)
         session.commit()
 
-        return True, new_community_id, further_non_critical_errors
+        return True, new_community_id, ['Community Successfully Created']

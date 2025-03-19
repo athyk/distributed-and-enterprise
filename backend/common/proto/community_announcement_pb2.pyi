@@ -16,8 +16,8 @@ class CommunityAnnouncementCreateRequest(_message.Message):
     user_id: int
     title: str
     description: str
-    tags: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
+    tags: _containers.RepeatedScalarFieldContainer[int]
+    def __init__(self, community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[int]] = ...) -> None: ...
 
 class CommunityAnnouncementUpdateRequest(_message.Message):
     __slots__ = ("announcement_id", "community_id", "user_id", "title", "description", "tags")
@@ -32,8 +32,8 @@ class CommunityAnnouncementUpdateRequest(_message.Message):
     user_id: int
     title: str
     description: str
-    tags: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, announcement_id: _Optional[int] = ..., community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
+    tags: _containers.RepeatedScalarFieldContainer[int]
+    def __init__(self, announcement_id: _Optional[int] = ..., community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., tags: _Optional[_Iterable[int]] = ...) -> None: ...
 
 class CommunityAnnouncementViewSelectRequest(_message.Message):
     __slots__ = ("community_id", "user_id", "offset", "limit")

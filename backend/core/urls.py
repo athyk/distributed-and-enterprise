@@ -30,4 +30,7 @@ urlpatterns = [
     path('tags/list/', list_tags),
     path('degrees/', degree_paths),
     path('degrees/list/', list_degrees),
+    path('community/announcements',community_global_announcement_view),
+    path('community/<int:community_id>/announcements',community_announcement_paths),
+    path('community/<int:community_id>/announcements/<int:announcement_id>',community_announcement_action_paths),
 ]

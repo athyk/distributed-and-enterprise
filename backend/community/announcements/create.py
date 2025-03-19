@@ -1,6 +1,7 @@
 from backend.common.utils import verify_string, verify_list, verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Announcement
+from backend.community.announcements.local_functions import add_tags
 
 from backend.community.utils import does_user_have_required_role
 
@@ -20,7 +21,6 @@ def create_announcement(community_id: int, user_id: int, title: str, description
     description_verify, description_error = verify_string(description, 4, 2048)
     tags_verify, tags_error = verify_list(tags, 0, 5)
     
-
     if False in [user_verify, community_verify, title_verify, description_verify, tags_verify]:
 
         all_errors = [user_error, community_error, title_error, description_error, tags_error]
@@ -29,6 +29,26 @@ def create_announcement(community_id: int, user_id: int, title: str, description
         return False, error_messages
 
     with get_db() as session:
-        # TODO: Rework to new structure
+        success, message = does_user_have_required_role(session, community_id, user_id, ['Moderator', 'Admin'])
 
-        return True, []
+        if not success:
+            return success, message
+
+        new_announcement = Announcement(
+            community_id=community_id,
+            user_id=user_id,
+            title=title,
+            description=description,
+            datetime=datetime.utcnow(),
+            edit_datetime=None,
+            last_edited_user_id=None
+        )
+
+        session.add(new_announcement)
+        session.commit()
+
+        new_announcement_id = new_announcement.id
+        
+        add_tags(session, tags, new_announcement_id)
+
+        return True, ['Community Announcement Successfully Created']

@@ -1,17 +1,12 @@
 import http
 import json
-import os
 import traceback
 
-import grpc
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from backend.common.proto import community_pb2, community_pb2_grpc
-from backend.common.proto.community_pb2 import CommunityCreateRequest, CommunityUpdateRequest, CommunityViewRequest, \
-    CommunityDeleteRequest, CommunityIDResponse, CommunityDataResponse, BasicCommunityResponse
-
+from backend.common.proto import community_pb2
 from backend.common.services.community.community import CommunityClient
 
 
@@ -58,7 +53,7 @@ def community_creation(request: WSGIRequest):
     try:
         data = json.loads(request.body)
 
-        req = CommunityCreateRequest(
+        req = community_pb2.CommunityCreateRequest(
             name=data['name'],
             description=data['description'],
             public=data['public'],
@@ -72,7 +67,7 @@ def community_creation(request: WSGIRequest):
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: CommunityIDResponse = client.create(req, request.COOKIES.get('sid'))
+        response: community_pb2.CommunityIDResponse = client.create(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
@@ -93,7 +88,7 @@ def community_read(request: WSGIRequest, community_id):
     client = CommunityClient()
 
     try:
-        req = CommunityViewRequest(
+        req = community_pb2.CommunityViewRequest(
             id=community_id
         )
 
@@ -101,7 +96,7 @@ def community_read(request: WSGIRequest, community_id):
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: CommunityDataResponse = client.view(req)
+        response: community_pb2.CommunityDataResponse = client.view(req)
     except Exception as e:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
@@ -137,7 +132,7 @@ def community_update(request: WSGIRequest, community_id):
     try:
         data = json.loads(request.body)
 
-        req = CommunityUpdateRequest(
+        req = community_pb2.CommunityUpdateRequest(
             id=community_id,
             name=data['name'],
             description=data['description'],
@@ -152,7 +147,7 @@ def community_update(request: WSGIRequest, community_id):
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: BasicCommunityResponse = client.update(req, request.COOKIES.get('sid'))
+        response: community_pb2.BasicCommunityResponse = client.update(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
@@ -172,7 +167,7 @@ def community_delete(request: WSGIRequest, community_id):
     client = CommunityClient()
 
     try:
-        req = CommunityDeleteRequest(
+        req = community_pb2.CommunityDeleteRequest(
             id=community_id
         )
 
@@ -182,7 +177,7 @@ def community_delete(request: WSGIRequest, community_id):
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: BasicCommunityResponse = client.delete(req, request.COOKIES.get('sid'))
+        response: community_pb2.BasicCommunityResponse = client.delete(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)

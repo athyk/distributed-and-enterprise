@@ -1,6 +1,7 @@
 import http
 import json
 import os
+import traceback
 
 import grpc
 from google.protobuf.json_format import MessageToDict
@@ -8,7 +9,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from backend.common.proto import community_announcement_pb2, community_announcement_pb2_grpc
+from backend.common.proto import community_announcement_pb2
+from backend.common.services.community.announcement import CommunityAnnouncementClient
 
 
 @csrf_exempt
@@ -19,11 +21,12 @@ def community_announcement_action_paths(request: WSGIRequest, community_id, anno
     Depending on the request method used defines whether the Update or Delete function is executed
     """
 
+    if request.method == 'GET':
+        return community_announcement_view_single(request, community_id, announcement_id)
+
     if not request.body:
         return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    if request.method == 'GET':
-        return community_announcement_view_single(request, community_id, announcement_id)
     if request.method == 'PUT':
         return community_announcement_edit(request, community_id, announcement_id)
     elif request.method == 'DELETE':
@@ -58,23 +61,37 @@ def community_announcement_creation(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to create a new community
     """
 
-    validations = ['user_id', 'title', 'description', 'tags']
+    validations = ['title', 'description', 'tags']
 
     for validation in validations:
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+        
+    client = CommunityAnnouncementClient()
 
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_announcement_pb2_grpc.CommunityAnnouncementStub(channel)
-    response: community_announcement_pb2.CommunityAnnouncementResponse = stub.CommunityCreateAnnouncement(community_announcement_pb2.CommunityAnnouncementCreateRequest(
-        community_id=community_id,
-        user_id=data['user_id'],
-        title=data['title'],
-        description=data['description'],
-        tags=data['tags']
-    ))
+        print(data)
+
+        req = community_announcement_pb2.CommunityAnnouncementCreateRequest(
+            community_id=community_id,
+            title=data['title'],
+            description=data['description'],
+            tags=data['tags']
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception as e:  # Occurs if the JSON is valid but the data is not
+        print(e)
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_announcement_pb2.CommunityAnnouncementResponse = client.create(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,
@@ -90,41 +107,57 @@ def community_announcement_view(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to create a new community
     """
 
-    validations = ['user_id', 'offset', 'limit']
+    validations = ['offset', 'limit']
 
     for validation in validations:
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    data = json.loads(request.body)
+    client = CommunityAnnouncementClient()
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_announcement_pb2_grpc.CommunityAnnouncementStub(channel)
-    response: community_announcement_pb2.AllCommunityAnnouncementResponse = stub.CommunityViewSelectAnnouncement(community_announcement_pb2.CommunityAnnouncementViewSelectRequest(
-        community_id=community_id,
-        user_id=data['user_id'],
-        offset=data['offset'],
-        limit=data['limit']
-    ))
+    try:
+        data = json.loads(request.body)
+
+        print(data)
+        print(community_id)
+
+        req = community_announcement_pb2.CommunityAnnouncementViewSelectRequest(
+            community_id=community_id,
+            offset=data['offset'],
+            limit=data['limit']
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception as e:  # Occurs if the JSON is valid but the data is not
+        print(e)
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_announcement_pb2.AllCommunityAnnouncementResponse = client.view(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     all_announcements = []
 
-    for announcement in response.announcements:
+    if response.success:
+        for announcement in response.announcements:
 
-        json_announcement = MessageToDict(announcement)
+            json_announcement = MessageToDict(announcement)
 
-        reformed_announcement = {
-                "id": json_announcement['id'],
-                "title": json_announcement['title'],
-                "description": json_announcement['description'],
-                "tags": json_announcement.get('tags', []),
-                "user_id": json_announcement['userId'],
-                "uploaded": json_announcement['uploaded'],
-                "edit_user_id": json_announcement.get('editUserId', 0),
-                "edit_uploaded": json_announcement.get('editUploaded', None)
-            }
-        
-        all_announcements.append(reformed_announcement)
+            reformed_announcement = {
+                    "id": json_announcement['id'],
+                    "title": json_announcement['title'],
+                    "description": json_announcement['description'],
+                    "tags": json_announcement.get('tags', []),
+                    "user_id": json_announcement['userId'],
+                    "uploaded": json_announcement['uploaded'],
+                    "edit_user_id": json_announcement.get('editUserId', 0),
+                    "edit_uploaded": json_announcement.get('editUploaded', None)
+                }
+
+            all_announcements.append(reformed_announcement)
 
     return JsonResponse({
         'success': response.success,
@@ -138,32 +171,39 @@ def community_announcement_view_single(request: WSGIRequest, community_id, annou
     """
     Sends a request to the community server with the relevant data to fetch a community's data
     """
+    client = CommunityAnnouncementClient()
 
-    validations = ['user_id']
+    try:
+        req = community_announcement_pb2.CommunityAnnouncementViewSelectOneRequest(
+            announcement_id=announcement_id,
+            community_id=community_id
+        )
 
-    for validation in validations:
-        if validation not in json.loads(request.body):
-            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception as e:  # Occurs if the JSON is valid but the data is not
+        print(e)
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
-    data = json.loads(request.body)
-
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_announcement_pb2_grpc.CommunityAnnouncementStub(channel)
-    response: community_announcement_pb2.CommunityAnnouncementResponse = stub.CommunityViewSelectAnnouncement(community_announcement_pb2.CommunityAnnouncementUpdateRequest(
-        announcement_id=announcement_id,
-        community_id=community_id,
-        user_id=data['user_id']
-    ))
+    try:
+        response: community_announcement_pb2.SingleCommunityAnnouncementResponse = client.view_one(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,
         'http_status': response.http_status,
         'error_message': list(response.error_message),
-        'name': response.name,
-        'description': response.description,
-        'public_community': response.public_community,
-        'tags': list(response.tags),
-        'degrees': list(response.degrees)
+        'announcement': {
+            'title': response.announcement.title,
+            'description': response.announcement.description,
+            'tags': list(response.announcement.tags),
+            'user_id': response.announcement.user_id,
+            'uploaded': response.announcement.uploaded,
+            'edit_user_id': response.announcement.edit_user_id,
+            'edit_uploaded': response.announcement.edit_uploaded
+        }
     })
 
 
@@ -187,22 +227,32 @@ def community_global_announcement_view(request: WSGIRequest):
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    data = json.loads(request.body)
+    client = CommunityAnnouncementClient()
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_announcement_pb2_grpc.CommunityAnnouncementStub(channel)
-    response: community_announcement_pb2.GlobalCommunityAnnouncementResponse = stub.CommunityViewGlobalAnnouncement(community_announcement_pb2.CommunityAnnouncementGlobalRequest(
-        offset=data['offset'],
-        limit=data['limit']
-    ))
+    try:
+        data = json.loads(request.body)
+
+        req = community_announcement_pb2.CommunityAnnouncementGlobalRequest(
+            offset=data['offset'],
+            limit=data['limit']
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception as e:  # Occurs if the JSON is valid but the data is not
+        print(e)
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_announcement_pb2.GlobalCommunityAnnouncementResponse = client.view_global(req)
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     all_announcements = []
 
     for announcement in response.global_announcements:
-
         json_announcement = MessageToDict(announcement)
-
-        print(json_announcement)
 
         reformed_announcement = {
                 "id": json_announcement['id'],
@@ -225,30 +275,42 @@ def community_global_announcement_view(request: WSGIRequest):
         "global_announcements": all_announcements
     })
 
-
 def community_announcement_edit(request: WSGIRequest, community_id, announcement_id):
     """
     Sends a request to the community server with the relevant data to update a community's data
     """
 
-    validations = ['user_id', 'title', 'description', 'tags']
+    validations = ['title', 'description', 'tags']
 
     for validation in validations:
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+        
+    client = CommunityAnnouncementClient()
 
-    data = json.loads(request.body)
+    try:
+        data = json.loads(request.body)
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_announcement_pb2_grpc.CommunityAnnouncementStub(channel)
-    response: community_announcement_pb2.CommunityAnnouncementResponse = stub.CommunityUpdateAnnouncement(community_announcement_pb2.CommunityAnnouncementUpdateRequest(
-        announcement_id=announcement_id,
-        community_id=community_id,
-        user_id=data['user_id'],
-        title=data['title'],
-        description=data['description'],
-        tags=data['tags']
-    ))
+        print(data)
+
+        req = community_announcement_pb2.CommunityAnnouncementUpdateRequest(
+            announcement_id=announcement_id,
+            community_id=community_id,
+            title=data['title'],
+            description=data['description'],
+            tags=data['tags']
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_announcement_pb2.CommunityAnnouncementResponse = client.update(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,
@@ -262,21 +324,24 @@ def community_announcement_delete(request: WSGIRequest, community_id, announceme
     Sends a request to the community server with the relevant data to delete a community
     """
 
-    validations = ['user_id']
+    client = CommunityAnnouncementClient()
 
-    for validation in validations:
-        if validation not in json.loads(request.body):
-            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+    try:
+        req = community_announcement_pb2.CommunityAnnouncementDeleteRequest(
+            announcement_id=announcement_id,
+            community_id=community_id
+        )
 
-    data = json.loads(request.body)
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_announcement_pb2_grpc.CommunityAnnouncementStub(channel)
-    response: community_announcement_pb2.CommunityAnnouncementResponse = stub.CommunityDeleteAnnouncement(community_announcement_pb2.CommunityAnnouncementDeleteRequest(
-        announcement_id=announcement_id,
-        community_id=community_id,
-        user_id=data['user_id']
-    ))
+    try:
+        response: community_announcement_pb2.CommunityAnnouncementResponse = client.delete(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,

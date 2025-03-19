@@ -11,7 +11,7 @@ message CommunityAnnouncementCreateRequest {
     // description is the short paragraph regarding the announcement
     string description = 4;
     // tags is a list of tag names
-    repeated string tags = 5;
+    repeated int32 tags = 5;
 }
 
 
@@ -28,7 +28,7 @@ message CommunityAnnouncementUpdateRequest {
     // description is the short paragraph regarding the announcement
     string description = 5;
     // tags is a list of tag names
-    repeated string tags = 6;
+    repeated int32 tags = 6;
 }
 
 

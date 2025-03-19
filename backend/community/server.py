@@ -10,6 +10,7 @@ from concurrent import futures
 from backend.common.proto import community_pb2_grpc, community_announcement_pb2_grpc
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
 from backend.common.services.community.community import CommunityClient
+from backend.common.services.community.announcement import CommunityAnnouncementClient
 
 from backend.community.database.database import engine, Base, confirm_database_exists
 
@@ -60,6 +61,11 @@ def serve():
     )
 
     CommunityClient.initialise( 
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityAnnouncementClient.initialise(
         "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )

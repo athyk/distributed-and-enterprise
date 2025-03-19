@@ -118,7 +118,11 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
         if not success:
             http_code = 400
 
-            return community_announcement_pb2.SingleCommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message)
+            return community_announcement_pb2.SingleCommunityAnnouncementResponse(
+                success=success,
+                http_status=http_code,
+                error_message=message,
+            )
 
         else:
             announce_object = community_announcement_pb2.CommunityAnnouncementData(
@@ -128,10 +132,10 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
                 tags=announcement.get('tags'),
                 user_id=announcement.get('user_id'),
                 uploaded=announcement.get('uploaded'),
-                edit_user_id=announcement.get('edit_user_id'),
+                edit_user_id=announcement.get('edit_user_id', 0),
                 edit_uploaded=announcement.get('edit_uploaded')
             )
-        
+
             return community_announcement_pb2.SingleCommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message, announcement=announce_object)
 
 
@@ -139,7 +143,7 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
         '''
         This function verifies incoming data and fetches a select number of announcements.
         '''
-    
+
         print("CommunityViewGlobalAnnouncement Request Made:")
         print(request)
 
@@ -166,5 +170,5 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
                 )
 
                 announcements.append(announce_object)
-        
+
         return community_announcement_pb2.GlobalCommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message, global_announcements=announcements)
