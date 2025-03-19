@@ -59,7 +59,7 @@ def serve():
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 
-    CommunityClient.initialise(
+    CommunityClient.initialise( 
         "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )

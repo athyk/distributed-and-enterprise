@@ -100,14 +100,43 @@ class CommunityClient:
                 # If set to zero, disables use of http proxies. Enabled by default
                 ('grpc.enable_http_proxy', 0)
             ])
-        self._stub = community_pb2_grpc.AccountsStub(self._channel)
+        self._stub = community_pb2_grpc.CommunityStub(self._channel)
         self._redis_client = redis.from_url(self._redis_url)
 
     def create(self, req: community_pb2.CommunityCreateRequest, session_id: int) -> community_pb2.CommunityIDResponse:
         """
         Create a new community in the Community service.
         """
-        print('community creation')
+        session_keys = self._redis_client.keys(f"sid:{session_id}:*")
+        if not session_keys:
+            return community_pb2.CommunityIDResponse(
+                success=False,
+                http_status=401,
+                error_message=['Action Requires User To Be Logged In'],
+                id=-1
+            )
+
+        user_data = self._redis_client.get(session_keys[0])
+
+        if user_data:
+            user_data = json.loads(user_data)  # Convert JSON string to Python dictionary
+            user_id = user_data.get("id")
+
+            req.user_id = int(user_id)
+
+            return self._grpc_call_with_retry(self._stub.CommunityCreate, req)
+        
+        return community_pb2.CommunityIDResponse(
+            success=False,
+            http_status=500,
+            error_message=['User Session Is Empty'],
+            id=-1
+        )
+    
+    def update(self, req: community_pb2.CommunityUpdateRequest, session_id) -> community_pb2.BasicCommunityResponse:
+        """
+        Updates a selected community in the Community service.
+        """
         session_keys = self._redis_client.keys(f"sid:{session_id}:*")
         if not session_keys:
             return community_pb2.BasicCommunityResponse(
@@ -116,61 +145,52 @@ class CommunityClient:
                 error_message=['Action Requires User To Be Logged In']
             )
 
-        user_session = session_keys[0]
+        user_data = self._redis_client.get(session_keys[0])
 
-        print(user_session)
+        if user_data:
+            user_data = json.loads(user_data)  # Convert JSON string to Python dictionary
+            user_id = user_data.get("id")
 
-        return self._grpc_call_with_retry(self._stub.CommunityCreate, req)
-    
-    def update(self, req: community_pb2.CommunityUpdateRequest) -> community_pb2.BasicCommunityResponse:
-        """
-        Updates a selected community in the Community service.
-        """
-        # TODO:
+            req.user_id = int(user_id)
 
-
-        return self._grpc_call_with_retry(self._stub.CommunityUpdate, req)
+            return self._grpc_call_with_retry(self._stub.CommunityUpdate, req)
+        
+        return community_pb2.BasicCommunityResponse(
+            success=False,
+            http_status=500,
+            error_message=['User Session Is Empty']
+        )
     
     def view(self, req: community_pb2.CommunityViewRequest) -> community_pb2.CommunityDataResponse:
         """
         Views a selected community in the Community service.
         """
-        # TODO:
-
-
         return self._grpc_call_with_retry(self._stub.CommunityView, req)
     
-    def delete(self, req: community_pb2.CommunityDeleteRequest) -> community_pb2.BasicCommunityResponse:
+    def delete(self, req: community_pb2.CommunityDeleteRequest, session_id) -> community_pb2.BasicCommunityResponse:
         """
         Deletes a community in the Community service.
         """
-        # TODO:
+        session_keys = self._redis_client.keys(f"sid:{session_id}:*")
+        if not session_keys:
+            return community_pb2.BasicCommunityResponse(
+                success=False,
+                http_status=401,
+                error_message=['Action Requires User To Be Logged In']
+            )
 
+        user_data = self._redis_client.get(session_keys[0])
 
-        return self._grpc_call_with_retry(self._stub.CommunityDelete, req)
+        if user_data:
+            user_data = json.loads(user_data)
+            user_id = user_data.get("id")
 
-    # noinspection PyMethodMayBeStatic
-    def user_to_json(self, user: community_pb2.CommunityDataResponse) -> dict:
-        """
-        Format the user object into a dictionary for use in a JSON response.
+            req.user_id = int(user_id)
 
-        :param user: The user object to format
-        :return: A dictionary containing the user's details
-        """
-        return {
-            "id": user.id,
-            "email": user.email,
-            "email_verified": user.email_verified,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "gender": user.gender,
-            "date_of_birth": user.date_of_birth,
-            "picture_url": user.picture_url,
-            "degree_id": user.degree_id,
-            "year_of_study": user.year_of_study,
-            "grad_date": user.grad_date,
-            "tags": list(user.tags),
-            "rank": user.rank,
-            "created_at": user.created_at,
-            "updated_at": user.updated_at,
-        }
+            return self._grpc_call_with_retry(self._stub.CommunityDelete, req)
+        
+        return community_pb2.BasicCommunityResponse(
+            success=False,
+            http_status=500,
+            error_message=['User Session Is Empty']
+        )

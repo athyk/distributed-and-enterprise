@@ -63,7 +63,7 @@ def update_community(community_id: int, name: str, description: str, public: boo
         ).all()
 
         for tag in tag_result:
-            current_tags.append(str(tag[0]))
+            current_tags.append(tag[0])
         
         degree_result = session.query(CommunityDegree.degree_id).filter(
             CommunityDegree.community_id == community_id
@@ -93,8 +93,8 @@ def update_community(community_id: int, name: str, description: str, public: boo
 
         further_non_critical_errors = ['Community Successfully Updated']
 
-        further_non_critical_errors = add_tags(session, tags, community_id, further_non_critical_errors)
-        further_non_critical_errors = add_degrees(session, degrees, community_id, further_non_critical_errors)
+        further_non_critical_errors = add_tags(session, tags, community_id)
+        further_non_critical_errors = add_degrees(session, degrees, community_id)
 
         session.commit()
 

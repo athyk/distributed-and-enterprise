@@ -36,7 +36,6 @@ class Announcement(Base):
     edit_datetime = Column(DateTime, default=lambda: datetime(1970, 1, 1), nullable=True)
 
 
-
 class CommunityDegree(Base):
     __tablename__ = 'community_degree'
     

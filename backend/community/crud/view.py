@@ -1,6 +1,7 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityDegree, CommunityTag
+from backend.community.crud.local_functions import get_tag_name, get_degree_name
 
 from math import inf as INFINITY
 
@@ -11,6 +12,8 @@ def get_community_data(community_id: int) -> tuple[bool, list, str, str, bool, l
     If any errors arise then relevant error messages are returned.
     """
 
+    print('community data')
+
     community_verify, community_error = verify_integer(community_id, 1, INFINITY)
 
     if False in [community_verify]:
@@ -20,11 +23,15 @@ def get_community_data(community_id: int) -> tuple[bool, list, str, str, bool, l
 
         return False, error_messages, "", "", False, [], []
     
+    print('checks passed')
+    
     with get_db() as session:
         result = session.query(Community.name, Community.description, Community.public).filter(Community.id == community_id).first()
 
         if not result:
             return False, ['Selected community does not exist'], "", "", False, [], []
+        
+        print('community exists')
         
         name = result[0]
         description = result[1]
@@ -37,15 +44,19 @@ def get_community_data(community_id: int) -> tuple[bool, list, str, str, bool, l
         tags = []
         degrees = []
 
+
+
         for tag in tag_result:
-            tags.append(str(tag[0]))
+            tags.append(get_tag_name(tag[0]))
         
         degree_result = session.query(CommunityDegree.degree_id).filter(
             CommunityDegree.community_id == community_id
         ).all()
 
         for degree in degree_result:
-            degrees.append(degree[0])
+            degrees.append(get_degree_name(degree[0]))
+
+        print('passed')
 
         return True, [], name, description, public, tags, degrees
         

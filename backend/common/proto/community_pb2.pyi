@@ -16,10 +16,10 @@ class CommunityCreateRequest(_message.Message):
     name: str
     description: str
     public: bool
-    tags: _containers.RepeatedScalarFieldContainer[str]
-    degrees: _containers.RepeatedScalarFieldContainer[str]
+    tags: _containers.RepeatedScalarFieldContainer[int]
+    degrees: _containers.RepeatedScalarFieldContainer[int]
     user_id: int
-    def __init__(self, name: _Optional[str] = ..., description: _Optional[str] = ..., public: bool = ..., tags: _Optional[_Iterable[str]] = ..., degrees: _Optional[_Iterable[str]] = ..., user_id: _Optional[int] = ...) -> None: ...
+    def __init__(self, name: _Optional[str] = ..., description: _Optional[str] = ..., public: bool = ..., tags: _Optional[_Iterable[int]] = ..., degrees: _Optional[_Iterable[int]] = ..., user_id: _Optional[int] = ...) -> None: ...
 
 class CommunityUpdateRequest(_message.Message):
     __slots__ = ("id", "name", "description", "public", "tags", "degrees", "user_id")
@@ -34,10 +34,10 @@ class CommunityUpdateRequest(_message.Message):
     name: str
     description: str
     public: bool
-    tags: _containers.RepeatedScalarFieldContainer[str]
-    degrees: _containers.RepeatedScalarFieldContainer[str]
+    tags: _containers.RepeatedScalarFieldContainer[int]
+    degrees: _containers.RepeatedScalarFieldContainer[int]
     user_id: int
-    def __init__(self, id: _Optional[int] = ..., name: _Optional[str] = ..., description: _Optional[str] = ..., public: bool = ..., tags: _Optional[_Iterable[str]] = ..., degrees: _Optional[_Iterable[str]] = ..., user_id: _Optional[int] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., name: _Optional[str] = ..., description: _Optional[str] = ..., public: bool = ..., tags: _Optional[_Iterable[int]] = ..., degrees: _Optional[_Iterable[int]] = ..., user_id: _Optional[int] = ...) -> None: ...
 
 class CommunityViewRequest(_message.Message):
     __slots__ = ("id",)
