@@ -1,27 +1,33 @@
 from django.urls import path
-from .views import ping1, ping5, ping10, chat_message
+
+from .view.auth.logout import logout_self
+from .view.degrees.list import list_degrees
+from .view.degrees.degrees import degree_paths
+from .view.tags.list import list_tags
+from .view.tags.tags import tag_paths
+from .view.users.self.profile import update_profile_picture
+from .view.users.self.users import user_self_paths
+from .view.users.users import user_paths
+from .views import chat_message
 
 from backend.core.view.community.announcements import community_announcement_paths, community_announcement_action_paths, community_global_announcement_view
 from backend.core.view.community.community_crud import community_crud_paths, community_creation
-from backend.core.view.authentication.authentication import login_user, register_user, send_email_verification_code, verify_email_and_account
-from backend.core.view.data_fetching.fetch_data_lists import fetch_degrees, fetch_tags
+from backend.core.view.auth.login import login_user
+from backend.core.view.auth.register import register_user
 
 
 urlpatterns = [
-    path('ping/', ping1),
-    path('ping/1/', ping1),
-    path('ping/5/', ping5),
-    path('ping/10/', ping10),
     path('chat/message/', chat_message),
     path('community/<int:community_id>', community_crud_paths),
     path('community/', community_creation),
-    path('community/announcements',community_global_announcement_view),
-    path('community/<int:community_id>/announcements',community_announcement_paths),
-    path('community/<int:community_id>/announcements/<int:announcement_id>',community_announcement_action_paths),
-    path('authorisation/login', login_user),
-    path('authorisation/register', register_user),
-    path('authorisation/email/send-code', send_email_verification_code),
-    path('authorisation/email/verify', verify_email_and_account),
-    path('degrees', fetch_degrees),
-    path('tags', fetch_tags),
+    path('auth/login', login_user),
+    path('auth/register', register_user),
+    path('auth/logout', logout_self),
+    path('users/@me/profile', update_profile_picture),
+    path('users/@me', user_self_paths),
+    path('users/', user_paths),
+    path('tags/', tag_paths),
+    path('tags/list/', list_tags),
+    path('degrees/', degree_paths),
+    path('degrees/list/', list_degrees),
 ]

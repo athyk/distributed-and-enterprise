@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+// Degree is the degree object that is returned, containing all the degree's information.
+message Degree {
+  // id is the Degree's unique id.
+  int64 id = 1;
+  // name is the Degree's name.
+  string name = 2;
+  // created_at is the time the Degree was created in unix time.
+  int64 created_at = 3;
+  // updated_at is the time the Degree was last updated in unix time.
+  int64 updated_at = 4;
+}
+
+// DegreeCreateRequest is the request for creating a degree.
+message DegreeCreateRequest {
+  // name is the degree's name.
+  string name = 1;
+}
+
+message DegreeCreateResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+  // id is the Degree's unique id.
+  int64 id = 4;
+}
+
+message DegreeDeleteRequest {
+  // id is the Degree's unique id.
+  int64 id = 1;
+}
+
+message DegreeDeleteResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+}
+
+message DegreeGetRequest {
+  // id is the Degree's unique id.
+  int64 id = 1;
+  // name is the Degree's name.
+  string name = 2;
+}
+
+message DegreeGetResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+  // Degree is the Degree object that was found.
+  Degree degree = 4;
+}
+
+message DegreeListRequest {
+  // page is the page number to return, starting from 0.
+  int32 page = 1;
+  // limit is the number of Degrees to return per page. The maximum limit is 50.
+  int32 limit = 2;
+  // name is the Degree's name, if provided, it will attempt to find Degrees that match the name.
+  string name = 3;
+}
+
+message DegreeListResponse {
+  // success is a flag to indicate if the message was successfully sent.
+  bool success = 1;
+  // http status is the integer response of the request results whilst following the http code format
+  int32 http_status = 2;
+  // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+  repeated string error_message = 3;
+  // Degrees is the list of degrees that were found.
+  repeated Degree degrees = 4;
+}
+
+
+service Degrees {
+  // Create creates a Degree.
+  rpc Create(DegreeCreateRequest) returns (DegreeCreateResponse) {}
+  // Delete deletes a Degree.
+  rpc Delete(DegreeDeleteRequest) returns (DegreeDeleteResponse) {}
+  // Get by id or name.
+  rpc Get(DegreeGetRequest) returns (DegreeGetResponse) {}
+  // List returns all Degrees found, allowing for partial name matching.
+  rpc List(DegreeListRequest) returns (DegreeListResponse) {}
+}

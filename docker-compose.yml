@@ -33,14 +33,13 @@ services:
     env_file: .env
     logging:
       driver: none
-
-  community-service:
+  chat-service:
     build:
         context: .
-        dockerfile: backend/community/Dockerfile
-    container_name: community-service
+        dockerfile: backend/chat/Dockerfile
+    container_name: chat-service
     ports:
-      - ${COMMUNITY_PORT}:${COMMUNITY_PORT}
+      - ${CHAT_PORT}:${CHAT_PORT}
     depends_on:
       - db
       - redis
@@ -56,28 +55,53 @@ services:
       - db
       - minio
       - redis
-      - auth-service
+      - account-service
       - chat-service
       - community-service
+      - tag-service
+      - degree-service
     env_file: .env
-  svelte-frontend:
+
+  tag-service:
     build:
-      context: ./frontend
-    container_name: svelte-frontend
+      context: .
+      dockerfile: backend/tag/Dockerfile
+    container_name: tag-service
     ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
+      - ${TAG_PORT}:${TAG_PORT}
     depends_on:
-      - django-backend
-    working_dir: /app
-  auth-service:
+      - db
+      - redis
+    env_file: .env
+  degree-service:
+    build:
+      context: .
+      dockerfile: backend/degree/Dockerfile
+    container_name: degree-service
+    ports:
+      - ${DEGREE_PORT}:${DEGREE_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+  community-service:
+    build:
+      context: .
+      dockerfile: backend/community/Dockerfile
+    container_name: community-service
+    ports:
+      - ${COMMUNITY_PORT}:${COMMUNITY_PORT}
+    depends_on:
+      - db
+      - redis
+    env_file: .env
+  account-service:
     build:
         context: .
-        dockerfile: backend/auth/Dockerfile
-    container_name: auth-service
+        dockerfile: backend/accounts/Dockerfile
+    container_name: account-service
     ports:
-      - ${AUTH_PORT}:${AUTH_PORT}
+      - ${ACC_PORT}:${ACC_PORT}
     depends_on:
       - db
       - redis
