@@ -218,3 +218,5 @@ INSERT INTO public."tag" (id, name, count, created_at, updated_at) VALUES
     (192, 'CollegeBurnout', 3, '2025-03-13', '2025-03-14'),
     (166, 'CampusEats', 3, '2025-03-13', '2025-03-14'),
     (196, 'LifeAfterCollege', 2, '2025-03-13', '2025-03-14');
+
+SELECT setval(pg_get_serial_sequence('tag', 'id'), COALESCE((SELECT MAX(id) FROM tag), 1), FALSE);

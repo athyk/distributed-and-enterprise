@@ -1674,3 +1674,6 @@ INSERT INTO public."user_tag" (id, tag_id, user_id) VALUES
     (1171, 183, 500),
     (1172, 212, 500),
     (1173, 156, 500);
+
+SELECT setval(pg_get_serial_sequence('user', 'id'), COALESCE((SELECT MAX(id) FROM "user"), 1), FALSE);
+SELECT setval(pg_get_serial_sequence('user_tag', 'id'), COALESCE((SELECT MAX(id) FROM "user_tag"), 1), FALSE);
