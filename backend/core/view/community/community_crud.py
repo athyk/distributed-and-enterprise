@@ -92,12 +92,12 @@ def community_read(request: WSGIRequest, community_id):
             id=community_id
         )
 
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
         response: community_pb2.CommunityDataResponse = client.view(req)
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 

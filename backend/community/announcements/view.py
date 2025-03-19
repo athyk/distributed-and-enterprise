@@ -151,7 +151,7 @@ def get_global_community_announcements(offset: int, limit: int) -> tuple[bool, l
             Announcement.datetime, Announcement.last_edited_user_id, Announcement.edit_datetime, Announcement.community_id
         ).filter(
             Announcement.community_id == Community.id,
-            Community.public == True
+            Community.public
         ).order_by(
             Announcement.datetime.desc(),
             Announcement.id.asc()

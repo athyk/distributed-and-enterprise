@@ -1,9 +1,7 @@
 import http
 import json
-import os
 import traceback
 
-import grpc
 from google.protobuf.json_format import MessageToDict
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
@@ -290,8 +288,6 @@ def community_announcement_edit(request: WSGIRequest, community_id, announcement
 
     try:
         data = json.loads(request.body)
-
-        print(data)
 
         req = community_announcement_pb2.CommunityAnnouncementUpdateRequest(
             announcement_id=announcement_id,
