@@ -1,6 +1,6 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Announcement, AnnouncementTag, Tag, Community
+from backend.community.database.models import Announcement, AnnouncementTag, Community
 from backend.community.utils import check_if_user_is_in_private_community
 
 from math import inf as INFINITY
@@ -25,52 +25,9 @@ def get_community_announcements(community_id: int, user_id: int, offset: int, li
         return False, error_messages, []
 
     with get_db() as session:
-        success, message = check_if_user_is_in_private_community(session, community_id, user_id)
+        # TODO: Rework to new structure
 
-        if not success:
-            return success, message, []
-            
-        announcement_result = session.query(
-            Announcement.id, Announcement.title, Announcement.description, Announcement.user_id,
-            Announcement.datetime, Announcement.last_edited_user_id, Announcement.edit_datetime
-        ).filter(
-            Announcement.community_id == community_id
-        ).order_by(
-            Announcement.datetime.desc()
-        ).limit(limit).offset(offset).all()
-
-        announcement_result = [list(_tuple) for _tuple in announcement_result]
-
-        announce = []
-
-        for announcement in announcement_result:
-            announcement_id = announcement[0]
-
-            announcement_tag_result = session.query(Tag.name).filter(
-                Announcement.id == announcement_id,
-                Announcement.id == AnnouncementTag.announcement_id,
-                AnnouncementTag.tag_id == Tag.id
-            ).all()
-
-            tags = []
-
-            for tag in announcement_tag_result:
-                tags.append(tag[0])
-
-            reformed_announcement = {
-                "id": announcement[0],
-                "title": announcement[1],
-                "description": announcement[2],
-                "tags": tags,
-                "user_id": announcement[3],
-                "uploaded": announcement[4].strftime("%Y-%m-%d %H:%M:%S"),
-                "edit_user_id": announcement[5],
-                "edit_uploaded": announcement[6].strftime("%Y-%m-%d %H:%M:%S")
-            }
-
-            announce.append(reformed_announcement)
-
-        return True, ['Announcements Fetched'], announce
+        return True, ['Announcements Fetched'], []
 
 
 def get_specified_community_announcement(announcement_id: int, community_id: int, user_id: int) -> tuple[bool, list, dict]:
@@ -91,41 +48,9 @@ def get_specified_community_announcement(announcement_id: int, community_id: int
         return False, error_messages, {}
 
     with get_db() as session:
-        success, message = check_if_user_is_in_private_community(session, community_id, user_id)
+        # TODO: Rework to new structure
 
-        if not success:
-            return success, message, {}
-            
-        announcement_result = session.query(
-            Announcement.id, Announcement.title, Announcement.description, Announcement.user_id,
-            Announcement.datetime, Announcement.last_edited_user_id, Announcement.edit_datetime
-        ).filter(
-            Announcement.id == announcement_id
-        ).first()
-
-        announcement_tag_result = session.query(Tag.name).filter(
-            Announcement.id == announcement_id,
-            Announcement.id == AnnouncementTag.announcement_id,
-            AnnouncementTag.tag_id == Tag.id
-        ).all()
-
-        tags = []
-
-        for tag in announcement_tag_result:
-            tags.append(tag[0])
-
-        reformed_announcement = {
-            "id": announcement_result[0],
-            "title": announcement_result[1],
-            "description": announcement_result[2],
-            "tags": tags,
-            "user_id": announcement_result[3],
-            "uploaded": announcement_result[4].strftime("%Y-%m-%d %H:%M:%S"),
-            "edit_user_id": announcement_result[5],
-            "edit_uploaded": announcement_result[6].strftime("%Y-%m-%d %H:%M:%S")
-        }
-
-        return True, ['Announcement Fetched'], reformed_announcement
+        return True, ['Announcement Fetched'], {}
 
 
 def get_global_community_announcements(offset: int, limit: int) -> tuple[bool, list, list]:
@@ -145,46 +70,6 @@ def get_global_community_announcements(offset: int, limit: int) -> tuple[bool, l
         return False, error_messages, []
 
     with get_db() as session:
-        announcement_result = session.query(
-            Announcement.id, Announcement.title, Announcement.description, Announcement.user_id,
-            Announcement.datetime, Announcement.last_edited_user_id, Announcement.edit_datetime, Announcement.community_id
-        ).filter(
-            Announcement.community_id == Community.id,
-            Community.public
-        ).order_by(
-            Announcement.datetime.desc()
-        ).limit(limit).offset(offset).all()
+        # TODO: Rework to new structure
 
-        announcement_result = [list(_tuple) for _tuple in announcement_result]
-
-        announce = []
-
-        for announcement in announcement_result:
-            announcement_id = announcement[0]
-
-            announcement_tag_result = session.query(Tag.name).filter(
-                Announcement.id == announcement_id,
-                Announcement.id == AnnouncementTag.announcement_id,
-                AnnouncementTag.tag_id == Tag.id
-            ).all()
-
-            tags = []
-
-            for tag in announcement_tag_result:
-                tags.append(tag[0])
-
-            reformed_announcement = {
-                "id": announcement[0],
-                "title": announcement[1],
-                "description": announcement[2],
-                "tags": tags,
-                "user_id": announcement[3],
-                "uploaded": announcement[4].strftime("%Y-%m-%d %H:%M:%S"),
-                "edit_user_id": announcement[5],
-                "edit_uploaded": announcement[6].strftime("%Y-%m-%d %H:%M:%S"),
-                "community_id": announcement[7]
-            }
-
-            announce.append(reformed_announcement)
-
-        return True, ['Announcements Fetched'], announce
+        return True, ['Announcements Fetched'], []

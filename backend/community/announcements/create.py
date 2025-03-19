@@ -2,7 +2,6 @@ from backend.common.utils import verify_string, verify_list, verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Announcement
 
-from backend.community.announcements.local_functions import add_tags
 from backend.community.utils import does_user_have_required_role
 
 from math import inf as INFINITY
@@ -30,27 +29,6 @@ def create_announcement(community_id: int, user_id: int, title: str, description
         return False, error_messages
 
     with get_db() as session:
-        success, message = does_user_have_required_role(session, community_id, user_id, ['Moderator', 'Admin'])
-        
-        if not success:
-            return success, message
-            
-        new_announcement = Announcement(
-            community_id=community_id,
-            user_id=user_id,
-            title=title,
-            description=description,
-            datetime=datetime.utcnow(),
-            edit_datetime=None,
-            last_edited_user_id=None
-        )
+        # TODO: Rework to new structure
 
-        session.add(new_announcement)
-        session.commit()
-
-        new_announcement_id = new_announcement.id
-        further_non_critical_errors = ['Community Announcement Successfully Created']
-
-        further_non_critical_errors = add_tags(session, tags, new_announcement_id, further_non_critical_errors)
-
-        return True, further_non_critical_errors
+        return True, []
