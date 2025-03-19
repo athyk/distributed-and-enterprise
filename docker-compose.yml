@@ -61,7 +61,6 @@ services:
       - tag-service
       - degree-service
     env_file: .env
-
   tag-service:
     build:
       context: .
