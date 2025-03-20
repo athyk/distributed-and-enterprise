@@ -7,16 +7,18 @@ from concurrent import futures
 #
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
-from backend.common.proto import community_pb2_grpc, community_announcement_pb2_grpc
+from backend.common.proto import community_pb2_grpc, community_announcement_pb2_grpc, community_joins_pb2_grpc
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
 from backend.common.services.community.community import CommunityClient
 from backend.common.services.community.announcement import CommunityAnnouncementClient
+from backend.common.services.community.joins import CommunityJoinsClient
 
 from backend.community.database.database import engine, Base, confirm_database_exists
 
 # All community services that will be run goes here
 from backend.community.services.community_crud import Community_CRUD_Service
 from backend.community.services.community_announcements import Community_Announcement_Service
+from backend.community.services.community_joins import Community_Joins_Service
 
 def serve():
     port = os.environ.get('COMMUNITY_PORT', '50052')
@@ -37,6 +39,9 @@ def serve():
 
     community_announcement_pb2_grpc.add_CommunityAnnouncementServicer_to_server(Community_Announcement_Service(), server)
     print('Service Added: Announcement-Service')
+
+    community_joins_pb2_grpc.add_CommunityJoinsServicer_to_server(Community_Joins_Service(), server)
+    print('Service Added: Joins-Service')
 
     server.add_insecure_port('[::]:' + port)
     server.start()
@@ -66,6 +71,11 @@ def serve():
     )
 
     CommunityAnnouncementClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityJoinsClient.initialise(
         "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
