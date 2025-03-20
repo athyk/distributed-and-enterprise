@@ -59,7 +59,7 @@ def community_event_creation(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to create a new community
     """
 
-    validations = ['title', 'description', 'location', 'datetime', 'duration']
+    validations = ['title', 'description', 'location', 'datetime', 'duration', 'tags']
 
     for validation in validations:
         if validation not in json.loads(request.body):
@@ -76,7 +76,8 @@ def community_event_creation(request: WSGIRequest, community_id):
             description=data['description'],
             location=data['location'],
             datetime=data['datetime'],
-            duration=data['duration']
+            duration=data['duration'],
+            tags=data['tags']
         )
 
     except json.JSONDecodeError:  # Occurs if the JSON is invalid
@@ -280,7 +281,7 @@ def community_event_edit(request: WSGIRequest, community_id, event_id):
     Sends a request to the community server with the relevant data to update a community's data
     """
 
-    validations = ['title', 'description', 'location', 'datetime', 'duration']
+    validations = ['title', 'description', 'location', 'datetime', 'duration', 'tags']
 
     for validation in validations:
         if validation not in json.loads(request.body):
@@ -299,7 +300,8 @@ def community_event_edit(request: WSGIRequest, community_id, event_id):
                 description=data['description'],
                 location=data['location'],
                 datetime=data['datetime'],
-                duration=data['duration']
+                duration=data['duration'],
+                tags=data['tags']
             )
         )
 

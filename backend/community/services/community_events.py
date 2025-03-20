@@ -61,7 +61,8 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             request.description,
             request.location,
             request.datetime,
-            request.duration
+            request.duration,
+            list(request.tags)
             )
         
         status = community_event_pb2.EventResponse(
@@ -150,7 +151,8 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             description=request.event_data.description,
             location=request.event_data.location,
             datetime=request.event_data.datetime,
-            duration=request.event_data.duration
+            duration=request.event_data.duration,
+            tags=list(request.event_data.tags)
             )
 
         status = community_event_pb2.EventResponse(

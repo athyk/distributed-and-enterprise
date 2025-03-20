@@ -6,7 +6,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class EventDataRequest(_message.Message):
-    __slots__ = ("user_id", "community_id", "title", "description", "location", "datetime", "duration")
+    __slots__ = ("user_id", "community_id", "title", "description", "location", "datetime", "duration", "tags")
     USER_ID_FIELD_NUMBER: _ClassVar[int]
     COMMUNITY_ID_FIELD_NUMBER: _ClassVar[int]
     TITLE_FIELD_NUMBER: _ClassVar[int]
@@ -14,6 +14,7 @@ class EventDataRequest(_message.Message):
     LOCATION_FIELD_NUMBER: _ClassVar[int]
     DATETIME_FIELD_NUMBER: _ClassVar[int]
     DURATION_FIELD_NUMBER: _ClassVar[int]
+    TAGS_FIELD_NUMBER: _ClassVar[int]
     user_id: int
     community_id: int
     title: str
@@ -21,7 +22,8 @@ class EventDataRequest(_message.Message):
     location: str
     datetime: str
     duration: int
-    def __init__(self, user_id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ...) -> None: ...
+    tags: _containers.RepeatedScalarFieldContainer[int]
+    def __init__(self, user_id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ..., tags: _Optional[_Iterable[int]] = ...) -> None: ...
 
 class EventResponse(_message.Message):
     __slots__ = ("success", "http_status", "error_message")
@@ -42,7 +44,7 @@ class CreateResponse(_message.Message):
     def __init__(self, status: _Optional[_Union[EventResponse, _Mapping]] = ..., event_id: _Optional[int] = ...) -> None: ...
 
 class ViewEvent(_message.Message):
-    __slots__ = ("id", "community_id", "title", "description", "location", "datetime", "duration", "latitude", "longitude")
+    __slots__ = ("id", "community_id", "title", "description", "location", "datetime", "duration", "tags", "latitude", "longitude")
     ID_FIELD_NUMBER: _ClassVar[int]
     COMMUNITY_ID_FIELD_NUMBER: _ClassVar[int]
     TITLE_FIELD_NUMBER: _ClassVar[int]
@@ -50,6 +52,7 @@ class ViewEvent(_message.Message):
     LOCATION_FIELD_NUMBER: _ClassVar[int]
     DATETIME_FIELD_NUMBER: _ClassVar[int]
     DURATION_FIELD_NUMBER: _ClassVar[int]
+    TAGS_FIELD_NUMBER: _ClassVar[int]
     LATITUDE_FIELD_NUMBER: _ClassVar[int]
     LONGITUDE_FIELD_NUMBER: _ClassVar[int]
     id: int
@@ -59,9 +62,10 @@ class ViewEvent(_message.Message):
     location: str
     datetime: str
     duration: int
+    tags: _containers.RepeatedScalarFieldContainer[int]
     latitude: float
     longitude: float
-    def __init__(self, id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ..., latitude: _Optional[float] = ..., longitude: _Optional[float] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ..., tags: _Optional[_Iterable[int]] = ..., latitude: _Optional[float] = ..., longitude: _Optional[float] = ...) -> None: ...
 
 class ViewOneRequest(_message.Message):
     __slots__ = ("user_id", "community_id", "event_id")

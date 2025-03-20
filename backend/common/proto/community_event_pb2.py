@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x63ommunity_event.proto\"\x93\x01\n\x10\x45ventDataRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x10\n\x08location\x18\x05 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x06 \x01(\t\x12\x10\n\x08\x64uration\x18\x07 \x01(\x05\"L\n\rEventResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"B\n\x0e\x43reateResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0b\x32\x0e.EventResponse\x12\x10\n\x08\x65vent_id\x18\x02 \x01(\x05\"\xd1\x01\n\tViewEvent\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x10\n\x08location\x18\x05 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x06 \x01(\t\x12\x10\n\x08\x64uration\x18\x07 \x01(\x05\x12\x15\n\x08latitude\x18\x08 \x01(\x02H\x00\x88\x01\x01\x12\x16\n\tlongitude\x18\t \x01(\x02H\x01\x88\x01\x01\x42\x0b\n\t_latitudeB\x0c\n\n_longitude\"I\n\x0eViewOneRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\x10\n\x08\x65vent_id\x18\x03 \x01(\x05\"S\n\x0bViewRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x05\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\x0e\n\x06offset\x18\x03 \x01(\x05\x12\r\n\x05limit\x18\x04 \x01(\x05\"2\n\x11ViewGlobalRequest\x12\x0e\n\x06offset\x18\x01 \x01(\x05\x12\r\n\x05limit\x18\x02 \x01(\x05\"I\n\x0cViewResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0b\x32\x0e.EventResponse\x12\x19\n\x05\x65vent\x18\x02 \x03(\x0b\x32\n.ViewEvent\"K\n\x10\x45\x64itEventRequest\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\x05\x12%\n\nevent_data\x18\x02 \x01(\x0b\x32\x11.EventDataRequest\"M\n\x12\x44\x65leteEventRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\x10\n\x08\x65vent_id\x18\x03 \x01(\x05\x32\xc5\x02\n\x0e\x43ommunityEvent\x12\x33\n\x0b\x43reateEvent\x12\x11.EventDataRequest\x1a\x0f.CreateResponse\"\x00\x12\x30\n\x0cViewOneEvent\x12\x0f.ViewOneRequest\x1a\r.ViewResponse\"\x00\x12+\n\nViewEvents\x12\x0c.ViewRequest\x1a\r.ViewResponse\"\x00\x12\x37\n\x10ViewGlobalEvents\x12\x12.ViewGlobalRequest\x1a\r.ViewResponse\"\x00\x12\x30\n\tEditEvent\x12\x11.EditEventRequest\x1a\x0e.EventResponse\"\x00\x12\x34\n\x0b\x44\x65leteEvent\x12\x13.DeleteEventRequest\x1a\x0e.EventResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x15\x63ommunity_event.proto\"\xa1\x01\n\x10\x45ventDataRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x10\n\x08location\x18\x05 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x06 \x01(\t\x12\x10\n\x08\x64uration\x18\x07 \x01(\x05\x12\x0c\n\x04tags\x18\x08 \x03(\x05\"L\n\rEventResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"B\n\x0e\x43reateResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0b\x32\x0e.EventResponse\x12\x10\n\x08\x65vent_id\x18\x02 \x01(\x05\"\xdf\x01\n\tViewEvent\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\r\n\x05title\x18\x03 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x04 \x01(\t\x12\x10\n\x08location\x18\x05 \x01(\t\x12\x10\n\x08\x64\x61tetime\x18\x06 \x01(\t\x12\x10\n\x08\x64uration\x18\x07 \x01(\x05\x12\x0c\n\x04tags\x18\x08 \x03(\x05\x12\x15\n\x08latitude\x18\t \x01(\x02H\x00\x88\x01\x01\x12\x16\n\tlongitude\x18\n \x01(\x02H\x01\x88\x01\x01\x42\x0b\n\t_latitudeB\x0c\n\n_longitude\"I\n\x0eViewOneRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\x10\n\x08\x65vent_id\x18\x03 \x01(\x05\"S\n\x0bViewRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x05\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\x0e\n\x06offset\x18\x03 \x01(\x05\x12\r\n\x05limit\x18\x04 \x01(\x05\"2\n\x11ViewGlobalRequest\x12\x0e\n\x06offset\x18\x01 \x01(\x05\x12\r\n\x05limit\x18\x02 \x01(\x05\"I\n\x0cViewResponse\x12\x1e\n\x06status\x18\x01 \x01(\x0b\x32\x0e.EventResponse\x12\x19\n\x05\x65vent\x18\x02 \x03(\x0b\x32\n.ViewEvent\"K\n\x10\x45\x64itEventRequest\x12\x10\n\x08\x65vent_id\x18\x01 \x01(\x05\x12%\n\nevent_data\x18\x02 \x01(\x0b\x32\x11.EventDataRequest\"M\n\x12\x44\x65leteEventRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x14\n\x0c\x63ommunity_id\x18\x02 \x01(\x05\x12\x10\n\x08\x65vent_id\x18\x03 \x01(\x05\x32\xc5\x02\n\x0e\x43ommunityEvent\x12\x33\n\x0b\x43reateEvent\x12\x11.EventDataRequest\x1a\x0f.CreateResponse\"\x00\x12\x30\n\x0cViewOneEvent\x12\x0f.ViewOneRequest\x1a\r.ViewResponse\"\x00\x12+\n\nViewEvents\x12\x0c.ViewRequest\x1a\r.ViewResponse\"\x00\x12\x37\n\x10ViewGlobalEvents\x12\x12.ViewGlobalRequest\x1a\r.ViewResponse\"\x00\x12\x30\n\tEditEvent\x12\x11.EditEventRequest\x1a\x0e.EventResponse\"\x00\x12\x34\n\x0b\x44\x65leteEvent\x12\x13.DeleteEventRequest\x1a\x0e.EventResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -32,25 +32,25 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'community_event_pb2', _glob
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_EVENTDATAREQUEST']._serialized_start=26
-  _globals['_EVENTDATAREQUEST']._serialized_end=173
-  _globals['_EVENTRESPONSE']._serialized_start=175
-  _globals['_EVENTRESPONSE']._serialized_end=251
-  _globals['_CREATERESPONSE']._serialized_start=253
-  _globals['_CREATERESPONSE']._serialized_end=319
-  _globals['_VIEWEVENT']._serialized_start=322
-  _globals['_VIEWEVENT']._serialized_end=531
-  _globals['_VIEWONEREQUEST']._serialized_start=533
-  _globals['_VIEWONEREQUEST']._serialized_end=606
-  _globals['_VIEWREQUEST']._serialized_start=608
-  _globals['_VIEWREQUEST']._serialized_end=691
-  _globals['_VIEWGLOBALREQUEST']._serialized_start=693
-  _globals['_VIEWGLOBALREQUEST']._serialized_end=743
-  _globals['_VIEWRESPONSE']._serialized_start=745
-  _globals['_VIEWRESPONSE']._serialized_end=818
-  _globals['_EDITEVENTREQUEST']._serialized_start=820
-  _globals['_EDITEVENTREQUEST']._serialized_end=895
-  _globals['_DELETEEVENTREQUEST']._serialized_start=897
-  _globals['_DELETEEVENTREQUEST']._serialized_end=974
-  _globals['_COMMUNITYEVENT']._serialized_start=977
-  _globals['_COMMUNITYEVENT']._serialized_end=1302
+  _globals['_EVENTDATAREQUEST']._serialized_end=187
+  _globals['_EVENTRESPONSE']._serialized_start=189
+  _globals['_EVENTRESPONSE']._serialized_end=265
+  _globals['_CREATERESPONSE']._serialized_start=267
+  _globals['_CREATERESPONSE']._serialized_end=333
+  _globals['_VIEWEVENT']._serialized_start=336
+  _globals['_VIEWEVENT']._serialized_end=559
+  _globals['_VIEWONEREQUEST']._serialized_start=561
+  _globals['_VIEWONEREQUEST']._serialized_end=634
+  _globals['_VIEWREQUEST']._serialized_start=636
+  _globals['_VIEWREQUEST']._serialized_end=719
+  _globals['_VIEWGLOBALREQUEST']._serialized_start=721
+  _globals['_VIEWGLOBALREQUEST']._serialized_end=771
+  _globals['_VIEWRESPONSE']._serialized_start=773
+  _globals['_VIEWRESPONSE']._serialized_end=846
+  _globals['_EDITEVENTREQUEST']._serialized_start=848
+  _globals['_EDITEVENTREQUEST']._serialized_end=923
+  _globals['_DELETEEVENTREQUEST']._serialized_start=925
+  _globals['_DELETEEVENTREQUEST']._serialized_end=1002
+  _globals['_COMMUNITYEVENT']._serialized_start=1005
+  _globals['_COMMUNITYEVENT']._serialized_end=1330
 # @@protoc_insertion_point(module_scope)
