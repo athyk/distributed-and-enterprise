@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+message 
+
+service CommunityEvent {
+    // CommunityCreateEvent
+    rpc CommunityCreateEvent() returns () {}
+    // CommunityViewOneEvent
+    rpc CommunityViewOneEvent() returns () {}
+    // CommunityViewEvents
+    rpc CommunityViewEvents() returns () {}
+    // CommunityViewGlobalEvents
+    rpc CommunityViewGlobalEvents() returns () {}
+    // CommunityEditEvent
+    rpc CommunityEditEvent() returns () {}
+    // CommunityDeleteEvent
+    rpc CommunityDeleteEvent() returns () {}
+}
