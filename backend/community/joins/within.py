@@ -1,6 +1,6 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Community, CommunityUser
+from backend.community.database.models import CommunityUser
 
 from math import inf as INFINITY
 

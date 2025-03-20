@@ -119,3 +119,49 @@ def with_community(request: WSGIRequest, community_id: int):
         'http_status': response.http_status,
         'error_message': list(response.error_message)
     })
+
+
+@csrf_exempt
+def invite_to_community(request: WSGIRequest, community_id: int):
+    """
+    URL: localhost:8000/community/<int:community_id>/invite
+
+    Sends a request to the community server with the relevant data to leave a community
+    """
+
+    if request.method != 'POST':
+        return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+    if not request.body:
+        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
+
+    validations = ['invite_user_id']
+
+    for validation in validations:
+        if validation not in json.loads(request.body):
+            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+
+    client = CommunityJoinsClient()
+
+    try:
+        data = json.loads(request.body)
+
+        req = community_joins_pb2.CommunityInviteRequest(
+            community_id=community_id,
+            invite_user_id=data['invite_user_id']
+        )
+
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_joins_pb2.CommunityActionResponse = client.invite(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    return JsonResponse({
+        'success': response.success,
+        'http_status': response.http_status,
+        'error_message': list(response.error_message)
+    })

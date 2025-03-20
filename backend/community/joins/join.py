@@ -23,7 +23,7 @@ def insert_user(session: any, community_id: int, user_id: int, role: str = 'user
         return False, 500, ['Internal Server Error', 'Unable To Join Community']
 
 
-def update_user(session: any, community_id: int, user_id: int) -> tuple[bool, int, list]:
+def update_user(session: any, community_id: int, user_id: int, success_message: list=[]) -> tuple[bool, int, list]:
     try:
         update_user = session.query(CommunityUser).filter(
             CommunityUser.community_id==community_id,
@@ -34,7 +34,9 @@ def update_user(session: any, community_id: int, user_id: int) -> tuple[bool, in
             update_user.role = 'user'
             session.commit()
 
-            return True, 201, []
+            print('converted to user')
+
+            return True, 201, success_message
 
         else:
             return False, 400, ['User Not Invited']
