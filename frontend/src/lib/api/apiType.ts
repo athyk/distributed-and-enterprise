@@ -8,6 +8,7 @@ export type RegiserResponse = {
 	success: boolean;
 	error_message: string[];
 	user_id: number;
+	otp_required: boolean;
 };
 
 export type PaginationData = {

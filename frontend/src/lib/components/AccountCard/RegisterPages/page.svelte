@@ -21,6 +21,8 @@
 
 	export let password_comfirm_value:string | undefined = undefined;
 
+	export let otp: [string, string,string] | undefined = undefined;
+
 	let current_year = new Date().getFullYear();
 	let max_grad_year = current_year + 5;
 
@@ -186,3 +188,15 @@
 	</div>
 {/if}
 
+{#if otp}
+	{#if otp[1] !== ""}
+		<label for={otp[1]} class="block text-gray-700">{otp[1]} </label>
+	{/if}
+	<input
+		type="text"
+		{...otp[1] !== "" ? { placeholder: otp[2] } : {}}
+		{...otp[1] !== "" ? { id: otp[1] } : {}}
+		bind:value={otp[0]}
+		class="mt-2 mb-2 w-full rounded-md border px-4 py-2 focus:ring-1 focus:ring-blue-600 focus:outline-none"
+	/>
+{/if}

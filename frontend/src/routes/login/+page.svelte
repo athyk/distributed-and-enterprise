@@ -3,12 +3,26 @@
 	import Page from '$components/AccountCard/RegisterPages/page.svelte';
 	import { post } from '$lib/api/post';
 	import type { RegiserResponse } from '$lib/api/apiType';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	let errorMessage = "";
 	let email: [string, string, string] = ['','Email',"Enter your email"]
 	let password: [string, string, string] = ['','Password',"Enter your password"]
+	let otp: [string, string, string] = ['','OTP',"Enter your OTP"]
 
-	async function register() {
+	let otp_required = false;
+
+	onMount(() => {
+        // Use the $page store to access URL search parameters
+        const searchParams = new URLSearchParams($page.url.search);
+        if (searchParams.get('otp') === 'true') {
+            otp_required = true;
+        }
+    });
+
+
+	async function login() {
 		if (email[0] === "" || password[0] === "") {
 			errorMessage = "Please fill in all fields";
 			return;
@@ -20,6 +34,7 @@
 		let data = {
 			"email": email[0],
 			"password": password[0],
+			"otp": otp_required ? otp[0] : null
 		};
 		let response = (await post('auth/login', data)) as RegiserResponse;
 		if (response.success) {
@@ -47,15 +62,23 @@
 		promoteUrl="register"
 		promoteText="Don't have an account?"
 		maxstep={1}
-		submitFunction={register}
+		submitFunction={login}
 		bind:errorMessage
 	>
 		<svelte:fragment slot="pages">
 			<div class="p-15">
-			<Page
-				bind:email
-				bind:password
-			/>
+				{#if otp_required}
+					<Page
+						bind:email
+						bind:password
+						bind:otp
+					/>
+				{:else}
+					<Page
+						bind:email
+						bind:password
+					/>
+				{/if}
 			</div>
 		</svelte:fragment>
 	</AccountCard>

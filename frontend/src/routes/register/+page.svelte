@@ -66,14 +66,18 @@
 			"year_of_study": year_of_study[0],
 			"grad_date": "30-06-"+graduation_date[0],
 			"tags": tagIds,
-			"skip_email": true,
+			"skip_email": (document.getElementById("skip") as HTMLInputElement)?.checked
 		}
 
 		console.log("Registering: ", data);
 		let response = (await post('auth/register', data)) as RegiserResponse;
 		if (response.success) {
+			if (response.otp_required) {
+				errorMessage = "OTP sent to your email";
+				window.location.href = "/login?otp=true";
+			}
 			localStorage.setItem('userID', response.user_id.toString());
-			window.location.href = '/';
+			// window.location.href = '/';
 		} else {
 			console.log("Error: ", response.error_message);
 
@@ -126,6 +130,7 @@
 					bind:graduation_date
 					bind:tags
 				/>
+				<input type="checkbox" id="skip" />
 			{/if}
 		</svelte:fragment>
 	</AccountCard>
