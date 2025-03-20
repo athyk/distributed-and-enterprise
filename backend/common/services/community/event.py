@@ -154,7 +154,7 @@ class CommunityEventClient:
             user_data = json.loads(user_data)  # Convert JSON string to Python dictionary
             user_id = user_data.get("id")
 
-            req.user_id = int(user_id)
+            req.event_data.user_id = int(user_id)
 
             return self._grpc_call_with_retry(self._stub.EditEvent, req)
         

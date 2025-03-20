@@ -143,7 +143,7 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
         print("EditEvent Request Made:")
         print(request)
 
-        success, http_code, message, id = edit_event(
+        success, http_code, message = edit_event(
             event_id=request.event_id,
             user_id=request.event_data.user_id,
             community_id=request.event_data.community_id,
@@ -161,7 +161,7 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             error_message=message
         )
 
-        return community_event_pb2.EventResponse(status=status, id=id)
+        return community_event_pb2.EventResponse(success=success, http_status=http_code, error_message=message)
 
 
     def DeleteEvent(self, request: community_event_pb2.DeleteEventRequest, context: grpc.ServicerContext) -> community_event_pb2.EventResponse:
@@ -173,12 +173,6 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
         print("DeleteEvent Request Made:")
         print(request)
 
-        success, http_code, message, id = delete_event(event_id=request.event_id, user_id=request.user_id, community_id=request.community_id)
-
-        status = community_event_pb2.EventResponse(
-            success=success,
-            http_status=http_code,
-            error_message=message
-        )
+        success, http_code, message = delete_event(event_id=request.event_id, user_id=request.user_id, community_id=request.community_id)
         
-        return community_event_pb2.EventResponse(status=status, id=id)
+        return community_event_pb2.EventResponse(success=success, http_status=http_code, error_message=message)
