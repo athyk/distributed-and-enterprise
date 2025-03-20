@@ -19,3 +19,14 @@ def is_user_in_community(community_id: int, user_id: int) -> tuple[bool, int, li
         error_messages = [item for item in all_errors if item.strip()]
 
         return False, error_messages
+    
+    with get_db() as session:
+        user_exists = session.query(CommunityUser.role).filter(
+            CommunityUser.community_id == community_id,
+            CommunityUser.user_id == user_id
+        ).first()
+
+        if not user_exists:
+            return False, 400, ['User Is Not With Community']
+        
+        return True, 200, [f'User Role: {user_exists[0].upper()}']
