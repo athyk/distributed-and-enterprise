@@ -21,14 +21,14 @@ def community_announcement_action_paths(request: WSGIRequest, community_id, anno
 
     if request.method == 'GET':
         return community_announcement_view_single(request, community_id, announcement_id)
+    elif request.method == 'DELETE':
+        return community_announcement_delete(request, community_id, announcement_id)
 
     if not request.body:
         return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
     if request.method == 'PUT':
         return community_announcement_edit(request, community_id, announcement_id)
-    elif request.method == 'DELETE':
-        return community_announcement_delete(request, community_id, announcement_id)
     else:
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
     
