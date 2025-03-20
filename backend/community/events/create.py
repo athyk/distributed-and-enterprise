@@ -1,6 +1,9 @@
 from backend.common.utils import verify_string, verify_integer, verify_list
 from backend.community.database.database import get_db
-from backend.community.database.models import CommunityUser, Event, EventTag
+from backend.community.database.models import Event, EventTag
+
+from backend.community.utils import does_user_have_required_role
+from backend.community.events.local_functions import location_name_to_coords, add_tags
 
 from math import inf as INFINITY
 
@@ -28,4 +31,31 @@ def create_event(user_id: int, community_id: int, title: str, description: str, 
         return False, 400, error_messages, -1
     
     with get_db() as session:
-        return True, 200, [], -1
+        success, message = does_user_have_required_role(session, community_id, user_id, ['moderator', 'admin'])
+
+        if not success:
+            return success, 403, message, -1
+
+        new_event = Event(
+            community_id=community_id,
+            title=title,
+            description=description,
+            location=location,
+            datetime=datetime,
+            duration=duration
+        )
+
+        success, lng, lat, message = location_name_to_coords(location)
+
+        if success:
+            new_event.longitude = lng
+            new_event.latitude = lat
+
+        session.add(new_event)
+        session.commit()
+
+        new_event_id = new_event.id
+        
+        add_tags(session, tags, new_event_id)
+
+        return True, 200, message, new_event_id

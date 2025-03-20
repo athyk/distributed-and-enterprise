@@ -71,7 +71,7 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             error_message=message
         )
         
-        return community_event_pb2.CreateResponse(status=status, id=id)
+        return community_event_pb2.CreateResponse(status=status, event_id=id)
 
 
     def ViewOneEvent(self, request: community_event_pb2.ViewOneRequest, context: grpc.ServicerContext) -> community_event_pb2.ViewResponse:
