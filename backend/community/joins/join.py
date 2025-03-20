@@ -17,7 +17,7 @@ def insert_user(session: any, community_id: int, user_id: int, role: str = 'user
 
         return True, 201, []
 
-    except:
+    except Exception:
         session.rollback()
 
         return False, 500, ['Internal Server Error', 'Unable To Join Community']
@@ -41,7 +41,7 @@ def update_user(session: any, community_id: int, user_id: int, success_message: 
         else:
             return False, 400, ['User Not Invited']
 
-    except:
+    except Exception:
         session.rollback()
 
         return False, 500, ['Internal Server Error', 'Unable To Join Community']
