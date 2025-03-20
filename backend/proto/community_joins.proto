@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+// CommunityActionRequest is the message that is sent to add/check/remove a user in a community
+message CommunityActionRequest {
+    // community_id is the specified community the user wants to join
+    int32 community_id = 1;
+    // user_id is the specified user to add to the community
+    int32 user_id = 2;
+}
+
+// CommunityInviteRequest is the message that is sent to add/check/remove a user in a community
+message CommunityInviteRequest {
+    // community_id is the specified community the user wants to join
+    int32 community_id = 1;
+    // user_id is the specified user performing the action
+    int32 user_id = 2;
+    // invite_user_id is the specified user to invite
+    int32 invite_user_id = 3;
+}
+
+// CommunityActionResponse is the message to state whether the action taken was successful or not
+message CommunityActionResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+}
+
+service CommunityJoins {
+    // JoinCommunity adds a user to the specified community
+    //
+    // If the community is private, they request to be added
+    // If already invited to a private community, they can join it
+    // If they are banned, they can not join the community
+    rpc JoinCommunity(CommunityActionRequest) returns (CommunityActionResponse) {}
+    // LeaveCommunity removes a user from the community
+    //
+    // If they are banned, the action is interrupted.
+    rpc LeaveCommunity(CommunityActionRequest) returns (CommunityActionResponse) {}
+    // WithCommunity checks whether the user is apart of the community or invited
+    rpc WithCommunity(CommunityActionRequest) returns (CommunityActionResponse) {}
+    // InviteToCommunity sends an invitation to the user and records it on the community
+    //
+    // If requested to join, they are added to the community
+    rpc InviteToCommunity(CommunityInviteRequest) returns (CommunityActionResponse) {}
+}
