@@ -19,4 +19,21 @@ def remove_user_in_community(community_id: int, user_id: int) -> tuple[bool, int
         all_errors = [user_error, community_error]
         error_messages = [item for item in all_errors if item.strip()]
 
-        return False, error_messages
+        return False, 400, error_messages
+    
+    with get_db() as session:
+        user_exists = session.query(CommunityUser).filter(
+            CommunityUser.community_id == community_id,
+            CommunityUser.user_id == user_id
+        ).first()
+
+        if not user_exists:
+            return False, 400, ['User Is Not Part Of Community']
+        
+        if user_exists.role == 'banned':
+            return False, 403, ['Unable To Perform Action']
+        
+        session.delete(user_exists)
+        session.commit()
+
+        return True, 200, []

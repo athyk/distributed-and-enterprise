@@ -62,7 +62,7 @@ def add_user_to_community(community_id: int, user_id: int) -> tuple[bool, int, l
         all_errors = [user_error, community_error]
         error_messages = [item for item in all_errors if item.strip()]
 
-        return False, error_messages
+        return False, 400, error_messages
     
     with get_db() as session:
         community_result = session.query(Community.public).filter(Community.id == community_id).first()
