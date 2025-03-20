@@ -4,6 +4,47 @@ from backend.community.database.models import Community, CommunityUser
 
 from math import inf as INFINITY
 
+def insert_user(session: any, community_id: int, user_id: int, role: str = 'user') -> tuple[bool, int, list]:
+    try:
+        new_user = CommunityUser(
+            community_id=community_id,
+            user_id=user_id,
+            role=role
+        )
+
+        session.add(new_user)
+        session.commit()
+
+        return True, 201, []
+
+    except:
+        session.rollback()
+
+        return False, 500, ['Internal Server Error', 'Unable To Join Community']
+
+
+def update_user(session: any, community_id: int, user_id: int) -> tuple[bool, int, list]:
+    try:
+        update_user = session.query(CommunityUser).filter(
+            CommunityUser.community_id==community_id,
+            CommunityUser.user_id==user_id
+            ).first()
+        
+        if update_user:
+            update_user.role = 'user'
+            session.commit()
+
+            return True, 201, []
+
+        else:
+            return False, 400, ['User Not Invited']
+
+    except:
+        session.rollback()
+
+        return False, 500, ['Internal Server Error', 'Unable To Join Community']
+
+
 def add_user_to_community(community_id: int, user_id: int) -> tuple[bool, int, list]:
     """
     This function verifies incoming data and adds a user to the community.
@@ -23,3 +64,33 @@ def add_user_to_community(community_id: int, user_id: int) -> tuple[bool, int, l
 
         return False, error_messages
     
+    with get_db() as session:
+        community_result = session.query(Community.public).filter(Community.id == community_id).first()
+
+        if community_result is None:
+            return False, 404, ['Community Does Not Exist']
+        
+        user_result = session.query(CommunityUser.role).filter(
+            CommunityUser.community_id == community_id,
+            CommunityUser.user_id == user_id
+            ).first()
+
+        if not user_result: # No relation to community and user
+            if not community_result[0]: # Community in question is private
+                return insert_user(session, community_id, user_id, 'requested')
+
+            else: # Add user to public server
+                return insert_user(session, community_id, user_id)
+
+        else: # Some Trace Of The User In The Community
+            if user_result[0] == 'banned':
+                return False, 403, ['User Is Banned From The Community']
+            
+            elif user_result[0] == 'invited':
+                return update_user(session, community_id, user_id)
+            
+            elif user_result[0] == 'requested':
+                return False, 400, ['User Has Requested Access To The Community']
+            
+            else:
+                return False, 400, ['User Is Already With The Community']
