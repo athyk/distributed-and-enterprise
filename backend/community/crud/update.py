@@ -39,7 +39,7 @@ def update_community(community_id: int, name: str, description: str, public: boo
             return False, ['User Or Community Does Not Exist']
         
         else:
-            if role_result[0] != 'Admin':
+            if role_result[0] != 'admin':
                 return False, ['User Does Not Have The Required Permission To Perform Requested Action']
 
         try:
