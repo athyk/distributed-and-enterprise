@@ -13,6 +13,7 @@ from backend.accounts.database.database import engine, Base, confirm_database_ex
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
 from backend.common.services.community.community import CommunityClient
 from backend.common.services.community.announcement import CommunityAnnouncementClient
+from backend.common.services.community.joins import CommunityJoinsClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
@@ -57,6 +58,11 @@ def serve():
     )
 
     CommunityAnnouncementClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityJoinsClient.initialise(
         "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
