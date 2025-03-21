@@ -7,36 +7,36 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from backend.common.proto import community_announcement_pb2
-from backend.common.services.community.announcement import CommunityAnnouncementClient
+from backend.common.proto import community_event_pb2
+from backend.common.services.community.event import CommunityEventClient
 
 
 @csrf_exempt
-def community_announcement_action_paths(request: WSGIRequest, community_id, announcement_id):
+def community_event_action_paths(request: WSGIRequest, community_id, event_id):
     """
-    URL: localhost:8000/community/<int:community_id>/announcements/<int:announcement_id>
+    URL: localhost:8000/community/<int:community_id>/events/<int:event_id>
 
     Depending on the request method used defines whether the Update or Delete function is executed
     """
 
     if request.method == 'GET':
-        return community_announcement_view_single(request, community_id, announcement_id)
+        return community_event_view_single(request, community_id, event_id)
     elif request.method == 'DELETE':
-        return community_announcement_delete(request, community_id, announcement_id)
+        return community_event_delete(request, community_id, event_id)
 
     if not request.body:
         return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
     if request.method == 'PUT':
-        return community_announcement_edit(request, community_id, announcement_id)
+        return community_event_edit(request, community_id, event_id)
     else:
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
     
 
 @csrf_exempt
-def community_announcement_paths(request: WSGIRequest, community_id):
+def community_event_paths(request: WSGIRequest, community_id):
     """
-    URL: localhost:8000/community/<int:community_id>/announcements
+    URL: localhost:8000/community/<int:community_id>/events
 
     Depending on the request method used defines whether the Create or View function is executed
     """
@@ -45,37 +45,38 @@ def community_announcement_paths(request: WSGIRequest, community_id):
         return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
     if request.method == 'GET':
-        return community_announcement_view(request, community_id)
+        return community_event_view(request, community_id)
     elif request.method == 'POST':
-        return community_announcement_creation(request, community_id)
+        return community_event_creation(request, community_id)
     else:
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
 
-def community_announcement_creation(request: WSGIRequest, community_id):
+def community_event_creation(request: WSGIRequest, community_id):
     """
-    URL: localhost:8000/community/<int:community_id>/announcements
+    URL: localhost:8000/community/<int:community_id>/events
 
     Sends a request to the community server with the relevant data to create a new community
     """
 
-    validations = ['title', 'description', 'tags']
+    validations = ['title', 'description', 'location', 'datetime', 'duration', 'tags']
 
     for validation in validations:
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
         
-    client = CommunityAnnouncementClient()
+    client = CommunityEventClient()
 
     try:
         data = json.loads(request.body)
 
-        print(data)
-
-        req = community_announcement_pb2.CommunityAnnouncementCreateRequest(
+        req = community_event_pb2.EventDataRequest(
             community_id=community_id,
             title=data['title'],
             description=data['description'],
+            location=data['location'],
+            datetime=data['datetime'],
+            duration=data['duration'],
             tags=data['tags']
         )
 
@@ -86,21 +87,22 @@ def community_announcement_creation(request: WSGIRequest, community_id):
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: community_announcement_pb2.CommunityAnnouncementResponse = client.create(req, request.COOKIES.get('sid'))
+        response: community_event_pb2.CreateResponse = client.create(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
-        'success': response.success,
-        'http_status': response.http_status,
-        'error_message': list(response.error_message)
+        'success': response.status.success,
+        'http_status': response.status.http_status,
+        'error_message': list(response.status.error_message),
+        'event_id': response.event_id
     })
 
 
-def community_announcement_view(request: WSGIRequest, community_id):
+def community_event_view(request: WSGIRequest, community_id):
     """
-    URL: localhost:8000/community/<int:community_id>/announcements
+    URL: localhost:8000/community/<int:community_id>/events
 
     Sends a request to the community server with the relevant data to create a new community
     """
@@ -111,15 +113,12 @@ def community_announcement_view(request: WSGIRequest, community_id):
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    client = CommunityAnnouncementClient()
+    client = CommunityEventClient()
 
     try:
         data = json.loads(request.body)
 
-        print(data)
-        print(community_id)
-
-        req = community_announcement_pb2.CommunityAnnouncementViewSelectRequest(
+        req = community_event_pb2.ViewRequest(
             community_id=community_id,
             offset=data['offset'],
             limit=data['limit']
@@ -132,48 +131,49 @@ def community_announcement_view(request: WSGIRequest, community_id):
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: community_announcement_pb2.AllCommunityAnnouncementResponse = client.view(req, request.COOKIES.get('sid'))
+        response: community_event_pb2.ViewResponse = client.view(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
-    all_announcements = []
+    all_events = []
 
-    if response.success:
-        for announcement in response.announcements:
+    if response.status.success:
+        for event in response.event:
+            json_event = MessageToDict(event)
 
-            json_announcement = MessageToDict(announcement)
-
-            reformed_announcement = {
-                    "id": json_announcement['id'],
-                    "title": json_announcement['title'],
-                    "description": json_announcement['description'],
-                    "tags": json_announcement.get('tags', []),
-                    "user_id": json_announcement['userId'],
-                    "uploaded": json_announcement['uploaded'],
-                    "edit_user_id": json_announcement.get('editUserId', 0),
-                    "edit_uploaded": json_announcement.get('editUploaded', None)
+            reformed_event = {
+                    "id": json_event['id'],
+                    "community_id": json_event['communityId'],
+                    "title": json_event['title'],
+                    "description": json_event['description'],
+                    "location": json_event['location'],
+                    "datetime": json_event['datetime'],
+                    "duration": json_event['duration'],
+                    "latitude": json_event.get('latitude', None),
+                    "longitude": json_event.get('longitude', None),
+                    "tags": json_event.get('tags', [])
                 }
 
-            all_announcements.append(reformed_announcement)
+            all_events.append(reformed_event)
 
     return JsonResponse({
-        'success': response.success,
-        'http_status': response.http_status,
-        'error_message': list(response.error_message),
-        "announcements": all_announcements
+        'success': response.status.success,
+        'http_status': response.status.http_status,
+        'error_message': list(response.status.error_message),
+        "events": all_events
     })
 
 
-def community_announcement_view_single(request: WSGIRequest, community_id, announcement_id):
+def community_event_view_single(request: WSGIRequest, community_id, event_id):
     """
     Sends a request to the community server with the relevant data to fetch a community's data
     """
-    client = CommunityAnnouncementClient()
+    client = CommunityEventClient()
 
     try:
-        req = community_announcement_pb2.CommunityAnnouncementViewSelectOneRequest(
-            announcement_id=announcement_id,
+        req = community_event_pb2.ViewOneRequest(
+            event_id=event_id,
             community_id=community_id
         )
 
@@ -184,31 +184,38 @@ def community_announcement_view_single(request: WSGIRequest, community_id, annou
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: community_announcement_pb2.SingleCommunityAnnouncementResponse = client.view_one(req, request.COOKIES.get('sid'))
+        response: community_event_pb2.ViewResponse = client.view_one(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
+    json_event = MessageToDict(response.event[0])
+
+    longitude = json_event.get('longitude', None)
+    latitude = json_event.get('latitude', None)
+
     return JsonResponse({
-        'success': response.success,
-        'http_status': response.http_status,
-        'error_message': list(response.error_message),
-        'announcement': {
-            'title': response.announcement.title,
-            'description': response.announcement.description,
-            'tags': list(response.announcement.tags),
-            'user_id': response.announcement.user_id,
-            'uploaded': response.announcement.uploaded,
-            'edit_user_id': response.announcement.edit_user_id,
-            'edit_uploaded': response.announcement.edit_uploaded
+        'success': response.status.success,
+        'http_status': response.status.http_status,
+        'error_message': list(response.status.error_message),
+        'event': {
+            'id': response.event[0].id,
+            'community_id': response.event[0].community_id,
+            'title': response.event[0].title,
+            'description': response.event[0].description,
+            'location': response.event[0].location,
+            'datetime': response.event[0].datetime,
+            'duration': response.event[0].duration,
+            'latitude': latitude,
+            'longitude': longitude
         }
     })
 
 
 @csrf_exempt
-def community_global_announcement_view(request: WSGIRequest):
+def community_global_event_view(request: WSGIRequest):
     """
-    URL: localhost:8000/community/announcements
+    URL: localhost:8000/community/events
 
     Sends a request to the community server with the relevant data to create a new community
     """
@@ -225,12 +232,12 @@ def community_global_announcement_view(request: WSGIRequest):
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    client = CommunityAnnouncementClient()
+    client = CommunityEventClient()
 
     try:
         data = json.loads(request.body)
 
-        req = community_announcement_pb2.CommunityAnnouncementGlobalRequest(
+        req = community_event_pb2.ViewGlobalRequest(
             offset=data['offset'],
             limit=data['limit']
         )
@@ -242,59 +249,67 @@ def community_global_announcement_view(request: WSGIRequest):
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: community_announcement_pb2.GlobalCommunityAnnouncementResponse = client.view_global(req)
+        response: community_event_pb2.ViewResponse = client.view_global(req)
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
-    all_announcements = []
+    all_events = []
 
-    for announcement in response.global_announcements:
-        json_announcement = MessageToDict(announcement)
+    if response.status.success:
+        for event in response.event:
+            json_event = MessageToDict(event)
 
-        reformed_announcement = {
-                "id": json_announcement['id'],
-                "title": json_announcement['title'],
-                "description": json_announcement['description'],
-                "tags": json_announcement.get('tags', []),
-                "user_id": json_announcement['userId'],
-                "uploaded": json_announcement['uploaded'],
-                "edit_user_id": json_announcement.get('editUserId', 0),
-                "edit_uploaded": json_announcement.get('editUploaded', None),
-                "community_id": json_announcement['communityId']
-            }
+            reformed_event = {
+                    "id": json_event['id'],
+                    "community_id": json_event['communityId'],
+                    "title": json_event['title'],
+                    "description": json_event['description'],
+                    "location": json_event['location'],
+                    "datetime": json_event['datetime'],
+                    "duration": json_event['duration'],
+                    "latitude": json_event.get('latitude', None),
+                    "longitude": json_event.get('longitude', None),
+                    "tags": json_event.get('tags', [])
+                }
 
-        all_announcements.append(reformed_announcement)
+            all_events.append(reformed_event)
 
     return JsonResponse({
-        'success': response.success,
-        'http_status': response.http_status,
-        'error_message': list(response.error_message),
-        "global_announcements": all_announcements
+        'success': response.status.success,
+        'http_status': response.status.http_status,
+        'error_message': list(response.status.error_message),
+        "global_events": all_events
     })
 
-def community_announcement_edit(request: WSGIRequest, community_id, announcement_id):
+
+def community_event_edit(request: WSGIRequest, community_id, event_id):
     """
     Sends a request to the community server with the relevant data to update a community's data
     """
 
-    validations = ['title', 'description', 'tags']
+    validations = ['title', 'description', 'location', 'datetime', 'duration', 'tags']
 
     for validation in validations:
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
         
-    client = CommunityAnnouncementClient()
+    client = CommunityEventClient()
 
     try:
         data = json.loads(request.body)
 
-        req = community_announcement_pb2.CommunityAnnouncementUpdateRequest(
-            announcement_id=announcement_id,
-            community_id=community_id,
-            title=data['title'],
-            description=data['description'],
-            tags=data['tags']
+        req = community_event_pb2.EditEventRequest(
+            event_id=event_id,
+            event_data=community_event_pb2.EventDataRequest(
+                community_id=community_id,
+                title=data['title'],
+                description=data['description'],
+                location=data['location'],
+                datetime=data['datetime'],
+                duration=data['duration'],
+                tags=data['tags']
+            )
         )
 
     except json.JSONDecodeError:  # Occurs if the JSON is invalid
@@ -303,7 +318,7 @@ def community_announcement_edit(request: WSGIRequest, community_id, announcement
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: community_announcement_pb2.CommunityAnnouncementResponse = client.update(req, request.COOKIES.get('sid'))
+        response: community_event_pb2.EventResponse = client.update(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
@@ -315,16 +330,16 @@ def community_announcement_edit(request: WSGIRequest, community_id, announcement
     })
 
 
-def community_announcement_delete(request: WSGIRequest, community_id, announcement_id):
+def community_event_delete(request: WSGIRequest, community_id, event_id):
     """
-    Sends a request to the community server with the relevant data to delete a community
+    Sends a request to the community server with the relevant data to delete a community event
     """
 
-    client = CommunityAnnouncementClient()
+    client = CommunityEventClient()
 
     try:
-        req = community_announcement_pb2.CommunityAnnouncementDeleteRequest(
-            announcement_id=announcement_id,
+        req = community_event_pb2.DeleteEventRequest(
+            event_id=event_id,
             community_id=community_id
         )
 
@@ -334,7 +349,7 @@ def community_announcement_delete(request: WSGIRequest, community_id, announceme
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
-        response: community_announcement_pb2.CommunityAnnouncementResponse = client.delete(req, request.COOKIES.get('sid'))
+        response: community_event_pb2.EventResponse = client.delete(req, request.COOKIES.get('sid'))
     except Exception:
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)

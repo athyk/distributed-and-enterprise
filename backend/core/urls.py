@@ -11,6 +11,7 @@ from .view.users.users import user_paths
 from .views import chat_message
 
 from backend.core.view.community.announcements import community_announcement_paths, community_announcement_action_paths, community_global_announcement_view
+from backend.core.view.community.community_events import community_event_action_paths, community_event_paths, community_global_event_view
 from backend.core.view.community.community_crud import community_crud_paths, community_creation
 from backend.core.view.community.community_joins import community_join_actions, invite_to_community
 
@@ -41,4 +42,7 @@ urlpatterns = [
     path('community/<int:community_id>/announcements/<int:announcement_id>', community_announcement_action_paths),
     path('community/<int:community_id>/members', community_join_actions),
     path('community/<int:community_id>/invite', invite_to_community),
+    path('community/events', community_global_event_view),
+    path('community/<int:community_id>/events', community_event_paths),
+    path('community/<int:community_id>/events/<int:event_id>', community_event_action_paths),
 ]

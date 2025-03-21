@@ -29,7 +29,7 @@ def delete_announcement(announcement_id: int, community_id: int, user_id: int) -
         if not success:
             return success, message
 
-        success, message = does_user_have_required_role(session, community_id, user_id, ['Moderator', 'Admin'])
+        success, message = does_user_have_required_role(session, community_id, user_id, ['moderator', 'admin'])
 
         if not success:
             return success, message

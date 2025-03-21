@@ -60,7 +60,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"email2@email.com\",\r\n    \"password\": \"password1\"\r\n}",
+							"raw": "{\r\n    \"email\": \"email1@email.com\",\r\n    \"password\": \"password1\",\r\n    \"skip_email\": false, // Optional Field To Use (Production Only)\r\n    \"otp\": \"\" // Optional Field To Use (Only When Verifying Account)\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -131,7 +131,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"user_id\": 1,\r\n    \"title\": \"Announcement Title 2\",\r\n    \"description\": \"Announcement Description 2\",\r\n    \"tags\": [\"Fun\", \"Hello\"]\r\n}",
+									"raw": "{\r\n    \"title\": \"Announcement Title 2\",\r\n    \"description\": \"Announcement Description 2\",\r\n    \"tags\": [1, 2]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -139,14 +139,14 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8000/community/34/announcements",
+									"raw": "localhost:8000/community/1/announcements",
 									"host": [
 										"localhost"
 									],
 									"port": "8000",
 									"path": [
 										"community",
-										"34",
+										"1",
 										"announcements"
 									]
 								}
@@ -163,7 +163,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"user_id\": 1,\r\n    \"offset\": 0,\r\n    \"limit\": 2\r\n}",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 20\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -195,7 +195,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"user_id\": 1\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -228,7 +228,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 3\r\n}",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 30\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -256,7 +256,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"user_id\": 1,\r\n    \"title\": \"Announcement Title\",\r\n    \"description\": \"Announcement Description\",\r\n    \"tags\": [\"Fun\"]\r\n}",
+									"raw": "{\r\n    \"title\": \"Announcement Title\",\r\n    \"description\": \"Announcement Description\",\r\n    \"tags\": [1,2,3]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -264,7 +264,7 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8000/community/1/announcements/135",
+									"raw": "localhost:8000/community/1/announcements/1",
 									"host": [
 										"localhost"
 									],
@@ -273,7 +273,7 @@
 										"community",
 										"1",
 										"announcements",
-										"135"
+										"1"
 									]
 								}
 							},
@@ -286,7 +286,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"user_id\": 1\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -294,7 +294,7 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8000/community/1/announcements/135",
+									"raw": "localhost:8000/community/1/announcements/1",
 									"host": [
 										"localhost"
 									],
@@ -303,7 +303,197 @@
 										"community",
 										"1",
 										"announcements",
-										"135"
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Events",
+					"item": [
+						{
+							"name": "Create Event",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Announcement Title 2\",\r\n    \"description\": \"Announcement Description 2\",\r\n    \"location\": \"Eiffel Tower\",\r\n    \"datetime\": \"2025-01-01\",\r\n    \"duration\": 1,\r\n    \"tags\": [1, 2]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/events",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Multiple Events",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/3/events",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"3",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Single Event",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/3/events/5",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"3",
+										"events",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Global Event",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 30\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/events",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Event",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Title 2\",\r\n    \"description\": \"Description 2\",\r\n    \"location\": \"Paris\",\r\n    \"datetime\": \"2025-01-01\",\r\n    \"duration\": 5,\r\n    \"tags\": [1,2,3]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/events/262",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"events",
+										"262"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Event",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/events/262",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"events",
+										"262"
 									]
 								}
 							},
@@ -321,7 +511,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Community 3\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": [],\r\n    \"user_id\": 2\r\n}",
+									"raw": "{\r\n    \"name\": \"Community 3\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": []\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -352,7 +542,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -380,7 +570,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Community 2\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": [],\r\n    \"user_id\": 1\r\n}",
+									"raw": "{\r\n    \"name\": \"Community 2\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": []\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -408,7 +598,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"user_id\": 2\r\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -440,14 +630,14 @@
 								"method": "POST",
 								"header": [],
 								"url": {
-									"raw": "localhost:8000/community/1/members",
+									"raw": "localhost:8000/community/3/members",
 									"host": [
 										"localhost"
 									],
 									"port": "8000",
 									"path": [
 										"community",
-										"1",
+										"3",
 										"members"
 									]
 								}

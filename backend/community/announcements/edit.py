@@ -25,21 +25,17 @@ def edit_announcement(announcement_id: int, community_id: int, user_id: int, tit
         all_errors = [announcement_error, user_error, community_error, title_error, description_error, tags_error]
         error_messages = [item for item in all_errors if item.strip()]
         return False, error_messages
-    
-    print('passed')
-    
+
     with get_db() as session:
         success, message = check_if_user_is_in_private_community(session, community_id, user_id)
 
         if not success:
             return success, message
         
-        success, message = does_user_have_required_role(session, community_id, user_id, ['Moderator', 'Admin'])
+        success, message = does_user_have_required_role(session, community_id, user_id, ['moderator', 'admin'])
 
         if not success:
             return success, message
-        
-        print('accepted')
 
         row = session.query(Announcement).filter_by(
             id=announcement_id,
@@ -48,8 +44,6 @@ def edit_announcement(announcement_id: int, community_id: int, user_id: int, tit
 
         if row is None:
             return False, ['Announcement Provided Does Not Exist']
-        
-        print('got it')
 
         row.title = title
         row.description = description
@@ -58,8 +52,6 @@ def edit_announcement(announcement_id: int, community_id: int, user_id: int, tit
         row.edit_datetime = datetime.utcnow()
 
         session.commit()
-
-        print('committed')
         
         current_tags = []
 
@@ -69,23 +61,19 @@ def edit_announcement(announcement_id: int, community_id: int, user_id: int, tit
         ).all()
 
         for tag in tag_result:
-            current_tags.append(tag[0])
+            current_tags.append(int(tag[0]))
 
         current_tags, tags = remove_duplicate_from_two_lists(current_tags, tags)
-
-        print('')
 
         for tag in current_tags:
             tag_result = session.query(AnnouncementTag).filter(
                 Announcement.id == announcement_id,
                 Announcement.id == AnnouncementTag.announcement_id,
-                AnnouncementTag.announcement_id == tag
+                AnnouncementTag.tag_id == tag
             ).first()
 
             session.delete(tag_result)
 
         add_tags(session, tags, announcement_id)
-
-        print('tagged')
 
         return True, ['Community Announcement Successfully Changed']

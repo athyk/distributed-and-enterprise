@@ -16,13 +16,16 @@ def check_if_user_is_in_private_community(session: any, community_id: int, user_
         return False, ['Community Does Not Exist']
         
     if community_result[0] is False:
-        user_result = session.query(CommunityUser.user_id).filter(
+        user_result = session.query(CommunityUser.role).filter(
             Community.id == community_id,
             Community.id == CommunityUser.community_id,
             CommunityUser.user_id == user_id
         ).first()
 
         if not user_result:
+            return False, ['User Not Part Of Community']
+        
+        if user_result[0] in ['requested', 'invited', 'banned']:
             return False, ['User Not Part Of Community']
 
     return True, []
