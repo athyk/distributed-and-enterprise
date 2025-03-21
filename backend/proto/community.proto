@@ -9,9 +9,9 @@ message CommunityCreateRequest {
     // public is for restricting access to users when false
     bool public = 3;
     // tags is a list of tag names
-    repeated string tags = 4;
+    repeated int32 tags = 4;
     // degrees is a list of degree names
-    repeated string degrees = 5;
+    repeated int32 degrees = 5;
     // user_id is the user who is performing the operation
     int32 user_id = 6;
 }
@@ -28,9 +28,9 @@ message CommunityUpdateRequest {
     // public is for restricting access to users when false
     bool public = 4;
     // tags is a list of tag names
-    repeated string tags = 5;
+    repeated int32 tags = 5;
     // degrees is a list of degree names
-    repeated string degrees = 6;
+    repeated int32 degrees = 6;
     // user_id is the user who is performing the operation
     int32 user_id = 7;
 }

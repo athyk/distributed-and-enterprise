@@ -1,8 +1,9 @@
 from backend.common.utils import verify_string, verify_boolean, verify_list, verify_integer
 from backend.community.database.database import get_db
-from backend.community.database.models import Community, Tag, Degree, CommunityDegree, CommunityTag, CommunityUser
+from backend.community.database.models import Community, CommunityDegree, CommunityTag, CommunityUser
 
 from backend.community.crud.local_functions import add_tags, add_degrees
+from backend.community.utils import remove_duplicate_from_two_lists
 
 from math import inf as INFINITY
 
@@ -38,8 +39,7 @@ def update_community(community_id: int, name: str, description: str, public: boo
             return False, ['User Or Community Does Not Exist']
         
         else:
-            print(role_result)
-            if role_result[0] != 'Admin':
+            if role_result[0] != 'admin':
                 return False, ['User Does Not Have The Required Permission To Perform Requested Action']
 
         try:
@@ -58,19 +58,15 @@ def update_community(community_id: int, name: str, description: str, public: boo
         current_tags = []
         current_degrees = []
 
-        tag_result = session.query(Tag.name).filter(
-            Community.id == community_id,
-            Community.id == CommunityTag.community_id,
-            CommunityTag.tag_id == Tag.id
+        tag_result = session.query(CommunityTag.tag_id).filter(
+            CommunityTag.community_id == community_id
         ).all()
 
         for tag in tag_result:
-            current_tags.append(str(tag[0]))
+            current_tags.append(tag[0])
         
-        degree_result = session.query(Degree.name).filter(
-            Community.id == community_id,
-            Community.id == CommunityDegree.community_id,
-            CommunityDegree.degree_id == Degree.id
+        degree_result = session.query(CommunityDegree.degree_id).filter(
+            CommunityDegree.community_id == community_id
         ).all()
 
         for degree in degree_result:
@@ -81,51 +77,25 @@ def update_community(community_id: int, name: str, description: str, public: boo
 
         for tag in current_tags:
             tag_result = session.query(CommunityTag).filter(
-                Community.id == community_id,
-                Community.id == CommunityTag.community_id,
-                CommunityTag.tag_id == Tag.id,
-                Tag.name == tag
+                CommunityTag.community_id == community_id,
+                CommunityTag.tag_id == tag
             ).first()
 
             session.delete(tag_result)
 
         for degree in current_degrees:
             degree_result = session.query(CommunityDegree).filter(
-                Community.id == community_id,
                 Community.id == CommunityDegree.community_id,
-                CommunityDegree.degree_id == Degree.id,
-                Degree.name == degree
+                CommunityDegree.degree_id == degree
             ).first()
 
             session.delete(degree_result)
 
         further_non_critical_errors = ['Community Successfully Updated']
 
-        further_non_critical_errors = add_tags(session, tags, community_id, further_non_critical_errors)
-        further_non_critical_errors = add_degrees(session, degrees, community_id, further_non_critical_errors)
+        further_non_critical_errors = add_tags(session, tags, community_id)
+        further_non_critical_errors = add_degrees(session, degrees, community_id)
 
         session.commit()
 
         return True, further_non_critical_errors
-
-
-def remove_duplicate_from_two_lists(list1, list2):
-    """
-    This function takes in two lists and removes the elements that occur in both from both lists.
-
-    However, if 7 appears once in list1 and then twice in list2 then 7 will only be removed from -
-    both lists once, thus leaving a 7 in list2
-    """
-
-    final_list1 = list1
-    final_list2 = list2
-
-    for item1 in list1:
-        for item2 in list2:
-            if item1 == item2:
-                final_list1.remove(item1)
-                final_list2.remove(item2)
-
-                return remove_duplicate_from_two_lists(final_list1, final_list2)
-
-    return final_list1, final_list2

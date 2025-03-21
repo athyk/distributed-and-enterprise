@@ -11,6 +11,10 @@ from backend.degree.services.rpc import DegreeServicer
 from backend.common.proto import degree_pb2_grpc
 from backend.degree.database.database import engine, Base, confirm_database_exists
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
+from backend.common.services.community.community import CommunityClient
+from backend.common.services.community.announcement import CommunityAnnouncementClient
+from backend.common.services.community.joins import CommunityJoinsClient
+from backend.common.services.community.event import CommunityEventClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
@@ -47,6 +51,26 @@ def serve():
 
     DegreesClient.initialise(
         "degree-service:" + os.environ.get('DEGREE_PORT', '50055'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityAnnouncementClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityJoinsClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityEventClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 

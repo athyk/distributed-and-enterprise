@@ -1,5 +1,5 @@
 import traceback
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timedelta
 from math import inf
 
 import grpc
@@ -117,15 +117,24 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                 error_message=['An Unknown Error Occurred'],
             )
 
+        if req.skip_email:
+            return accounts_pb2.LoginResponse(
+                success=True,
+                http_status=201,
+                user_id=user.id,
+                otp_required=False,
+            )
+
         success, message, otp_seed = send_verification_code_email(req.email)
 
         if success:
+            account_client = AccountsClient()
+            account_client.save_otp(user.id, str(otp_seed))
             return accounts_pb2.LoginResponse(
                 success=True,
                 http_status=200,
                 user_id=user.id,
                 otp_required=True,
-                email_id=str(otp_seed),
             )
 
         return accounts_pb2.LoginResponse(
@@ -216,10 +225,50 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
 
         This is intended for admin or self use.
         """
-        # TODO: Get User
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        if req.page < 0:
+            req.page = 0
+        if req.limit < 1:
+            req.limit = 1
+        elif req.limit > 50:
+            req.limit = 50
+        offset = req.page * req.limit
+
+        with get_db() as session:
+            users = session.query(User)
+            if req.user_id > 0:
+                users = users.filter(User.id == req.user_id)
+            if req.email != "":
+                users = users.filter(User.email == req.email)
+            if req.first_name != "":  # Allows partial searching
+                users = users.filter(User.first_name.ilike(f"%{req.first_name}%"))
+            if req.last_name != "":  # Allows partial searching
+                users = users.filter(User.last_name.ilike(f"%{req.last_name}%"))
+            if req.email_verified != 0:
+                if req.email_verified == 1:
+                    users = users.filter(User.email_verified is True)
+                else:
+                    users = users.filter(User.email_verified is False)
+            if req.age_from > 0:  # age from is in years, use 365 as it's days in a year
+                users = users.filter(User.date_of_birth <= datetime.now() - timedelta(days=req.age_from * 365))
+            if req.age_to > 0:  # age to is in years, use 365 as it's days in a year
+                users = users.filter(User.date_of_birth >= datetime.now() - timedelta(days=req.age_to * 365))
+            if req.degree_id > 0:
+                users = users.filter(User.degree_id == req.degree_id)
+            if req.tag_id > 0:
+                users = users.join(UserTag).filter(UserTag.tag_id == req.tag_id)
+            if req.gender != "":  # Allows lowercase and uppercase
+                users = users.filter(User.gender.ilike(f"%{req.gender}%"))
+            if req.year_of_study != 0:
+                users = users.filter(User.year_of_study == req.year_of_study)
+
+            users = users.offset(offset).limit(req.limit).all()
+            users_list = [user.to_dict() for user in users]
+
+            return accounts_pb2.GetResponse(
+                success=True,
+                http_status=200,
+                users=users_list,
+            )
 
     def Update(self, req: accounts_pb2.UpdateRequest, context: grpc.ServicerContext) -> accounts_pb2.Response:
         """
@@ -227,20 +276,164 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
 
         Send the user object with the total changes to be made. INCLUDE all fields, even if they are not changing.
 
+        This is done so tags can be removed/added.
+
         It does not return the changes to the user.
         """
-        # TODO: Update User
-        # TODO: Update user tags
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        # In more complex system, this would be done more efficiently and cleaner but as this is a prototype
+        # it does not require that level of complexity.
+        #
+        # This would be done as a diff of the user object and the user in the database.
+        # With validate functions per field as part of the db user.
+        if req.user.id < 1:
+            return accounts_pb2.Response(
+                success=False,
+                http_status=400,
+                error_message=["User ID must be greater than 0"],
+            )
+
+        with get_db() as session:
+            user = session.query(User).filter(User.id == req.user.id).first()
+            # Picture URL is done as a separate request so other data won't exist.
+            if req.user.picture_url != user.picture_url:
+                user.picture_url = req.user.picture_url
+                session.commit()
+                return accounts_pb2.Response(
+                    success=True,
+                    http_status=200,
+                )
+
+            if req.user.email != user.email:
+                return self.update_email(req)
+
+            if req.new_password != "" and not check_password_hash(user.password, req.password) and not req.is_self:
+                return accounts_pb2.Response(
+                    success=False,
+                    http_status=400,  # They are authenticated, but the password is incorrect
+                    error_message=["Invalid Password"],
+                )
+
+            if req.new_password != "":
+                user.password = generate_password_hash(req.new_password)
+
+            if req.user.first_name != user.first_name:
+                user.first_name = req.user.first_name
+            if req.user.last_name != user.last_name:
+                user.last_name = req.user.last_name
+
+            if req.user.degree_id != user.degree_id:
+                # While this could be moved into its own function,
+                # it's not worth it for a prototype
+                degree_client = DegreesClient()
+                degree = degree_client.get(degree_pb2.DegreeGetRequest(id=req.user.degree_id))
+                if not degree.success:
+                    return accounts_pb2.Response(
+                        success=False,
+                        http_status=400,
+                        error_message=['Degree Not Found'],
+                    )
+                user.degree_id = req.user.degree_id
+
+            dob = datetime.strptime(req.user.date_of_birth, "%d-%m-%Y").date()
+            if dob != user.date_of_birth:
+                user.date_of_birth = dob
+
+            if req.user.rank != user.rank and not req.is_self:
+                user.rank = req.user.rank
+
+            user_tags = session.query(UserTag).filter(UserTag.user_id == user.id).all()
+            user_tags = [tag.tag_id for tag in user_tags]
+            tags_to_add = [tag for tag in req.user.tags if tag not in user_tags]
+            tags_to_remove = [tag for tag in user_tags if tag not in req.user.tags]
+
+            for tag in tags_to_add:
+                user_tag = UserTag(user_id=user.id, tag_id=tag)
+                session.add(user_tag)
+
+            for tag in tags_to_remove:
+                user_tag = session.query(UserTag).filter(UserTag.user_id == user.id, UserTag.tag_id == tag).first()
+                session.delete(user_tag)
+
+            session.commit()
+
+        return accounts_pb2.Response(
+            success=True,
+            http_status=200,
+        )
+
+    # noinspection PyMethodMayBeStatic
+    def update_email(self, req: accounts_pb2.UpdateRequest) -> accounts_pb2.Response | None:
+        """
+        Update the email of a user.
+
+        This sends out a verification email to the new email.
+        """
+        accounts_client = AccountsClient()
+        if not req.is_self:
+            return None
+
+        if req.skip_email and req.user.email == "":
+            return None
+
+        if req.otp:  # OTP is provided
+            email_verify_id = accounts_client.get_otp(req.user.id)
+            if not email_verify_id:  # If no otp is in cache.
+                return accounts_pb2.Response(
+                    success=False,
+                    http_status=401,
+                    error_message=["Email Verification Required"],
+                )
+
+            # We don't pass in the email as it's not in the database yet
+            success, message = verify_email(req.otp, email_verify_id, "")
+
+            if not success:
+                return accounts_pb2.Response(
+                    success=False,
+                    http_status=400,
+                    error_message=[message],
+                    otp_required=True,
+                )
+
+            with get_db() as session:
+                user = session.query(User).filter(User.id == req.user.id).first()
+                user.email = req.user.email
+                session.commit()
+
+        success, message, otp_seed = send_verification_code_email(req.user.email)
+
+        if success:
+            accounts_client.save_otp(req.user.id, str(otp_seed))
+            return accounts_pb2.Response(
+                success=True,
+                http_status=200,
+                otp_required=True,
+            )
+        return accounts_pb2.Response(
+            success=False,
+            http_status=500,
+            error_message=['Error Sending Out Verification Email', message],
+        )
 
     def Delete(self, req: accounts_pb2.DeleteRequest, context: grpc.ServicerContext) -> accounts_pb2.Response:
         """
         Delete allows the deletion of a user.
+
+        There is no confirmation, it's intention is for quick and easy use for the prototype.
         """
-        # TODO: Delete User
-        # TODO: Delete user tags
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
+        with get_db() as session:
+            user = session.query(User).filter(User.id == req.user_id).first()
+            if not user:
+                return accounts_pb2.Response(
+                    success=False,
+                    http_status=400,
+                    error_message=["User not found"],
+                )
+
+            session.delete(user)
+            session.commit()
+
+        return accounts_pb2.Response(
+            success=True,
+            http_status=200,
+        )

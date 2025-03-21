@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from backend.common.proto import community_pb2 as community__pb2
+import community_pb2 as community__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -67,21 +67,21 @@ class CommunityServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def CommunityUpdate(self, request, context):
-        """CommunityUpdate creates a new community
+        """CommunityUpdate updates a specified community
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CommunityView(self, request, context):
-        """CommunityView creates a new community
+        """CommunityView fetches a specified community data
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def CommunityDelete(self, request, context):
-        """CommunityDelete creates a new community
+        """CommunityDelete deletes a specified community
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
