@@ -29,7 +29,7 @@ def create_announcement(community_id: int, user_id: int, title: str, description
         return False, error_messages
 
     with get_db() as session:
-        success, message = does_user_have_required_role(session, community_id, user_id, ['Moderator', 'Admin'])
+        success, message = does_user_have_required_role(session, community_id, user_id, ['moderator', 'admin'])
 
         if not success:
             return success, message

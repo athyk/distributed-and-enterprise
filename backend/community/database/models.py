@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, DateTime, Float
 from backend.community.database.database import Base
 from datetime import datetime
 
@@ -76,6 +76,8 @@ class Event(Base):
     title = Column(String(100), nullable=False)
     description = Column(String(1024), nullable=False)
     location = Column(String(200), nullable=False)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
     datetime = Column(DateTime, default=lambda: datetime(1970, 1, 1), nullable=False)
-    duration = Column(String(2), nullable=False)
+    duration = Column(Integer, nullable=False)
 

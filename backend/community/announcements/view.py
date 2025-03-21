@@ -36,7 +36,8 @@ def get_community_announcements(community_id: int, user_id: int, offset: int, li
         ).filter(
             Announcement.community_id == community_id
         ).order_by(
-            Announcement.datetime.desc()
+            Announcement.datetime.desc(),
+            Announcement.id.asc()
         ).limit(limit).offset(offset).all()
 
         announcement_result = [list(_tuple) for _tuple in announcement_result]
@@ -56,6 +57,11 @@ def get_community_announcements(community_id: int, user_id: int, offset: int, li
             for tag in announcement_tag_result:
                 tags.append(get_tag_name(tag[0]))
 
+            edit_uploaded = None
+
+            if announcement[6] is not None:
+                edit_uploaded = announcement[6].strftime("%Y-%m-%d %H:%M:%S")
+
             reformed_announcement = {
                 "id": announcement[0],
                 "title": announcement[1],
@@ -64,7 +70,7 @@ def get_community_announcements(community_id: int, user_id: int, offset: int, li
                 "user_id": announcement[3],
                 "uploaded": announcement[4].strftime("%Y-%m-%d %H:%M:%S"),
                 "edit_user_id": announcement[5],
-                "edit_uploaded": announcement[6].strftime("%Y-%m-%d %H:%M:%S")
+                "edit_uploaded": edit_uploaded
             }
 
             announce.append(reformed_announcement)
@@ -115,6 +121,11 @@ def get_specified_community_announcement(announcement_id: int, community_id: int
         for tag in announcement_tag_result:
             tags.append(get_tag_name(tag[0]))
 
+        edit_uploaded = None
+
+        if announcement_result[6] is not None:
+            edit_uploaded = announcement_result[6].strftime("%Y-%m-%d %H:%M:%S")
+
         reformed_announcement = {
             "id": announcement_result[0],
             "title": announcement_result[1],
@@ -123,7 +134,7 @@ def get_specified_community_announcement(announcement_id: int, community_id: int
             "user_id": announcement_result[3],
             "uploaded": announcement_result[4].strftime("%Y-%m-%d %H:%M:%S"),
             "edit_user_id": announcement_result[5],
-            "edit_uploaded": announcement_result[6].strftime("%Y-%m-%d %H:%M:%S")
+            "edit_uploaded": edit_uploaded
         }
 
         return True, ['Announcement Fetched'], reformed_announcement
@@ -172,10 +183,10 @@ def get_global_community_announcements(offset: int, limit: int) -> tuple[bool, l
             for tag in announcement_tag_result:
                 tags.append(get_tag_name(tag[0]))
 
+            edit_uploaded = None
+
             if announcement[6] is not None:
-                announcement[6].strftime("%Y-%m-%d %H:%M:%S")
-            else:
-                announcement[6] = ''
+                edit_uploaded = announcement[6].strftime("%Y-%m-%d %H:%M:%S")
 
             if announcement[5] is None:
                 announcement[5] = 0
@@ -188,7 +199,7 @@ def get_global_community_announcements(offset: int, limit: int) -> tuple[bool, l
                 "user_id": announcement[3],
                 "uploaded": announcement[4].strftime("%Y-%m-%d %H:%M:%S"),
                 "edit_user_id": announcement[5],
-                "edit_uploaded": announcement[6],
+                "edit_uploaded": edit_uploaded,
                 "community_id": announcement[7]
             }
 
