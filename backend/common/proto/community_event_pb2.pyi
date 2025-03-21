@@ -62,10 +62,10 @@ class ViewEvent(_message.Message):
     location: str
     datetime: str
     duration: int
-    tags: _containers.RepeatedScalarFieldContainer[int]
+    tags: _containers.RepeatedScalarFieldContainer[str]
     latitude: float
     longitude: float
-    def __init__(self, id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ..., tags: _Optional[_Iterable[int]] = ..., latitude: _Optional[float] = ..., longitude: _Optional[float] = ...) -> None: ...
+    def __init__(self, id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ..., tags: _Optional[_Iterable[str]] = ..., latitude: _Optional[float] = ..., longitude: _Optional[float] = ...) -> None: ...
 
 class ViewOneRequest(_message.Message):
     __slots__ = ("user_id", "community_id", "event_id")

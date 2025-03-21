@@ -36,7 +36,8 @@ def get_community_announcements(community_id: int, user_id: int, offset: int, li
         ).filter(
             Announcement.community_id == community_id
         ).order_by(
-            Announcement.datetime.desc()
+            Announcement.datetime.desc(),
+            Announcement.id.asc()
         ).limit(limit).offset(offset).all()
 
         announcement_result = [list(_tuple) for _tuple in announcement_result]

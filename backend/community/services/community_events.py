@@ -23,7 +23,8 @@ def format_events(events: list) -> list:
                 description=event.get('description'),
                 location=event.get('location'),
                 datetime=event.get('datetime'),
-                duration=event.get('duration')
+                duration=event.get('duration'),
+                tags=event.get('tags')
             )
 
             if event.get('latitude') is not None and event.get('longitude') is not None:
@@ -111,7 +112,7 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             error_message=message
         )
         
-        return community_event_pb2.ViewResponse(status=status, events=format_events(event_list))
+        return community_event_pb2.ViewResponse(status=status, event=format_events(event_list))
 
 
     def ViewGlobalEvents(self, request: community_event_pb2.ViewGlobalRequest, context: grpc.ServicerContext) -> community_event_pb2.ViewResponse:
@@ -131,7 +132,7 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             error_message=message
         )
         
-        return community_event_pb2.ViewResponse(status=status, events=format_events(event_list))
+        return community_event_pb2.ViewResponse(status=status, event=format_events(event_list))
 
 
     def EditEvent(self, request: community_event_pb2.EditEventRequest, context: grpc.ServicerContext) -> community_event_pb2.EventResponse:

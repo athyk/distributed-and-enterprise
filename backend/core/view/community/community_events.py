@@ -140,19 +140,19 @@ def community_event_view(request: WSGIRequest, community_id):
 
     if response.status.success:
         for event in response.event:
-
             json_event = MessageToDict(event)
 
             reformed_event = {
                     "id": json_event['id'],
-                    "community_id": json_event['community_id'],
+                    "community_id": json_event['communityId'],
                     "title": json_event['title'],
                     "description": json_event['description'],
                     "location": json_event['location'],
                     "datetime": json_event['datetime'],
                     "duration": json_event['duration'],
-                    "latitude": json_event['latitude'],
-                    "longitude": json_event['longitude']
+                    "latitude": json_event.get('latitude', None),
+                    "longitude": json_event.get('longitude', None),
+                    "tags": json_event.get('tags', [])
                 }
 
             all_events.append(reformed_event)
@@ -189,20 +189,25 @@ def community_event_view_single(request: WSGIRequest, community_id, event_id):
         traceback.print_exc()
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
+    json_event = MessageToDict(response.event[0])
+
+    longitude = json_event.get('longitude', None)
+    latitude = json_event.get('latitude', None)
+
     return JsonResponse({
         'success': response.status.success,
         'http_status': response.status.http_status,
         'error_message': list(response.status.error_message),
         'event': {
-            'id': response.event.id,
-            'community_id': response.event.community_id,
-            'title': response.event.title,
-            'description': response.event.description,
-            'location': response.event.location,
-            'datetime': response.event.datetime,
-            'duration': response.event.duration,
-            'latitude': response.event.latitude,
-            'longitude': response.event.longitude
+            'id': response.event[0].id,
+            'community_id': response.event[0].community_id,
+            'title': response.event[0].title,
+            'description': response.event[0].description,
+            'location': response.event[0].location,
+            'datetime': response.event[0].datetime,
+            'duration': response.event[0].duration,
+            'latitude': latitude,
+            'longitude': longitude
         }
     })
 
@@ -251,22 +256,24 @@ def community_global_event_view(request: WSGIRequest):
 
     all_events = []
 
-    for event in response.event:
-        json_event = MessageToDict(event)
+    if response.status.success:
+        for event in response.event:
+            json_event = MessageToDict(event)
 
-        reformed_event = {
+            reformed_event = {
                     "id": json_event['id'],
-                    "community_id": json_event['community_id'],
+                    "community_id": json_event['communityId'],
                     "title": json_event['title'],
                     "description": json_event['description'],
                     "location": json_event['location'],
                     "datetime": json_event['datetime'],
                     "duration": json_event['duration'],
-                    "latitude": json_event['latitude'],
-                    "longitude": json_event['longitude']
+                    "latitude": json_event.get('latitude', None),
+                    "longitude": json_event.get('longitude', None),
+                    "tags": json_event.get('tags', [])
                 }
 
-        all_events.append(reformed_event)
+            all_events.append(reformed_event)
 
     return JsonResponse({
         'success': response.status.success,

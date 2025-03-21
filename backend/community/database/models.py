@@ -79,5 +79,5 @@ class Event(Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     datetime = Column(DateTime, default=lambda: datetime(1970, 1, 1), nullable=False)
-    duration = Column(String(2), nullable=False)
+    duration = Column(Integer, nullable=False)
 
