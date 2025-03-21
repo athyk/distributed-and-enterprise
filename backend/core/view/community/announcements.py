@@ -163,7 +163,7 @@ def community_announcement_view_single(request: WSGIRequest, community_id, annou
             community_id=community_id
         )
 
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
@@ -207,7 +207,7 @@ def community_global_announcement_view(request: WSGIRequest):
             limit=int(request.GET.get('limit', '1'))
         )
 
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
