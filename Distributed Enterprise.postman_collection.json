@@ -1,0 +1,1213 @@
+{
+	"info": {
+		"_postman_id": "59c9251d-7059-4e5e-96b8-ac526bc09778",
+		"name": "Distributed Enterprise",
+		"description": "# 🚀 Get started here\n\nThis template guides you through CRUD operations (GET, POST, PUT, DELETE), variables, and tests.\n\n## 🔖 **How to use this template**\n\n#### **Step 1: Send requests**\n\nRESTful APIs allow you to perform CRUD operations using the POST, GET, PUT, and DELETE HTTP methods.\n\nThis collection contains each of these [request](https://learning.postman.com/docs/sending-requests/requests/) types. Open each request and click \"Send\" to see what happens.\n\n#### **Step 2: View responses**\n\nObserve the response tab for status code (200 OK), response time, and size.\n\n#### **Step 3: Send new Body data**\n\nUpdate or add new data in \"Body\" in the POST request. Typically, Body data is also used in PUT request.\n\n```\n{\n    \"name\": \"Add your name in the body\"\n}\n\n ```\n\n#### **Step 4: Update the variable**\n\nVariables enable you to store and reuse values in Postman. We have created a [variable](https://learning.postman.com/docs/sending-requests/variables/) called `base_url` with the sample request [https://postman-api-learner.glitch.me](https://postman-api-learner.glitch.me). Replace it with your API endpoint to customize this collection.\n\n#### **Step 5: Add tests in the \"Scripts\" tab**\n\nAdding tests to your requests can help you confirm that your API is working as expected. You can write test scripts in JavaScript and view the output in the \"Test Results\" tab.\n\n<img src=\"https://content.pstmn.io/fa30ea0a-373d-4545-a668-e7b283cca343/aW1hZ2UucG5n\" alt=\"\" height=\"1530\" width=\"2162\">\n\n## 💪 Pro tips\n\n- Use folders to group related requests and organize the collection.\n    \n- Add more [scripts](https://learning.postman.com/docs/writing-scripts/intro-to-scripts/) to verify if the API works as expected and execute workflows.\n    \n\n## 💡Related templates\n\n[API testing basics](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9a37a28-055b-49cd-8c7e-97494a21eb54&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[API documentation](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=e9c28f47-1253-44af-a2f3-20dce4da1f18&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)  \n[Authorization methods](https://go.postman.co/redirect/workspace?type=personal&collectionTemplateId=31a9a6ed-4cdf-4ced-984c-d12c9aec1c27&sourceTemplateId=ddb19591-3097-41cf-82af-c84273e56719)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34455508"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"admin@example.com\",\r\n    \"password\":\"password1\",\r\n    \"first_name\":\"Jane\",\r\n    \"last_name\":\"Doe\",\r\n    \"dob\":\"01-01-2000\",\r\n    \"gender\":\"Male\",\r\n    \"degree_id\":1,\r\n    \"year_of_study\": 1,\r\n    \"grad_date\":\"01-01-2000\",\r\n    \"tags\":[],\r\n    \"skip_email\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/auth/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+					},
+					"response": []
+				},
+				{
+					"name": "Log In",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"email1@email.com\",\r\n    \"password\": \"password1\",\r\n    \"skip_email\": false, // Optional Field To Use (Production Only)\r\n    \"otp\": \"\" // Optional Field To Use (Only When Verifying Account)\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/auth/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/auth/logout",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"auth",
+								"logout"
+							],
+							"query": [
+								{
+									"key": "all",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Community",
+			"item": [
+				{
+					"name": "Announcements",
+					"item": [
+						{
+							"name": "Create Announcement",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Announcement Title 2\",\r\n    \"description\": \"Announcement Description 2\",\r\n    \"tags\": [1, 2]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/announcements",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"announcements"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Multiple Announcements",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 20\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/announcements",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"announcements"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Single Announcement",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/announcements/1",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"announcements",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Global Announcements",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 30\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/announcements",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"announcements"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Announcement",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Announcement Title\",\r\n    \"description\": \"Announcement Description\",\r\n    \"tags\": [1,2,3]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/announcements/1",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"announcements",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Announcement",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/announcements/1",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"announcements",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Events",
+					"item": [
+						{
+							"name": "Create Event",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Announcement Title 2\",\r\n    \"description\": \"Announcement Description 2\",\r\n    \"location\": \"Eiffel Tower\",\r\n    \"datetime\": \"2025-01-01\",\r\n    \"duration\": 1,\r\n    \"tags\": [1, 2]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/events",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Multiple Events",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/3/events",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"3",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Single Event",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/3/events/5",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"3",
+										"events",
+										"5"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Fetch Global Event",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"offset\": 0,\r\n    \"limit\": 30\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/events",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"events"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Event",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Title 2\",\r\n    \"description\": \"Description 2\",\r\n    \"location\": \"Paris\",\r\n    \"datetime\": \"2025-01-01\",\r\n    \"duration\": 5,\r\n    \"tags\": [1,2,3]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/events/262",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"events",
+										"262"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Event",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/events/262",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"events",
+										"262"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "CRUD",
+					"item": [
+						{
+							"name": "Create Community",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Community 3\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": []\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Community Data",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/2",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Community Data",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Community 2\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": []\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/34",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"34"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Community",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/35",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"35"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Joins",
+					"item": [
+						{
+							"name": "Join Community",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/community/3/members",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"3",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Leave Community",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/community/3/members",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"3",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "User With Community",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/community/1/members",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"members"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Invite User",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"invite_user_id\": 2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/community/1/invite",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"1",
+										"invite"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Tags",
+			"item": [
+				{
+					"name": "Get Tag",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/tags/?id=1&name=food",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tags",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "name",
+									"value": "food"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List tags",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/tags/list/?page=0&limit=50&name=food",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tags",
+								"list",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "50"
+								},
+								{
+									"key": "name",
+									"value": "food"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tag",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/tags/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"tags",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Degrees",
+			"item": [
+				{
+					"name": "Create Degree",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Music\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/degrees/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"degrees",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Degree",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/degrees/?id=1",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"degrees",
+								""
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								},
+								{
+									"key": "name",
+									"value": "food",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Degrees",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/degrees/list/?page=0&limit=50",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"degrees",
+								"list",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "50"
+								},
+								{
+									"key": "name",
+									"value": "food",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete tag",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/degrees/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"degrees",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "@me",
+					"item": [
+						{
+							"name": "Get self",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/users/@me",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete self",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/users/@me",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update self",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user\": {\n        \"email\": \"admin@example.com\",\n        \"first_name\": \"Jane\",\n        \"last_name\": \"Doa\",\n        \"gender\": \"Male\",\n        \"date_of_birth\": \"01-01-2000\",\n        \"degree_id\": 1,\n        \"year_of_study\": 1,\n        \"grad_date\": \"01-01-2000\",\n        \"tags\": []\n    },\n    \"password\": \"\",\n    \"new_password\": \"\",\n    \"otp\": \"\",\n    \"skip_email\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "localhost:8000/users/@me",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"@me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update profile picture",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": []
+										}
+									]
+								},
+								"url": {
+									"raw": "localhost:8000/users/@me/profile",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"users",
+										"@me",
+										"profile"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Search user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/users/?first_name=j&last_name=",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								""
+							],
+							"query": [
+								{
+									"key": "first_name",
+									"value": "j"
+								},
+								{
+									"key": "last_name",
+									"value": ""
+								},
+								{
+									"key": "age_from",
+									"value": "25",
+									"disabled": true
+								},
+								{
+									"key": "age_to",
+									"value": "26",
+									"disabled": true
+								},
+								{
+									"key": "degree_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "tag_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "MALE",
+									"disabled": true
+								},
+								{
+									"key": "year_of_study",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"id\": 3,\n        \"email\": \"admin@example.com\",\n        \"email_verified\": 1,\n        \"first_name\": \"Jane\",\n        \"last_name\": \"Doa\",\n        \"gender\": \"Male\",\n        \"date_of_birth\": \"01-01-2000\",\n        \"degree_id\": 1,\n        \"year_of_study\": 1,\n        \"grad_date\": \"01-01-2000\",\n        \"tags\": [],\n        \"rank\": \"user\"\n    },\n    \"password\": \"\",\n    \"new_password\": \"\",\n    \"otp\": \"\",\n    \"skip_email\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/users/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/users/",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat message",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\": \"hi\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/chat/message/",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"chat",
+						"message",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

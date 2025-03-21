@@ -1,122 +1,146 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	export let Name = 'Search Box';
-	export let showLabel = false;
-	export let data: string[] = [];
-	export let chosenItems: string[] = [];
-	export let maxItems = 1;
-	export let placeholder = 'Search...';
-	export let dataPromise: Promise<string[]> | null = null;
+	import { get } from '$lib/api/get';
+	import type { PaginationDataResponse, PaginationData } from '$lib/api/apiType';
+	import { onMount, onDestroy } from 'svelte';
 
-	let filterData: string[] = data;
+	const instanceId = Math.random().toString(36).substring(2, 9);
 
-	let showDropdown = false;
-
-	onMount(async () => {
-		try {
-			if (dataPromise === null) {
-				if (data.length > 0) {
-					filterData = data;
-				}
-				return;
-			}
-			data = await dataPromise;
-			filterData = data;
-		} catch (error) {
-			console.error('Failed to fetch data:', error);
-		}
+	onMount(() => {
+		document.addEventListener('click', handleClickOutside);
 	});
 
-	function filterItems(event: Event) {
-		const target = event.target as HTMLInputElement;
-		const value = target.value.toLowerCase();
-		filterData = data.filter((item) => item.toLowerCase().includes(value));
-	}
+	onDestroy(() => {
+		document.removeEventListener('click', handleClickOutside);
+	});
 
-	function toggleCheckBox(id: string) {
-		const checkbox = document.getElementById(id) as HTMLInputElement;
-		if (checkbox) {
-			checkbox.checked = !checkbox.checked;
+	export let Name = 'Search Box';
+	export let showLabel = false;
+	export let placeholder = 'Search';
+	export let url = '';
+	export let value = '';
+	export let id;
+	export let multi_select = false;
+	export let max_select = 1;
+	export let selected: [string, number][] = [];
+
+	let last_value = '';
+	let showDropdown = false;
+	let dropdownItems: PaginationData[] = [];
+
+	async function search() {
+		if (value === last_value || value === '' || value.length < 2) {
+			return;
+		}
+		let response = (await get(url + '/?limit=5&name=' + value)) as PaginationDataResponse;
+		if (response.success != true) {
+			console.log('Error fetching data');
+			return;
+		}
+		last_value = value;
+		dropdownItems = response.degrees || response.tags || [];
+		console.log('Data Given: ', dropdownItems);
+		if (dropdownItems.length > 0) {
+			showDropdown = true;
+		} else {
+			showDropdown = false;
 		}
 	}
 
-	function itemClicked(item: string) {
-		const searchBoxText = document.getElementById('text') as HTMLInputElement;
-		if (!chosenItems.includes(item)) {
-			if (maxItems === 1) {
-				chosenItems = [item];
-				searchBoxText.value = item;
-				showDropdown = false;
-			} else if (chosenItems.length < maxItems) {
-				chosenItems = [...chosenItems, item];
-				if (maxItems === 1) {
-					searchBoxText.value = item;
-					showDropdown = false;
-				}
+	function handleClickOutside(event: MouseEvent) {
+		const target = event.target as HTMLElement;
+		if (!target.closest(`#searchbox-${instanceId}`)) {
+			showDropdown = false;
+		}
+	}
+
+	function handleButtonClick(item: PaginationData, event: MouseEvent) {
+		event.stopPropagation();
+
+		if (multi_select) {
+			if (selected.length < max_select) {
+				selected = [...selected, [item.name, item.id]];
 			} else {
-				toggleCheckBox(item);
+				alert('Max Select Limit Reached');
 			}
 		} else {
-			if (maxItems === 1) {
-				chosenItems = [];
-				showDropdown = false;
-				searchBoxText.value = '';
-			} else {
-				chosenItems = chosenItems.filter((i) => i !== item);
-				toggleCheckBox(item);
-			}
+			value = item.name;
+			id = item.id;
+			selected = [[item.name, item.id]];
+			showDropdown = false;
 		}
 	}
-
-	function toggleDropdown() {
-		console.log('toggleDropdown');
-		showDropdown = !showDropdown;
-	}
-
-	export function reportValidity() {
-		return true;
-	}
-
-	export function setErrorMessage(message: string) {
-		console.log('Setting error message: ', message);
-	}
-
-	$: console.log('Data Given: ', data);
 </script>
 
-<div class="mt-4">
+<div class="relative mt-4" id={`searchbox-${instanceId}`}>
 	{#if showLabel}
-		<label for={Name} class="block text-gray-700">{Name} </label>
+		<label for={`${Name}-${instanceId}`} class="mb-1 block text-gray-700">{Name}</label>
 	{/if}
-	<input
-		type="text"
-		{placeholder}
-		id="text"
-		class="mt-2 w-full rounded-md border px-4 py-2 focus:ring-1 focus:ring-blue-600 focus:outline-none"
-		on:input={filterItems}
-		on:click={toggleDropdown}
-	/>
-	<div class="absolute mt-1 hidden w-48 rounded bg-white shadow-md" class:hidden={!showDropdown}>
-		{#each filterData as item}
-			{#if maxItems > 1}
-				<div class="flex items-center">
-					<input
-						type="checkbox"
-						id={item}
-						name={item}
-						value={item}
-						on:click={() => itemClicked(item)}
-						class="mr-2 ml-1"
-					/>
-					<label for={item}>{item}</label>
-				</div>
-			{:else}
+	{#if multi_select && max_select > 1 && showLabel}
+		<div class="mt-1 text-xs text-gray-500">
+			{selected.length}/{max_select} selected
+		</div>
+	{/if}
+
+	<div
+		class="mt-2 flex w-full flex-wrap items-center rounded-md border px-2 py-1 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+	>
+		{#if multi_select && selected.length > 0}
+			<div
+				class="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 flex items-center space-x-2 overflow-x-auto"
+			>
+				{#each selected as [name, itemId]}
+					<div
+						class="flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs whitespace-nowrap text-blue-800"
+					>
+						<span>{name}</span>
+						<button
+							type="button"
+							class="ml-1 text-blue-500 hover:text-blue-700"
+							on:click={(e) => {
+								e.stopPropagation();
+								selected = selected.filter((item) => item[1] !== itemId);
+							}}
+						>
+							×
+						</button>
+					</div>
+				{/each}
+			</div>
+		{/if}
+
+		<input
+			type="text"
+			{placeholder}
+			id={`${Name}-${instanceId}`}
+			class="min-w-[80px] flex-grow py-1 outline-none"
+			on:input={search}
+			on:click={(e) => {
+				e.stopPropagation();
+				if (value.length > 0) {
+					showDropdown = true;
+				} else {
+					showDropdown = false;
+				}
+			}}
+			bind:value
+		/>
+	</div>
+
+	{#if showDropdown}
+		<div
+			class="absolute z-50 w-full rounded border border-gray-200 bg-white shadow-md"
+			style="top: calc(100% + 5px); left: 0;"
+		>
+			{#each dropdownItems as item}
 				<button
 					type="button"
 					class="block w-full px-4 py-2 text-left hover:bg-gray-200"
-					on:click={() => itemClicked(item)}>{item}</button
+					class:bg-blue-100={multi_select && selected.some((sel) => sel[1] === item.id)}
+					on:click={(e) => handleButtonClick(item, e)}
 				>
-			{/if}
-		{/each}
-	</div>
+					{item.name}
+				</button>
+			{/each}
+		</div>
+	{/if}
 </div>

@@ -14,6 +14,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from backend.common.files import StorageClient
+from backend.common.services import AccountsClient, TagsClient, DegreesClient
+from backend.common.services.community.community import CommunityClient
+from backend.common.services.community.announcement import CommunityAnnouncementClient
+from backend.common.services.community.joins import CommunityJoinsClient
+from backend.common.services.community.event import CommunityEventClient
 
 load_dotenv()
 
@@ -41,19 +46,14 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -79,56 +79,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "unihub_project.wsgi.application"
 
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        "NAME": os.environ.get("DATABASE_NAME", "unihub"),
-        "USER": os.environ.get("DATABASE_USERNAME", "root"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD", ""),
-        "HOST": os.environ.get("DATABASE_HOST", "127.0.0.1"),
-        "PORT": os.environ.get("DATABASE_PORT", 5432),
-        "CONN_MAX_AGE": 300,
-        "OPTIONS": {
-            "client_encoding": "UTF8",
-        },
-    }
-}
-
-# Cache using django_redis
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get("REDIS_URL", "redis://127.0.0.1:6379/1"),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            'CONNECTION_POOL_KWARGS': {
-                'max_connections': 100,
-                'retry_on_timeout': True,
-            }
-        }
-    }
-}
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
+# Caches are done in the backend/common/services and databases in their respective service directories.
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -146,11 +97,6 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
 # Image handling
 S3_ACCESS_KEY_ID = os.environ.get("MINIO_ROOT_USER", "minio")
 S3_ACCESS_KEY = os.environ.get("MINIO_ROOT_PASSWORD", "minio123")
@@ -159,6 +105,15 @@ S3_ENDPOINT_URL = os.environ.get("MINIO_ENDPOINT", "http://minio:9000")
 S3_URL = os.environ.get("S3_URL", "http://localhost:9000")
 
 StorageClient.initialise(S3_ENDPOINT_URL, S3_ACCESS_KEY_ID, S3_ACCESS_KEY, S3_BUCKET_NAME, S3_URL)
+
+CommunityClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+CommunityAnnouncementClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+CommunityJoinsClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+CommunityEventClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+
+AccountsClient.initialise("account-service:" + os.environ.get('ACC_PORT', '50053'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+TagsClient.initialise("tag-service:" + os.environ.get('TAG_PORT', '50054'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+DegreesClient.initialise("degree-service:" + os.environ.get('DEGREE_PORT', '50055'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",

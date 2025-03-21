@@ -1,13 +1,13 @@
 import http
 import json
-import os
+import traceback
 
-import grpc
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from backend.common.proto import community_pb2, community_pb2_grpc
+from backend.common.proto import community_pb2
+from backend.common.services.community.community import CommunityClient
 
 
 @csrf_exempt
@@ -42,24 +42,35 @@ def community_creation(request: WSGIRequest):
     if not request.body:
         return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    validations = ['name', 'description', 'public', 'tags', 'degrees', 'user_id']
+    validations = ['name', 'description', 'public', 'tags', 'degrees']
 
     for validation in validations:
         if validation not in json.loads(request.body):
             return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    data = json.loads(request.body)
+    client = CommunityClient()
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_pb2_grpc.CommunityStub(channel)
-    response: community_pb2.CommunityIDResponse = stub.CommunityCreate(community_pb2.CommunityCreateRequest(
-        name=data['name'],
-        description=data['description'],
-        public=data['public'],
-        tags=data['tags'],
-        degrees=data['degrees'],
-        user_id=data['user_id']
-    ))
+    try:
+        data = json.loads(request.body)
+
+        req = community_pb2.CommunityCreateRequest(
+            name=data['name'],
+            description=data['description'],
+            public=data['public'],
+            tags=data['tags'],
+            degrees=data['degrees']
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_pb2.CommunityIDResponse = client.create(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,
@@ -74,11 +85,21 @@ def community_read(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to fetch a community's data
     """
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_pb2_grpc.CommunityStub(channel)
-    response: community_pb2.CommunityDataResponse = stub.CommunityView(community_pb2.CommunityViewRequest(
-        id=community_id
-    ))
+    client = CommunityClient()
+
+    try:
+        req = community_pb2.CommunityViewRequest(
+            id=community_id
+        )
+
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_pb2.CommunityDataResponse = client.view(req)
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,
@@ -97,19 +118,39 @@ def community_update(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to update a community's data
     """
 
-    data = json.loads(request.body)
+    client = CommunityClient()
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_pb2_grpc.CommunityStub(channel)
-    response: community_pb2.BasicCommunityResponse = stub.CommunityUpdate(community_pb2.CommunityUpdateRequest(
-        id=community_id,
-        name=data['name'],
-        description=data['description'],
-        public=data['public'],
-        tags=data['tags'],
-        degrees=data['degrees'],
-        user_id=data['user_id']
-    ))
+    if not request.body:
+        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
+    
+    validations = ['name', 'description', 'public', 'tags', 'degrees']
+
+    for validation in validations:
+        if validation not in json.loads(request.body):
+            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
+
+    try:
+        data = json.loads(request.body)
+
+        req = community_pb2.CommunityUpdateRequest(
+            id=community_id,
+            name=data['name'],
+            description=data['description'],
+            public=data['public'],
+            tags=data['tags'],
+            degrees=data['degrees']
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_pb2.BasicCommunityResponse = client.update(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,
@@ -123,14 +164,23 @@ def community_delete(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to delete a community
     """
 
-    data = json.loads(request.body)
+    client = CommunityClient()
 
-    channel = grpc.insecure_channel("community-service:" + os.environ.get('COMMUNITY_PORT', '50052'))
-    stub = community_pb2_grpc.CommunityStub(channel)
-    response: community_pb2.BasicCommunityResponse = stub.CommunityDelete(community_pb2.CommunityDeleteRequest(
-        id=community_id,
-        user_id=data['user_id']
-    ))
+    try:
+        req = community_pb2.CommunityDeleteRequest(
+            id=community_id
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_pb2.BasicCommunityResponse = client.delete(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     return JsonResponse({
         'success': response.success,
