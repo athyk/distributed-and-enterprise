@@ -1,45 +1,52 @@
-<script lang="ts">
-    export let name: string = "Tech Innovators Hub";
-    export let description: string =
-      "Join a vibrant community of developers, designers, and tech enthusiasts. Collaborate on projects, share insights, and drive innovation in the tech industry.";
-    export let tags: string[] = ["JavaScript", "Svelte", "React", "Tailwind", "Node.js"];
-    export let degrees: string[] = ["Beginner", "Intermediate", "Expert"];
-    export let totalMembers: string = "3,425";
-    export let creationDate: string = "February 2021";
-    export let isPublic: boolean = true;
-  </script>
+<div class="max-w-md mx-auto p-6 bg-white dark:bg-gray-900 rounded-xl shadow-lg">
+  <!-- Title -->
+  <h2 class="text-2xl font-semibold text-gray-900 dark:text-white text-center mb-6">
+    Create Communities
+  </h2>
+
+  <!-- Community Name Input -->
+  <input 
+    type="text" 
+    placeholder="Community Name"
+    class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+  />
+
+  <!-- Community Publicity -->
+  <div class="relative mt-4">
+    <select 
+      class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white appearance-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option>Community Publicity</option>
+    </select>
+  </div>
+
+  <!-- Community Tags -->
+  <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mt-6 mb-2">Community Tags</h3>
   
+  <!-- Tags Container -->
+  <div id="tags-container" class="flex flex-wrap gap-2 mb-3"></div>
 
-<div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md w-full max-w-2xl">
-  <div class="flex justify-between items-center mb-2">
-    <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{name}</h2>
-    <span class="text-sm px-2 py-1 rounded-md bg-gray-200 dark:bg-gray-700">
-      {isPublic ? "Public" : "Private"}
-    </span>
+  <!-- Tag Input Field -->
+  <input 
+    id="tag-input"
+    type="text" 
+    placeholder="Type #tag and press Enter"
+    class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none"
+  />
+
+  <!-- Community Degrees -->
+  <div class="relative mt-6">
+    <select 
+      class="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white appearance-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option>Community Degrees</option>
+    </select>
   </div>
 
-  <p class="text-sm text-gray-700 dark:text-gray-300">{description}</p>
-
-  <div class="mt-3 flex flex-wrap gap-2">
-    {#each tags as tag}
-      <span class="text-sm bg-gray-300 dark:bg-gray-600 px-2 py-1 rounded">{tag}</span>
-    {/each}
-  </div>
-
-  <div class="mt-2 flex flex-wrap gap-2">
-    {#each degrees as degree}
-      <span class="text-sm bg-gray-400 dark:bg-gray-500 px-2 py-1 rounded">{degree}</span>
-    {/each}
-  </div>
-
-  <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
-    <p>Total Members: {totalMembers}</p>
-    <p>{creationDate}</p>
-  </div>
-
-  <div class="mt-4 flex justify-end">
-    <button class="px-4 py-2 text-md rounded bg-blue-600 text-white hover:bg-blue-700">
-      {isPublic ? "Join Community +" : "Request Access +"}
-    </button>
-  </div>
+  <!-- Submit Button -->
+  <button 
+    class="mt-6 w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+  >
+    Submit
+  </button>
 </div>

@@ -22,17 +22,18 @@
     ]);
 
     const communityTags = writable([
-        { name: "Homophobia", count: 100 },
-        { name: "Racism", count: 60 },
-        { name: "Xenophobia", count: 30 },
-        { name: "Antisemitic", count: 30 },
-        { name: "Misogyny", count: 50 },
-        { name: "Ableism", count: 20 },
-        { name: "Ageism", count: 40 },
-        { name: "Hate Speech", count: 70 },
-        { name: "Transphobia", count: 90 },
-        { name: "Islamophobia", count: 80 }
-    ]);
+    { name: "Inclusivity", count: 100 },
+    { name: "Diversity", count: 60 },
+    { name: "Cultural Awareness", count: 30 },
+    { name: "Religious Tolerance", count: 30 },
+    { name: "Gender Equality", count: 50 },
+    { name: "Accessibility", count: 20 },
+    { name: "Respect for All Ages", count: 40 },
+    { name: "Kindness in Speech", count: 70 },
+    { name: "Mutual Respect", count: 90 },
+    { name: "Empathy", count: 80 }
+]);
+
 
     const communityDegree = writable([
         { name: "Computer Science", count: 150 },
@@ -141,25 +142,9 @@
         {/if}
     </div>
 
-    <!-- Price Range -->
-    <div class="border-b border-gray-700 py-2">
-        <div class="flex justify-between items-center cursor-pointer p-2 hover:text-yellow-400" on:click={() => toggleSection('price')}>
-            Price Range <span>{expanded.price ? "▲" : "▼"}</span>
-        </div>
-        {#if expanded.price}
-            <div class="flex flex-col px-2">
-                <input type="range" min="10" max="1000" step="10" bind:value={priceRange[0]} class="accent-yellow-400">
-                <input type="range" min="10" max="1000" step="10" bind:value={priceRange[1]} class="accent-yellow-400">
-                <div class="text-center text-gray-400">£{priceRange[0]} - £{priceRange[1]}</div>
-            </div>
-        {/if}
-    </div>
+    
 
-    <!-- Joke Section (For Mates) -->
-    <div class="mt-4 text-center text-gray-400">
-        <p class="italic">"Why don't skeletons fight each other? They don't have the guts!"</p>
-    </div>
-
+  
     <!-- Clear Filters Button -->
     <button class="w-full bg-red-600 hover:bg-red-700 text-white py-2 mt-4 rounded-lg transition duration-300" on:click={clearFilters}>
         Clear All Filters
