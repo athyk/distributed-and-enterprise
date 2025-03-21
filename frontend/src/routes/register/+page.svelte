@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AccountCard from '$components/AccountCard/base.svelte';
-	import Page from '$components/AccountCard/RegisterPages/page.svelte';
+	import Page from '$components/AccountCard/page.svelte';
 	import type { RegiserResponse } from '$lib/api/apiType';
 	import { post } from '$lib/api/post';
 
