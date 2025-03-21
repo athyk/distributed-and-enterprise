@@ -1,6 +1,6 @@
 from backend.common.utils import verify_string, verify_integer, verify_list
 from backend.community.database.database import get_db
-from backend.community.database.models import Event, EventTag
+from backend.community.database.models import Event
 
 from backend.community.utils import does_user_have_required_role
 from backend.community.events.local_functions import location_name_to_coords, add_tags

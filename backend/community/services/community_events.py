@@ -156,12 +156,6 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             tags=list(request.event_data.tags)
             )
 
-        status = community_event_pb2.EventResponse(
-            success=success,
-            http_status=http_code,
-            error_message=message
-        )
-
         return community_event_pb2.EventResponse(success=success, http_status=http_code, error_message=message)
 
 
