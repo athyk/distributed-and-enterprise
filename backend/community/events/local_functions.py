@@ -6,10 +6,10 @@ import os
 
 
 def add_tags(session, tags, event_id):
-    """
+    '''
     This function searches for the tags provided and connects them to -
     the Announcement in the AnnouncementTag table
-    """
+    '''
 
     tag_client = TagsClient()
 
@@ -24,16 +24,18 @@ def add_tags(session, tags, event_id):
 
 
 def location_name_to_coords(place_name: str) -> tuple[bool, float, float, list]:
-    url = f"https://maps.googleapis.com/maps/api/geocode/json?address={place_name}&key={os.environ.get('GEOCODING_API_KEY')}"
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?address={place_name}&key={os.environ.get('GEOCODING_API_KEY')}'
     response = requests.get(url).json()
 
-    if response["status"] == "OK":
-        location = response["results"][0]["geometry"]["location"]
-        lng = location["lng"]
-        lat = location["lat"]
+    if response['status'] == 'OK':
+        location = response['results'][0]['geometry']['location']
+        lng = location['lng']
+        lat = location['lat']
 
         return True, lng, lat, []
+    
+    elif response['status'] == 'OVER_QUERY_LIMIT':
+        return False, None, None, ['Unable To Perform Location Query']
 
     else:
-        print("Error:", response["status"])
         return False, None, None, ['Unable To Find Location']
