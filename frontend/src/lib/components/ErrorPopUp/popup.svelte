@@ -3,7 +3,7 @@
 </script>
 
 {#if errorMessage}
-	<div class="absolute top-0 right-0 p-4 w-1/2">
+	<div class="absolute top-0 right-0 w-1/2 p-4">
 		<div class="mb-4 w-full rounded bg-red-500 p-4 text-white shadow-lg">
 			<p>{errorMessage}</p>
 			<button

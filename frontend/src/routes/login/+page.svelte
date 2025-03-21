@@ -6,53 +6,50 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 
-	let errorMessage = "";
-	let email: [string, string, string] = ['','Email',"Enter your email"]
-	let password: [string, string, string] = ['','Password',"Enter your password"]
-	let otp: [string, string, string] = ['','OTP',"Enter your OTP"]
+	let errorMessage = '';
+	let email: [string, string, string] = ['', 'Email', 'Enter your email'];
+	let password: [string, string, string] = ['', 'Password', 'Enter your password'];
+	let otp: [string, string, string] = ['', 'OTP', 'Enter your OTP'];
 
 	let otp_required = false;
 
 	onMount(() => {
-        // Use the $page store to access URL search parameters
-        const searchParams = new URLSearchParams($page.url.search);
-        if (searchParams.get('otp') === 'true') {
-            otp_required = true;
-        }
-    });
-
+		// Use the $page store to access URL search parameters
+		const searchParams = new URLSearchParams($page.url.search);
+		if (searchParams.get('otp') === 'true') {
+			otp_required = true;
+		}
+	});
 
 	async function login() {
-		if (email[0] === "" || password[0] === "") {
-			errorMessage = "Please fill in all fields";
+		if (email[0] === '' || password[0] === '') {
+			errorMessage = 'Please fill in all fields';
 			return;
 		}
 		if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email[0])) {
-			errorMessage = "Invalid email format";
+			errorMessage = 'Invalid email format';
 			return;
 		}
 		let data = {
-			"email": email[0],
-			"password": password[0],
-			"otp": otp_required ? otp[0] : null
+			email: email[0],
+			password: password[0],
+			otp: otp_required ? otp[0] : null
 		};
 		let response = (await post('auth/login', data)) as RegiserResponse;
 		if (response.success) {
-			errorMessage = "";
-			window.location.href = "/";
+			errorMessage = '';
+			window.location.href = '/';
 		} else {
-			errorMessage = "";
+			errorMessage = '';
 			for (let i = 0; i < response.error_message.length; i++) {
 				if (i > 0) {
-					errorMessage += " | ";
+					errorMessage += ' | ';
 				}
 				errorMessage += response.error_message[i];
 			}
 		}
 	}
-
 </script>
-
 
 <div class="flex h-screen w-full items-center justify-center">
 	<AccountCard
@@ -68,16 +65,9 @@
 		<svelte:fragment slot="pages">
 			<div class="p-15">
 				{#if otp_required}
-					<Page
-						bind:email
-						bind:password
-						bind:otp
-					/>
+					<Page bind:email bind:password bind:otp />
 				{:else}
-					<Page
-						bind:email
-						bind:password
-					/>
+					<Page bind:email bind:password />
 				{/if}
 			</div>
 		</svelte:fragment>

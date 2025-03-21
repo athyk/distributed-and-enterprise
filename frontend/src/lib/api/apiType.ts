@@ -25,7 +25,3 @@ export type PaginationDataResponse = {
 	degrees: PaginationData[];
 	tags: PaginationData[];
 };
-
-
-
-	

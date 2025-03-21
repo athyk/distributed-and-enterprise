@@ -2,7 +2,6 @@
 	import Input from '$components/FormInput/Input.svelte';
 	import SearchBox from '$components/SearchBox/searchBox.svelte';
 
-
 	export let email: string[] | undefined = undefined;
 	export let password: string[] | undefined = undefined;
 	export let password_comfirm = false;
@@ -17,26 +16,24 @@
 	export let year_of_study: [number, number, string] | undefined = undefined;
 	export let graduation_date: [number, string] | undefined = undefined;
 
-	export let tags : [[string, number][], string, string] | undefined = undefined;
+	export let tags: [[string, number][], string, string] | undefined = undefined;
 
-	export let password_comfirm_value:string | undefined = undefined;
+	export let password_comfirm_value: string | undefined = undefined;
 
-	export let otp: [string, string,string] | undefined = undefined;
+	export let otp: [string, string, string] | undefined = undefined;
 
 	let current_year = new Date().getFullYear();
 	let max_grad_year = current_year + 5;
-
 </script>
 
-
 {#if email}
-	{#if email[1] !== ""}
+	{#if email[1] !== ''}
 		<label for={email[1]} class="block text-gray-700">{email[1]} </label>
 	{/if}
 	<input
 		type="email"
-		{...email[1] !== "" ? { placeholder: email[2] } : {}}
-		{...email[1] !== "" ? { id: email[1] } : {}}
+		{...email[1] !== '' ? { placeholder: email[2] } : {}}
+		{...email[1] !== '' ? { id: email[1] } : {}}
 		bind:value={email[0]}
 		class="mt-2 mb-2 w-full rounded-md border px-4 py-2 focus:ring-1 focus:ring-blue-600 focus:outline-none"
 	/>
@@ -46,14 +43,14 @@
 	<label for={password[1]} class="block text-gray-700">{password[1]} </label>
 	<input
 		type="password"
-		{...password[1] !== "" ? { placeholder: password[2] } : {}}
-		{...password[1] !== "" ? { id: password[1] } : {}}
+		{...password[1] !== '' ? { placeholder: password[2] } : {}}
+		{...password[1] !== '' ? { id: password[1] } : {}}
 		bind:value={password[0]}
 		class="mt-2 mb-2 w-full rounded-md border px-4 py-2 focus:ring-1 focus:ring-blue-600 focus:outline-none"
 	/>
 
 	{#if password_comfirm}
-		{#if password[1] !== ""}
+		{#if password[1] !== ''}
 			<label for={password[1]} class="block text-gray-700">{password[1]} </label>
 		{/if}
 		<input
@@ -66,13 +63,12 @@
 	{/if}
 {/if}
 
-
 {#if first_name}
 	<Input
 		Name={first_name[1]}
 		placeholder={first_name[2]}
 		type="text"
-		showLabel={first_name[1] !== ""}
+		showLabel={first_name[1] !== ''}
 		required={true}
 		bind:value={first_name[0]}
 	/>
@@ -83,7 +79,7 @@
 		Name={last_name[1]}
 		placeholder={last_name[2]}
 		type="text"
-		showLabel={last_name[1] !== ""}
+		showLabel={last_name[1] !== ''}
 		required={true}
 		bind:value={last_name[0]}
 	/>
@@ -94,7 +90,7 @@
 		Name={dob[1]}
 		placeholder={dob[2]}
 		type="date"
-		showLabel={dob[1] !== ""}
+		showLabel={dob[1] !== ''}
 		required={true}
 		bind:value={dob[0]}
 	/>
@@ -102,7 +98,7 @@
 
 {#if gender}
 	<div class="mt-4">
-		<label for='gender' class="block text-gray-700">
+		<label for="gender" class="block text-gray-700">
 			{gender[1]}
 		</label>
 		<div>
@@ -112,7 +108,7 @@
 					name="gender"
 					id={`gender-${g}`}
 					value={g}
-					class="mt-2 rounded-md border px-4 py"
+					class="py mt-2 rounded-md border px-4"
 					bind:group={gender[0]}
 				/>
 				<label class="mr-5" for={`gender-${g}`}>{g}</label>
@@ -124,7 +120,7 @@
 {#if tags}
 	<SearchBox
 		Name={tags[2]}
-		showLabel={tags[2] !== ""}
+		showLabel={tags[2] !== ''}
 		url={tags[1]}
 		id={tags[0]}
 		multi_select={true}
@@ -136,7 +132,7 @@
 {#if degree}
 	<SearchBox
 		Name={degree[2]}
-		showLabel={degree[2] !== ""}
+		showLabel={degree[2] !== ''}
 		url={degree[1]}
 		id={degree[0]}
 		bind:selected={degree[0]}
@@ -148,8 +144,8 @@
 		<label for="year_of_study" class="block text-gray-700">
 			{year_of_study[2]}
 		</label>
-		<div class="flex items-center mt-2">
-			<div class=" text-black px-5 py-1 rounded">
+		<div class="mt-2 flex items-center">
+			<div class=" rounded px-5 py-1 text-black">
 				<span>{year_of_study[0]}</span>
 			</div>
 			<input
@@ -159,10 +155,9 @@
 				max="5"
 				step="1"
 				bind:value={year_of_study[0]}
-				class="w-1/2 ml-4"
+				class="ml-4 w-1/2"
 			/>
 		</div>
-
 	</div>
 {/if}
 
@@ -171,8 +166,8 @@
 		<label for="year_of_study" class="block text-gray-700">
 			{graduation_date[1]}
 		</label>
-		<div class="flex items-center mt-2">
-			<div class=" text-black px-2 py-1 rounded">
+		<div class="mt-2 flex items-center">
+			<div class=" rounded px-2 py-1 text-black">
 				<span>{graduation_date[0]}</span>
 			</div>
 			<input
@@ -182,20 +177,20 @@
 				max={max_grad_year}
 				step="1"
 				bind:value={graduation_date[0]}
-				class="w-1/2 ml-4"
+				class="ml-4 w-1/2"
 			/>
 		</div>
 	</div>
 {/if}
 
 {#if otp}
-	{#if otp[1] !== ""}
+	{#if otp[1] !== ''}
 		<label for={otp[1]} class="block text-gray-700">{otp[1]} </label>
 	{/if}
 	<input
 		type="text"
-		{...otp[1] !== "" ? { placeholder: otp[2] } : {}}
-		{...otp[1] !== "" ? { id: otp[1] } : {}}
+		{...otp[1] !== '' ? { placeholder: otp[2] } : {}}
+		{...otp[1] !== '' ? { id: otp[1] } : {}}
 		bind:value={otp[0]}
 		class="mt-2 mb-2 w-full rounded-md border px-4 py-2 focus:ring-1 focus:ring-blue-600 focus:outline-none"
 	/>
