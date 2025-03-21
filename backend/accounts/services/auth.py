@@ -430,6 +430,13 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                     error_message=["User not found"],
                 )
 
+            user_tags = session.query(UserTag).filter(UserTag.user_id == user.id).all()
+
+            for user_tag in user_tags:
+                session.delete(user_tag)
+
+            session.commit()
+
             session.delete(user)
             session.commit()
 
