@@ -41,12 +41,13 @@ def community_announcement_paths(request: WSGIRequest, community_id):
     Depending on the request method used defines whether the Create or View function is executed
     """
 
+    if request.method == 'GET':
+        return community_announcement_view(request, community_id)
+
     if not request.body:
         return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    if request.method == 'GET':
-        return community_announcement_view(request, community_id)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         return community_announcement_creation(request, community_id)
     else:
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
@@ -105,30 +106,16 @@ def community_announcement_view(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to create a new community
     """
 
-    validations = ['offset', 'limit']
-
-    for validation in validations:
-        if validation not in json.loads(request.body):
-            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
-
     client = CommunityAnnouncementClient()
 
     try:
-        data = json.loads(request.body)
-
-        print(data)
-        print(community_id)
-
         req = community_announcement_pb2.CommunityAnnouncementViewSelectRequest(
             community_id=community_id,
-            offset=data['offset'],
-            limit=data['limit']
+            offset=int(request.GET.get('offset', '0')),
+            limit=int(request.GET.get('limit', '1'))
         )
 
-    except json.JSONDecodeError:  # Occurs if the JSON is invalid
-        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
-        print(e)
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
@@ -141,7 +128,6 @@ def community_announcement_view(request: WSGIRequest, community_id):
 
     if response.success:
         for announcement in response.announcements:
-
             json_announcement = MessageToDict(announcement)
 
             reformed_announcement = {
@@ -177,10 +163,7 @@ def community_announcement_view_single(request: WSGIRequest, community_id, annou
             community_id=community_id
         )
 
-    except json.JSONDecodeError:  # Occurs if the JSON is invalid
-        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
-        print(e)
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
@@ -216,29 +199,15 @@ def community_global_announcement_view(request: WSGIRequest):
     if request.method != 'GET':
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
-    if not request.body:
-        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
-
-    validations = ['offset', 'limit']
-
-    for validation in validations:
-        if validation not in json.loads(request.body):
-            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
-
     client = CommunityAnnouncementClient()
 
     try:
-        data = json.loads(request.body)
-
         req = community_announcement_pb2.CommunityAnnouncementGlobalRequest(
-            offset=data['offset'],
-            limit=data['limit']
+            offset=int(request.GET.get('offset', '0')),
+            limit=int(request.GET.get('limit', '1'))
         )
 
-    except json.JSONDecodeError:  # Occurs if the JSON is invalid
-        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
-        print(e)
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
@@ -272,6 +241,7 @@ def community_global_announcement_view(request: WSGIRequest):
         'error_message': list(response.error_message),
         "global_announcements": all_announcements
     })
+
 
 def community_announcement_edit(request: WSGIRequest, community_id, announcement_id):
     """
@@ -328,8 +298,6 @@ def community_announcement_delete(request: WSGIRequest, community_id, announceme
             community_id=community_id
         )
 
-    except json.JSONDecodeError:  # Occurs if the JSON is invalid
-        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
     except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
