@@ -21,7 +21,8 @@
 
 </script>
 
-<div class="w-full max-w-2xl p-4">
+
+<div class="flex flex-col justify-between min-h-[50px] bg-white rounded-2xl border-black border-1 m-5 p-5">
     <form>
         <div class="w-full flex flex-col items-center p-4">
             <h1 class="text-2xl font-bold mb-2">Create Post</h1>

@@ -11,7 +11,7 @@
     let showdropdown = false;
 </script>
 
-<div class="flex items-center space-x-2 top-0 bg-gray-300 p-2 rounded-t-2xl">
+<div class="flex items-center space-x-2 top-0 bg-white p-2 rounded-t-2xl">
     <a href={author.URL} target="_blank" rel="noopener noreferrer">
         <img src={author.profile_image} alt="Profile Icon" class="h-11 w-11 rounded-full" />
     </a>

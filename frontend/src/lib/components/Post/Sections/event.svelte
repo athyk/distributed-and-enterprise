@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Button from "$components/SubmitButton/button.svelte";
     import { convertTimestamp } from "$lib/utils/unixToSring";
     import Map from "./Map/map.svelte";
     export let event: {

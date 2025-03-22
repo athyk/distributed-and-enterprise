@@ -1,24 +1,45 @@
 <script lang="ts">
-    import Header from "./Sections/header.svelte";
-    import Footer from "./Sections/footer.svelte";
-    export let author: {
-        name: string,
-        profile_image: string,
-        URL: string,
-        DegreeYear?: string,
-        Degree?: string,
-    };
-    export let date = '' as string;
-    export let id = 0 as number;
-    export let likes = 0 as number;
-    export let showLikes = true as boolean;
-    export let ownPost = false as boolean;
+    import Post from "./base.svelte";
+
+    import Title from "./Sections/title.svelte";
+    import Text from "./Sections/text.svelte";
+    import Tags from "./Sections/tags.svelte";
+    import Gallery from "./Sections/gallery.svelte";
+
+    import type { postsData } from "$lib/api/apiType";
+
+
+    export let data: postsData[] = []
+
 </script>
 
-<div class="flex flex-col justify-between min-h-[50px] bg-gray-300 rounded-2xl border-black border-1 m-5 p-5" id={id.toString()}>
-    <Header {author} {ownPost} />
+{#each data as post (post.id)}
+    <Post
+        author={{
+            name: "I need an API",
+            profile_image: "https://picsum.photos/id/433/300/300",
+            URL: "/",
+        }}
+        date={post.created_at}
+        id={post.id}
+        likes={0}
+        showLikes={true}
+        ownPost={false}
+    >
+        {#if post.title}
+            <Title>{post.title}</Title>
+        {/if}
 
-    <slot />
+        <!-- {#if post.tags}
+            <Tags tags={post.tags} />
+        {/if} -->
 
-    <Footer likes={likes} date={date} showLikes={showLikes} />
-</div>
+        {#if post.description}
+            <Text>{post.description}</Text>
+        {/if}
+
+        <!-- {#if post.images}
+            <Gallery images={post.images} />
+        {/if} -->
+    </Post>
+{/each}
