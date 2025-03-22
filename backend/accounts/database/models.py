@@ -109,7 +109,6 @@ class Post(Base):
         # Remove the _sa_instance_state key since this causes a Protocol message Post has no "_sa_instance_state" field.
         td.pop('_sa_instance_state', None)
         # Convert the datetime objects to timestamps (unix time).
-        print(td)
         td['created_at'] = int(td['created_at'].timestamp())
         td['updated_at'] = int(td['updated_at'].timestamp())
 
