@@ -41,12 +41,13 @@ def community_event_paths(request: WSGIRequest, community_id):
     Depending on the request method used defines whether the Create or View function is executed
     """
 
+    if request.method == 'GET':
+        return community_event_view(request, community_id)
+
     if not request.body:
         return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
 
-    if request.method == 'GET':
-        return community_event_view(request, community_id)
-    elif request.method == 'POST':
+    if request.method == 'POST':
         return community_event_creation(request, community_id)
     else:
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
@@ -107,27 +108,16 @@ def community_event_view(request: WSGIRequest, community_id):
     Sends a request to the community server with the relevant data to create a new community
     """
 
-    validations = ['offset', 'limit']
-
-    for validation in validations:
-        if validation not in json.loads(request.body):
-            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
-
     client = CommunityEventClient()
 
     try:
-        data = json.loads(request.body)
-
         req = community_event_pb2.ViewRequest(
             community_id=community_id,
-            offset=data['offset'],
-            limit=data['limit']
+            offset=int(request.GET.get('offset', '0')),
+            limit=int(request.GET.get('limit', '1'))
         )
 
-    except json.JSONDecodeError:  # Occurs if the JSON is invalid
-        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
-        print(e)
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
@@ -179,8 +169,7 @@ def community_event_view_single(request: WSGIRequest, community_id, event_id):
 
     except json.JSONDecodeError:  # Occurs if the JSON is invalid
         return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
-        print(e)
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
@@ -223,29 +212,17 @@ def community_global_event_view(request: WSGIRequest):
     if request.method != 'GET':
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
-    if not request.body:
-        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
-
-    validations = ['offset', 'limit']
-
-    for validation in validations:
-        if validation not in json.loads(request.body):
-            return JsonResponse({'error': f'Key: {validation} Not Found'}, status=http.HTTPStatus.BAD_REQUEST)
-
     client = CommunityEventClient()
 
     try:
-        data = json.loads(request.body)
-
         req = community_event_pb2.ViewGlobalRequest(
-            offset=data['offset'],
-            limit=data['limit']
+            offset=int(request.GET.get('offset', '0')),
+            limit=int(request.GET.get('limit', '1'))
         )
 
     except json.JSONDecodeError:  # Occurs if the JSON is invalid
         return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
-    except Exception as e:  # Occurs if the JSON is valid but the data is not
-        print(e)
+    except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 
     try:
@@ -343,8 +320,6 @@ def community_event_delete(request: WSGIRequest, community_id, event_id):
             community_id=community_id
         )
 
-    except json.JSONDecodeError:  # Occurs if the JSON is invalid
-        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
     except Exception:  # Occurs if the JSON is valid but the data is not
         return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
 

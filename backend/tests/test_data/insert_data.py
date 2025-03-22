@@ -59,6 +59,7 @@ if __name__ == "__main__":
     insert_data(tags_db_config, 'backend/tests/test_data/Tag.sql')
     insert_data(degree_db_config, 'backend/tests/test_data/Degree.sql')
     insert_data(account_db_config, 'backend/tests/test_data/Account.sql')
+    insert_data(account_db_config, 'backend/tests/test_data/AccountPost.sql')
     insert_data(community_db_config, 'backend/tests/test_data/Community.sql')
 
     print('\nAll Data Insertion Functions Completed')
