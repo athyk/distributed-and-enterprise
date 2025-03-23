@@ -14,7 +14,7 @@ def get_accounts(request: WSGIRequest):
     try:
 
         req = GetRequest(  # TODO: Search by age etc
-            user_id=request.GET.get('user_id', 0),
+            user_id=int(request.GET.get('user_id', 0)),
             email='',  # TODO: Admin only
             first_name=request.GET.get('first_name', ''),
             last_name=request.GET.get('last_name', ''),
@@ -28,7 +28,8 @@ def get_accounts(request: WSGIRequest):
             page=request.GET.get('page', 0),
             limit=request.GET.get('limit', 50),
         )
-    except Exception:
+    except Exception as e:
+        print(e)
         return JsonResponse({'success': False, 'error_message': 'Invalid Query'}, status=http.HTTPStatus.BAD_REQUEST)
 
     try:

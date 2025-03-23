@@ -4,7 +4,9 @@ import traceback
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from backend.common.proto.account_post_pb2 import AccountPostListRequest, AccountPostListResponse
-from backend.common.services import AccountPostsClient
+from backend.common.proto.accounts_pb2 import GetRequest
+from backend.common.services import AccountPostsClient, AccountsClient
+from backend.core.utils import get_tag_name
 
 
 def list_posts(request: WSGIRequest):
@@ -12,6 +14,7 @@ def list_posts(request: WSGIRequest):
     List posts/search posts
     """
     client = AccountPostsClient()
+    user_client = AccountsClient()
 
     try:
         req = AccountPostListRequest(
@@ -40,7 +43,24 @@ def list_posts(request: WSGIRequest):
     if len(res.posts) > 0:
         http_res['posts'] = []
         for post in res.posts:
-            http_res['posts'].append(client.post_to_json(post))
+            json_post = client.post_to_json(post)
+            json_post['tags'] = [get_tag_name(tag) for tag in json_post['tags']]
+
+            req_user = GetRequest(user_id = json_post['user_id'])
+            user_result = user_client.get(req_user)
+
+            user_data = {
+                'user_id': user_result.users[0].id,
+                'first_name': user_result.users[0].first_name,
+                'last_name': user_result.users[0].last_name,
+                'picture_url': user_result.users[0].picture_url
+            }
+
+            del json_post['user_id']
+
+            json_post['user_data'] = user_data
+
+            http_res['posts'].append(json_post)
 
     if len(res.error_message) > 0:
         http_res['error_message'] = list(res.error_message)
