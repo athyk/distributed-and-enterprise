@@ -112,7 +112,7 @@
         {/if}
     </div>
 
-    <!-- Community Tags (e.g., Racism, Homophobia) -->
+
     <div class="border-b border-gray-700 py-2">
         <div class="flex justify-between items-center cursor-pointer p-2 hover:text-yellow-400" on:click={() => toggleSection('communityTags')}>
             Community Tags <span>{expanded.communityTags ? "▲" : "▼"}</span>

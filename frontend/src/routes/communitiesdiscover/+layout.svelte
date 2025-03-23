@@ -24,6 +24,7 @@
 		isSidebarOpen = false;
 	}
 
+	/*
 	onMount(() => {
 		handleResize();
 		window.addEventListener('resize', handleResize);
@@ -32,6 +33,8 @@
 	onDestroy(() => {
 		window.removeEventListener('resize', handleResize);
 	});
+
+	*/
 </script>
 
 <div class="min-h-screen flex flex-col text-gray-900 dark:text-gray-100">
