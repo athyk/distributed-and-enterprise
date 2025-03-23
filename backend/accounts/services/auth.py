@@ -264,6 +264,8 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
             users = users.offset(offset).limit(req.limit).all()
             users_list = [user.to_dict() for user in users]
 
+            print(users_list)
+
             return accounts_pb2.GetResponse(
                 success=True,
                 http_status=200,
