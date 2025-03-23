@@ -5,6 +5,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 from backend.common.proto.account_post_pb2 import AccountPostListRequest, AccountPostListResponse
 from backend.common.services import AccountPostsClient
+from backend.core.utils import get_tag_name
 
 
 def list_posts(request: WSGIRequest):
@@ -40,7 +41,10 @@ def list_posts(request: WSGIRequest):
     if len(res.posts) > 0:
         http_res['posts'] = []
         for post in res.posts:
-            http_res['posts'].append(client.post_to_json(post))
+            json_post = client.post_to_json(post)
+            json_post['tags'] = [get_tag_name(tag) for tag in json_post['tags']]
+
+            http_res['posts'].append(json_post)
 
     if len(res.error_message) > 0:
         http_res['error_message'] = list(res.error_message)
