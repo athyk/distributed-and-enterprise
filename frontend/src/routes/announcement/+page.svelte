@@ -1,53 +1,61 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-    import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
-  
-    // Define the structure of a global announcement
-    interface Announcement {
-      title: string;
-      description: string;
-      location: string;
-      datetime: string;
-      duration: number;
-      tags: number[];
+  import { onMount } from 'svelte';
+  import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
+  import { get } from '$lib/api/get';
+
+  // Define the structure of a global announcement
+  interface Announcement {
+    id: number;
+    title: string;
+    description: string;
+    tags: string[]; // tags are strings per your API response
+    user_id: number;
+    uploaded: string;
+    edit_user_id: number;
+    edit_uploaded: string | null;
+    community_id: number;
+  }
+
+  // Define the structure of the API response
+  interface AnnouncementsResponse {
+    global_announcements: Announcement[];
+  }
+
+  // Initialize an empty announcements array
+  let announcements: Announcement[] = [];
+
+  // Fetch announcements from the API endpoint.
+  async function fetchAnnouncements() {
+    console.log("Fetching announcements...");
+
+    try {
+      const response: unknown = await get('community/announcements');
+      console.log("Announcements fetched:", response);
+
+      // Cast the response to the expected type
+      const data = response as AnnouncementsResponse;
+      announcements = data.global_announcements;
+    } catch (error) {
+      console.error("Error fetching announcements:", error);
     }
-  
-    // Initialize an empty announcements array
-    let announcements: Announcement[] = [];
-  
-    // Fetch announcements from the API endpoint when the component mounts
-    onMount(async () => {
-      try {
-        const response = await fetch('http://localhost:8000/community/events');
-        if (!response.ok) {
-          throw new Error('Failed to fetch announcements');
-        }
-        // Assuming the API returns an array of announcements in JSON format
-        announcements = await response.json();
-      } catch (error) {
-        console.error('Error fetching announcements:', error);
-      }
-    });
-  </script>
-  
-  <main class="container mx-auto px-4 py-4">
-    <!-- Responsive grid:
-         - 1 column by default,
-         - 2 columns on medium screens,
-         - 3 columns on large screens -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {#each announcements as announcement}
+  }
+
+  // Call the function when the component is mounted
+  onMount(fetchAnnouncements);
+</script>
+
+<main class="container mx-auto px-4 py-4">
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {#if announcements && announcements.length > 0}
+      {#each announcements as announcement (announcement.id)}
         <AnnouncementCard
           title={announcement.title}
           description={announcement.description}
-          location={announcement.location}
-          datetime={announcement.datetime}
-          duration={announcement.duration}
-          tags={announcement.tags}
+          datetime={announcement.uploaded}
         />
       {/each}
-    </div>
-  </main>
-  
-
-  
+    {:else}
+      <p>No announcements found.</p>
+    {/if}
+  </div>
+</main>
