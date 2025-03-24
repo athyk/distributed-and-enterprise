@@ -1,0 +1,118 @@
+syntax = "proto3";
+
+message AccountPost {
+    // id is the post identification
+    int64 id = 1;
+    // title is the post title used to summarise, doesn't need to be used but helpful if frontend would like to use it
+    string title = 2;
+    // description is the short paragraph regarding the post
+    string description = 3;
+    // tags is a list of tag names
+    repeated int64 tags = 4;
+    // user_id is the identification of the user who made the post
+    int64 user_id = 5;
+    // created_at is when the post was first made
+    int64 created_at = 6;
+    // updated_at is when the last change was made to the post
+    int64 updated_at = 7;
+    // images is a list of image urls
+    repeated string images = 8;
+}
+
+// AccountPostCreateRequest is the message for the creation of a new post.
+message AccountPostCreateRequest {
+    // user_id is the user who is performing the operation
+    int64 user_id = 1;
+    // title is the post title used to summarise, doesn't need to be used but helpful if frontend would like to use it
+    string title = 2;
+    // description is the short paragraph
+    string description = 3;
+    // tags is a list of tag names
+    repeated int32 tags = 4;
+    // images is a list of image urls
+    repeated string images = 5;
+}
+
+// AccountPostUpdateRequest allows updating of a previously created post.
+message AccountPostUpdateRequest {
+    // post_id is used to specify what post to get
+    int64 post_id = 1;
+    // user_id is the user who is performing the operation, it's used for authorisation
+    int64 user_id = 2;
+    // title is the post title used to summarise, doesn't need to be used but helpful if frontend would like to use it
+    string title = 3;
+    // description is the short paragraph regarding the post
+    string description = 4;
+    // tags is a list of tag names
+    repeated int32 tags = 5;
+    // images is a list of image urls
+    repeated string images = 6;
+}
+
+// AccountPostGetRequest allows fetching of a specific post.
+message AccountPostGetRequest {
+    // post_id is used to specify what post to get
+    int64 post_id = 1;
+    // user_id is the user who is performing the operation, it's used for authorisation
+    int64 user_id = 2;
+}
+
+// AccountPostListRequest allows fetching of a list of posts of a user.
+//
+// When specifying a user_id, it will fetch all posts from that user.
+//
+// If also specifying a tag_id, it will fetch all posts from that user with that tag.
+// If no user_id is specified, it will fetch all posts regardless of the user.
+message AccountPostListRequest {
+    // user_id is to get posts from a specific user,
+    // if this is not set, it will fetch all posts regardless of the user in date order
+    int64 user_id = 1;
+    // tag_id is to get posts with a specific tag,
+    // if this is not set, it will fetch all posts regardless of the tag in date order
+    int32 tag_id = 2;
+    // title is a partial or full title to search for in the post
+    string title = 3;
+    // description is a partial or full description to search for in the post
+    string description = 4;
+    // offset is the position to start fetching post data in date order
+    int32 offset = 5;
+    // limit is the number of post to fetch from the offset
+    int32 limit = 6;
+}
+
+// AccountPostResponse is the general response message.
+message AccountPostResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+    // post is the post that was created/updated/fetched
+    AccountPost post = 4;
+}
+
+// AccountPostListResponse is the response message for the List method.
+message AccountPostListResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+    // posts is the list of posts that were fetched
+    repeated AccountPost posts = 4;
+}
+
+service AccountPosts {
+    // Create creates a new post
+    rpc Create(AccountPostCreateRequest) returns (AccountPostResponse) {}
+    // Update updates a specified post
+    rpc Update(AccountPostUpdateRequest) returns (AccountPostResponse) {}
+    // List fetches all/selected number of posts from a user
+    rpc List(AccountPostListRequest) returns (AccountPostListResponse) {}
+    // Get fetches a specified post
+    rpc Get(AccountPostGetRequest) returns (AccountPostResponse) {}
+    // Delete deletes a specified post
+    rpc Delete(AccountPostGetRequest) returns (AccountPostResponse) {}
+}

@@ -264,6 +264,8 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
             users = users.offset(offset).limit(req.limit).all()
             users_list = [user.to_dict() for user in users]
 
+            print(users_list)
+
             return accounts_pb2.GetResponse(
                 success=True,
                 http_status=200,
@@ -429,6 +431,13 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
                     http_status=400,
                     error_message=["User not found"],
                 )
+
+            user_tags = session.query(UserTag).filter(UserTag.user_id == user.id).all()
+
+            for user_tag in user_tags:
+                session.delete(user_tag)
+
+            session.commit()
 
             session.delete(user)
             session.commit()

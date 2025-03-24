@@ -15,6 +15,7 @@ from dotenv import load_dotenv
 
 from backend.common.files import StorageClient
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
+from backend.common.services.account_posts import AccountPostsClient
 from backend.common.services.community.community import CommunityClient
 from backend.common.services.community.announcement import CommunityAnnouncementClient
 from backend.common.services.community.joins import CommunityJoinsClient
@@ -112,6 +113,8 @@ CommunityJoinsClient.initialise("community-service:" + os.environ.get('Community
 CommunityEventClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 
 AccountsClient.initialise("account-service:" + os.environ.get('ACC_PORT', '50053'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+AccountPostsClient.initialise("account-service:" + os.environ.get('ACC_PORT', '50053'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+
 TagsClient.initialise("tag-service:" + os.environ.get('TAG_PORT', '50054'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 DegreesClient.initialise("degree-service:" + os.environ.get('DEGREE_PORT', '50055'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 
