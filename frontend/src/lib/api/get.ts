@@ -4,7 +4,7 @@ export async function get<T>(url: string): Promise<T> {
 		const response = await fetch(base_url + url, {
 			method: 'GET',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
 			credentials: 'include'
 		});
