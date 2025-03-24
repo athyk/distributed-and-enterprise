@@ -21,6 +21,7 @@ from backend.community.services.community_crud import Community_CRUD_Service
 from backend.community.services.community_announcements import Community_Announcement_Service
 from backend.community.services.community_joins import Community_Joins_Service
 from backend.community.services.community_events import Community_Event_Service
+from backend.community.services.community_search import Community_Searching_Service
 
 def serve():
     port = os.environ.get('COMMUNITY_PORT', '50052')
