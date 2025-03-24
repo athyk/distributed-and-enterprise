@@ -1,12 +1,27 @@
 <script lang="ts">
+	import Navbar from '$components/Navbar/navbar.svelte';
+
     // Data model for the form
+
+    import { post } from '$lib/api/post';
+
     let formData = {
       name: "",
       description: "",
       public: false,
-      tags: [] as string[],
+      tags: [] as number[],
       degrees: [] as string[]
     };
+
+
+    type createResponse = {
+      "success": boolean,
+      "http_status": Number,
+      "error_message":  String [],
+      "id": Number
+    }
+      
+    
   
     // Function to handle adding a tag
     function addTag() {
@@ -33,10 +48,29 @@
     }
   
     // Function to handle form submission
-    function createCommunity() {
+    async function createCommunity() {
       console.log("Creating community with data:", formData);
+
+      try{
+        let response = (await post('community/', formData)) as createResponse;
+
+console.log(response.id)
+
+
+      }  catch (error) {
+
+
+    
+
+  console.error("Error creating community:", error);
+     
+    };
+
+  }
+
+
       // Add your API call or store logic here
-    }
+    
   </script>
   
   <!-- Container -->
