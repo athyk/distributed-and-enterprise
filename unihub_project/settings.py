@@ -123,3 +123,5 @@ DegreesClient.initialise("degree-service:" + os.environ.get('DEGREE_PORT', '5005
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
