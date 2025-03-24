@@ -77,7 +77,7 @@
         </div>
     {:else}
         <Feed
-            items={posts.length}
+            items={posts}
             minColWidth={sliders[0].value}
             maxColWidth={sliders[1].value}
             gap={sliders[2].value}

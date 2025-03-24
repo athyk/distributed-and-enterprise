@@ -4,7 +4,7 @@
 
     import Masonry from 'svelte-bricks';
     import { onMount } from "svelte";
-    export let items = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    export let data: any[] = [];
 
 
 
@@ -71,13 +71,13 @@
 
 
     <Masonry
-        items={[items]}
+        items={data}
         minColWidth={minColWidth}
         maxColWidth={maxColWidth}
         gap={gap}
         masonryWidth={width}
         masonryHeight={height}
     >
-        <slot name="Posts" />
+        <slot  name="Posts" />
     </Masonry>
 </div>
