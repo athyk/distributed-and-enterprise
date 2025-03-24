@@ -163,6 +163,7 @@ class AccountsPostsServicer(account_post_pb2_grpc.AccountPostsServicer):
 
             if req.tag_id != 0:
                 posts = posts.join(PostTag).filter(PostTag.tag_id == req.tag_id)
+                print('getting tags')
 
             if req.title != "":
                 posts = posts.filter(Post.title.ilike(f'%{req.title}%'))
@@ -172,6 +173,8 @@ class AccountsPostsServicer(account_post_pb2_grpc.AccountPostsServicer):
             res = posts.order_by(Post.created_at.desc()).limit(req.limit).offset(req.offset).all()
 
             posts = [post.to_dict() for post in res]
+
+            
 
             return account_post_pb2.AccountPostListResponse(success=True, http_status=200, error_message=['Posts Successfully Fetched'], posts=posts)
 
