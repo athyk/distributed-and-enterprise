@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+// RequestResponse is the response message for the CommunityUpdate and CommunityDelete method from the Community service.
+//
+// It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
+message RequestResponse {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+}
+
+// CommunityData is the response message for the CommunityView method from the Community service.
+//
+// It contains a flag to indicate if the message was successfully sent and an error message if there was an error.
+message CommunityData {
+    // id is the community unique identification
+    int32 id = 1;
+    // name is the community identifier for users
+    string name = 2;
+    // description is the short paragraph regarding the community
+    string description = 3;
+    // public is for restricting access to users when false
+    int32 public_community = 4;
+    // member_count is the total number of members in the community
+    int32 member_count = 5;
+    // tags is a list of tag names
+    repeated string tags = 6;
+    // degrees is a list of degree names
+    repeated string degrees = 7;
+}
+
+message CommunityFilter {
+    // status is the response data of the request
+    RequestResponse status = 1;
+    // communities is a list of communities that match the filter
+    repeated CommunityData communities = 2;
+}
+
+message Filter {
+    // user_id is the user asking for the filter
+    int32 user_id = 1;
+    // is_with only displays the communities at value -
+    //
+    // 0 - get all communities
+    // 1 - joined communities
+    // 2 - not joined communities
+    int32 is_with = 2;
+    // name of the community
+    string name = 3;
+    // public is community private
+    //
+    // 0 - get all communities
+    // 1 - public communities
+    // 2 - private communities
+    int32 public = 4;
+    // minimum_members minimum required members
+    int32 minimum_members = 5;
+    // community tags
+    repeated int32 tags = 6;
+    // community degrees
+    repeated int32 degrees = 7;
+    // offset is the position to start fetching announcement data in date order
+    // this is to skip fetching more recent announcements when already fetched
+    int32 offset = 8;
+    // limit is the number of announcements to fetch from the offset
+    int32 limit = 9;
+}
+
+service CommunitySearching {
+    // CommunitySearch fetches communities that match the filter
+    rpc CommunitySearch(Filter) returns (CommunityFilter) {}
+}

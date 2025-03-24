@@ -19,6 +19,7 @@ from backend.common.services.community.announcement import CommunityAnnouncement
 from backend.common.services.community.joins import CommunityJoinsClient
 from backend.common.services.community.event import CommunityEventClient
 from backend.common.services.community.member import CommunityMemberClient
+from backend.common.services.community.search import CommunitySearchingClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
@@ -90,6 +91,11 @@ def serve():
     )
 
     CommunityMemberClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunitySearchingClient.initialise(
         "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )

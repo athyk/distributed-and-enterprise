@@ -21,6 +21,7 @@ from backend.common.services.community.announcement import CommunityAnnouncement
 from backend.common.services.community.joins import CommunityJoinsClient
 from backend.common.services.community.event import CommunityEventClient
 from backend.common.services.community.member import CommunityMemberClient
+from backend.common.services.community.search import CommunitySearchingClient
 
 load_dotenv()
 
@@ -113,6 +114,7 @@ CommunityAnnouncementClient.initialise("community-service:" + os.environ.get('Co
 CommunityJoinsClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 CommunityEventClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 CommunityMemberClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
+CommunitySearchingClient.initialise("community-service:" + os.environ.get('Community_PORT', '50052'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 
 AccountsClient.initialise("account-service:" + os.environ.get('ACC_PORT', '50053'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
 AccountPostsClient.initialise("account-service:" + os.environ.get('ACC_PORT', '50053'), os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),)
