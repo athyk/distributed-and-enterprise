@@ -1,0 +1,24 @@
+from backend.common.utils import verify_integer
+from backend.community.database.database import get_db
+from backend.community.database.models import Community, CommunityUser
+
+from math import inf as INFINITY
+
+
+def promote_user(community_id: int, user_id: int, action_user_id: int) -> tuple[bool, int, list]:
+    """
+    This function verifies incoming data and promotess a user in the community.
+    Only Moderators and Admins can perform these actions
+    If any errors arise then relevant error messages are returned.
+    """
+
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
+    action_verify, action_error = verify_integer(action_user_id, 1, INFINITY)
+    
+    if False in [user_verify, community_verify, action_verify]:
+
+        all_errors = [user_error, community_error, action_error]
+        error_messages = [item for item in all_errors if item.strip()]
+
+        return False, error_messages
