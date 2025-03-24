@@ -20,16 +20,18 @@ class Community_Searching_Service(community_searching_pb2_grpc.CommunitySearchin
         print(request)
 
         success, http_code, message, filter = search_for_community(
+            request.offset,
+            request.limit,
             request.user_id,
             request.is_with,
             request.name,
             request.public,
             request.minimum_members,
-            request.tags,
-            request.degrees
+            list(request.tags),
+            list(request.degrees)
         )
 
-        status = community_searching_pb2.BasicCommunityResponse(
+        status = community_searching_pb2.RequestResponse(
             success=success,
             http_status=http_code,
             error_message=message
@@ -38,14 +40,24 @@ class Community_Searching_Service(community_searching_pb2_grpc.CommunitySearchin
         filtered = []
 
         for community in filter:
+            public = 2
+
+            if community.get('public') == 1:
+                print('public')
+                public = 1
+            
             filtered.append(community_searching_pb2.CommunityData(
                 id=community.get('id', 0),
                 name=community.get('name', ''),
                 description=community.get('description', ''),
-                public_community=community.get('public_community', True),
+                public_community=public,
                 member_count=community.get('member_count', 0),
                 tags=community.get('tags', []),
                 degrees=community.get('degrees', []),
             ))
+
+        print('-----')
+
+        print(filtered)
         
         return community_searching_pb2.CommunityFilter(status=status, communities=filtered)

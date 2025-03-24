@@ -24,21 +24,21 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x19\x63ommunity_searching.proto\"U\n\x16\x42\x61sicCommunityResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"\x8d\x01\n\rCommunityData\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x18\n\x10public_community\x18\x04 \x01(\x08\x12\x14\n\x0cmember_count\x18\x05 \x01(\x05\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x0f\n\x07\x64\x65grees\x18\x07 \x03(\t\"_\n\x0f\x43ommunityFilter\x12\'\n\x06status\x18\x01 \x01(\x0b\x32\x17.BasicCommunityResponse\x12#\n\x0b\x63ommunities\x18\x02 \x03(\x0b\x32\x0e.CommunityData\"\x80\x01\n\x06\x46ilter\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x0f\n\x07is_with\x18\x02 \x01(\x05\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0e\n\x06public\x18\x04 \x01(\x08\x12\x17\n\x0fminimum_members\x18\x05 \x01(\x05\x12\x0c\n\x04tags\x18\x06 \x03(\x05\x12\x0f\n\x07\x64\x65grees\x18\x07 \x03(\x05\x32\x44\n\x12\x43ommunitySearching\x12.\n\x0f\x43ommunitySearch\x12\x07.Filter\x1a\x10.CommunityFilter\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x19\x63ommunity_searching.proto\"N\n\x0fRequestResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"\x8d\x01\n\rCommunityData\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x13\n\x0b\x64\x65scription\x18\x03 \x01(\t\x12\x18\n\x10public_community\x18\x04 \x01(\x05\x12\x14\n\x0cmember_count\x18\x05 \x01(\x05\x12\x0c\n\x04tags\x18\x06 \x03(\t\x12\x0f\n\x07\x64\x65grees\x18\x07 \x03(\t\"X\n\x0f\x43ommunityFilter\x12 \n\x06status\x18\x01 \x01(\x0b\x32\x10.RequestResponse\x12#\n\x0b\x63ommunities\x18\x02 \x03(\x0b\x32\x0e.CommunityData\"\x9f\x01\n\x06\x46ilter\x12\x0f\n\x07user_id\x18\x01 \x01(\x05\x12\x0f\n\x07is_with\x18\x02 \x01(\x05\x12\x0c\n\x04name\x18\x03 \x01(\t\x12\x0e\n\x06public\x18\x04 \x01(\x05\x12\x17\n\x0fminimum_members\x18\x05 \x01(\x05\x12\x0c\n\x04tags\x18\x06 \x03(\x05\x12\x0f\n\x07\x64\x65grees\x18\x07 \x03(\x05\x12\x0e\n\x06offset\x18\x08 \x01(\x05\x12\r\n\x05limit\x18\t \x01(\x05\x32\x44\n\x12\x43ommunitySearching\x12.\n\x0f\x43ommunitySearch\x12\x07.Filter\x1a\x10.CommunityFilter\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'community_searching_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_BASICCOMMUNITYRESPONSE']._serialized_start=29
-  _globals['_BASICCOMMUNITYRESPONSE']._serialized_end=114
-  _globals['_COMMUNITYDATA']._serialized_start=117
-  _globals['_COMMUNITYDATA']._serialized_end=258
-  _globals['_COMMUNITYFILTER']._serialized_start=260
-  _globals['_COMMUNITYFILTER']._serialized_end=355
-  _globals['_FILTER']._serialized_start=358
-  _globals['_FILTER']._serialized_end=486
-  _globals['_COMMUNITYSEARCHING']._serialized_start=488
-  _globals['_COMMUNITYSEARCHING']._serialized_end=556
+  _globals['_REQUESTRESPONSE']._serialized_start=29
+  _globals['_REQUESTRESPONSE']._serialized_end=107
+  _globals['_COMMUNITYDATA']._serialized_start=110
+  _globals['_COMMUNITYDATA']._serialized_end=251
+  _globals['_COMMUNITYFILTER']._serialized_start=253
+  _globals['_COMMUNITYFILTER']._serialized_end=341
+  _globals['_FILTER']._serialized_start=344
+  _globals['_FILTER']._serialized_end=503
+  _globals['_COMMUNITYSEARCHING']._serialized_start=505
+  _globals['_COMMUNITYSEARCHING']._serialized_end=573
 # @@protoc_insertion_point(module_scope)

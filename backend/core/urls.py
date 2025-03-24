@@ -17,11 +17,9 @@ from backend.core.view.community.announcements import community_announcement_pat
 from backend.core.view.community.community_events import community_event_action_paths, community_event_paths, community_global_event_view
 from backend.core.view.community.community_crud import community_crud_paths, community_creation
 from backend.core.view.community.community_joins import community_join_actions, invite_to_community
-<<<<<<< HEAD
 from backend.core.view.community.searching import fetch_communities
-=======
 from backend.core.view.community.member_management import community_promotion, community_ban, community_demotion
->>>>>>> main
+
 
 from backend.core.view.auth.login import login_user
 from backend.core.view.auth.register import register_user
@@ -56,6 +54,7 @@ urlpatterns = [
     path('community/events', community_global_event_view),
     path('community/<int:community_id>/events', community_event_paths),
     path('community/<int:community_id>/events/<int:event_id>', community_event_action_paths),
+    path('community/search', fetch_communities),
 
     path('posts/upload', create_attachment),
     path('posts/list', list_posts),
