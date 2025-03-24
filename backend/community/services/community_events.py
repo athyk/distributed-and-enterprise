@@ -74,12 +74,11 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
         
         return community_event_pb2.CreateResponse(status=status, event_id=id)
 
-
     def ViewOneEvent(self, request: community_event_pb2.ViewOneRequest, context: grpc.ServicerContext) -> community_event_pb2.ViewResponse:
-        '''
+        """
         This function verifies incoming data and fetches one specified community event.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("ViewOneEvent Request Made:")
         print(request)
@@ -94,12 +93,11 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
         
         return community_event_pb2.ViewResponse(status=status, event=format_events([event]))
 
-
     def ViewEvents(self, request: community_event_pb2.ViewRequest, context: grpc.ServicerContext) -> community_event_pb2.ViewResponse:
-        '''
+        """
         This function verifies incoming data and fetches community event.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("ViewEvents Request Made:")
         print(request)
@@ -114,12 +112,11 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
         
         return community_event_pb2.ViewResponse(status=status, event=format_events(event_list))
 
-
     def ViewGlobalEvents(self, request: community_event_pb2.ViewGlobalRequest, context: grpc.ServicerContext) -> community_event_pb2.ViewResponse:
-        '''
+        """
         This function verifies incoming data and fetches global community events.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("ViewGlobalEvents Request Made:")
         print(request)
@@ -134,12 +131,11 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
         
         return community_event_pb2.ViewResponse(status=status, event=format_events(event_list))
 
-
     def EditEvent(self, request: community_event_pb2.EditEventRequest, context: grpc.ServicerContext) -> community_event_pb2.EventResponse:
-        '''
+        """
         This function verifies incoming data and edits a community event.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("EditEvent Request Made:")
         print(request)
@@ -158,12 +154,11 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
 
         return community_event_pb2.EventResponse(success=success, http_status=http_code, error_message=message)
 
-
     def DeleteEvent(self, request: community_event_pb2.DeleteEventRequest, context: grpc.ServicerContext) -> community_event_pb2.EventResponse:
-        '''
+        """
         This function verifies incoming data and deletes a community event.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
 
         print("DeleteEvent Request Made:")
         print(request)
