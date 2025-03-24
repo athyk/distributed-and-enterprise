@@ -7,7 +7,7 @@ from concurrent import futures
 #
 # Alternatively you may convert the following for use on your operating system: PYTHONPATH=$(pwd)/backend/common/proto
 # But if any issues happen, use the docker compose command to run the server.
-from backend.common.proto import community_pb2_grpc, community_announcement_pb2_grpc, community_joins_pb2_grpc, community_event_pb2_grpc
+from backend.common.proto import community_pb2_grpc, community_announcement_pb2_grpc, community_joins_pb2_grpc, community_event_pb2_grpc, community_member_management_pb2_grpc
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
 from backend.common.services.community.community import CommunityClient
 from backend.common.services.community.announcement import CommunityAnnouncementClient
@@ -22,6 +22,7 @@ from backend.community.services.community_crud import Community_CRUD_Service
 from backend.community.services.community_announcements import Community_Announcement_Service
 from backend.community.services.community_joins import Community_Joins_Service
 from backend.community.services.community_events import Community_Event_Service
+from backend.community.services.member_manage import Community_Member_Management_Service
 
 def serve():
     port = os.environ.get('COMMUNITY_PORT', '50052')
@@ -47,6 +48,9 @@ def serve():
     print('Service Added: Joins-Service')
 
     community_event_pb2_grpc.add_CommunityEventServicer_to_server(Community_Event_Service(), server)
+    print('Service Added: Event-Service')
+
+    community_member_management_pb2_grpc.add_MemberManagementServicer_to_server(Community_Member_Management_Service(), server)
     print('Service Added: Event-Service')
 
     server.add_insecure_port('[::]:' + port)

@@ -111,8 +111,7 @@ class CommunityMemberClient:
             return community_member_management_pb2.MemberActionResponse(
                 success=False,
                 http_status=401,
-                error_message=['Action Requires User To Be Logged In'],
-                id=-1
+                error_message=['Action Requires User To Be Logged In']
             )
 
         user_data = self._redis_client.get(session_keys[0])
