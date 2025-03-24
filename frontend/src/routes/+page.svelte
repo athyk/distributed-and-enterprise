@@ -1,6 +1,18 @@
 <script lang="ts">
-    import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
-    import EventCard from '$components/eventCard/eventCard.svelte';
+  import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
+  import EventCard from '$components/eventCard/eventCard.svelte';
+	import { get } from '$lib/api/get';
+	import { onMount } from 'svelte';
+
+	async function getUser() {
+		let response = await get('users/@me');
+		console.log(response);
+	}
+
+	onMount(() => {
+		getUser();
+	});
+
 </script>
 
 <div class="min-h-screen p-4 sm:p-8 lg:p-12 flex flex-col items-center">
