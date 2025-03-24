@@ -21,8 +21,10 @@ message UserRequest {
 }
 
 service MemberManagement {
-    // PromoteUser is used for both promotion and demotion of a specific user
+    // PromoteUser is used for promotion of a specific user
     rpc PromoteUser(UserRequest) returns (MemberActionResponse) {}
+    // DemoteUser is used for demoting a specific user
+    rpc DemoteUser(UserRequest) returns (MemberActionResponse) {}
     // BanUser is used by admins to either ban or unban users
     rpc BanUser(UserRequest) returns (MemberActionResponse) {}
 }

@@ -39,6 +39,11 @@ class MemberManagementStub(object):
                 request_serializer=community__member__management__pb2.UserRequest.SerializeToString,
                 response_deserializer=community__member__management__pb2.MemberActionResponse.FromString,
                 _registered_method=True)
+        self.DemoteUser = channel.unary_unary(
+                '/MemberManagement/DemoteUser',
+                request_serializer=community__member__management__pb2.UserRequest.SerializeToString,
+                response_deserializer=community__member__management__pb2.MemberActionResponse.FromString,
+                _registered_method=True)
         self.BanUser = channel.unary_unary(
                 '/MemberManagement/BanUser',
                 request_serializer=community__member__management__pb2.UserRequest.SerializeToString,
@@ -50,7 +55,14 @@ class MemberManagementServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def PromoteUser(self, request, context):
-        """PromoteUser is used for both promotion and demotion of a specific user
+        """PromoteUser is used for promotion of a specific user
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DemoteUser(self, request, context):
+        """DemoteUser is used for demoting a specific user
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -68,6 +80,11 @@ def add_MemberManagementServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'PromoteUser': grpc.unary_unary_rpc_method_handler(
                     servicer.PromoteUser,
+                    request_deserializer=community__member__management__pb2.UserRequest.FromString,
+                    response_serializer=community__member__management__pb2.MemberActionResponse.SerializeToString,
+            ),
+            'DemoteUser': grpc.unary_unary_rpc_method_handler(
+                    servicer.DemoteUser,
                     request_deserializer=community__member__management__pb2.UserRequest.FromString,
                     response_serializer=community__member__management__pb2.MemberActionResponse.SerializeToString,
             ),
@@ -102,6 +119,33 @@ class MemberManagement(object):
             request,
             target,
             '/MemberManagement/PromoteUser',
+            community__member__management__pb2.UserRequest.SerializeToString,
+            community__member__management__pb2.MemberActionResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DemoteUser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/MemberManagement/DemoteUser',
             community__member__management__pb2.UserRequest.SerializeToString,
             community__member__management__pb2.MemberActionResponse.FromString,
             options,

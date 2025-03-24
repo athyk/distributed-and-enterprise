@@ -5,9 +5,9 @@ from backend.community.database.models import Community, CommunityUser
 from math import inf as INFINITY
 
 
-def promote_user(community_id: int, user_id: int, action_user_id: int) -> tuple[bool, int, list]:
+def demote_user(community_id: int, user_id: int, action_user_id: int) -> tuple[bool, int, list]:
     """
-    This function verifies incoming data and promotess a user in the community.
+    This function verifies incoming data and demotes a user in the community.
     Only Moderators and Admins can perform these actions
     If any errors arise then relevant error messages are returned.
     """
@@ -46,17 +46,17 @@ def promote_user(community_id: int, user_id: int, action_user_id: int) -> tuple[
         if not role_result:
             return False, 400, ['User Not Within Community']
         
-        if role_result.role == 'user':
+        if role_result.role == 'moderator':
+            role_result.role = 'user'
+            session.commit()
+
+            return True, 200, ['User Demoted To User']
+        
+        elif role_result.role == 'admin' and user_role_result[0] == 'admin':
             role_result.role = 'moderator'
             session.commit()
 
-            return True, 200, ['User Promoted To Moderator']
-        
-        elif role_result.role == 'moderator' and user_role_result[0] == 'admin':
-            role_result.role = 'admin'
-            session.commit()
-
-            return True, 200, ['User Promoted To Admin']
+            return True, 200, ['User Demoted To Moderator']
 
         else:
-            return False, 400, ['User Is Unable To Be Promoted']
+            return False, 400, ['User Is Unable To Be Demoted']

@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!community_member_management.proto\"S\n\x14MemberActionResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"L\n\x0bUserRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x05\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\x16\n\x0e\x61\x63tion_user_id\x18\x03 \x01(\x05\x32z\n\x10MemberManagement\x12\x34\n\x0bPromoteUser\x12\x0c.UserRequest\x1a\x15.MemberActionResponse\"\x00\x12\x30\n\x07\x42\x61nUser\x12\x0c.UserRequest\x1a\x15.MemberActionResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!community_member_management.proto\"S\n\x14MemberActionResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x13\n\x0bhttp_status\x18\x02 \x01(\x05\x12\x15\n\rerror_message\x18\x03 \x03(\t\"L\n\x0bUserRequest\x12\x14\n\x0c\x63ommunity_id\x18\x01 \x01(\x05\x12\x0f\n\x07user_id\x18\x02 \x01(\x05\x12\x16\n\x0e\x61\x63tion_user_id\x18\x03 \x01(\x05\x32\xaf\x01\n\x10MemberManagement\x12\x34\n\x0bPromoteUser\x12\x0c.UserRequest\x1a\x15.MemberActionResponse\"\x00\x12\x33\n\nDemoteUser\x12\x0c.UserRequest\x1a\x15.MemberActionResponse\"\x00\x12\x30\n\x07\x42\x61nUser\x12\x0c.UserRequest\x1a\x15.MemberActionResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -35,6 +35,6 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_MEMBERACTIONRESPONSE']._serialized_end=120
   _globals['_USERREQUEST']._serialized_start=122
   _globals['_USERREQUEST']._serialized_end=198
-  _globals['_MEMBERMANAGEMENT']._serialized_start=200
-  _globals['_MEMBERMANAGEMENT']._serialized_end=322
+  _globals['_MEMBERMANAGEMENT']._serialized_start=201
+  _globals['_MEMBERMANAGEMENT']._serialized_end=376
 # @@protoc_insertion_point(module_scope)
