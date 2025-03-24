@@ -14,7 +14,7 @@ def get_community_data(community_id: int) -> tuple[bool, list, str, str, bool, l
 
     print('community data')
 
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
 
     if False in [community_verify]:
 

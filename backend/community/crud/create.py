@@ -13,12 +13,12 @@ def create_community(name: str, description: str, public: bool, tags: list, degr
     If any errors arise then relevant error messages are returned.
     """
 
-    name_verify, name_error = verify_string(name, 4, 64)
-    description_verify, description_error = verify_string(description, 4, 511)
-    public_verify, public_error = verify_boolean(public)
-    tags_verify, tags_error = verify_list(tags, 0, 5)
-    degrees_verify, degrees_error = verify_list(degrees, 0, 5)
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
+    name_verify, name_error = verify_string(name, 4, 64, 'Name')
+    description_verify, description_error = verify_string(description, 4, 511, 'Description')
+    public_verify, public_error = verify_boolean(public, 'Public')
+    tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
+    degrees_verify, degrees_error = verify_list(degrees, 0, 5, 'Degrees')
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
 
     if False in [name_verify, description_verify, public_verify, tags_verify, degrees_verify, user_verify]:
 

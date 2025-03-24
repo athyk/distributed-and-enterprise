@@ -15,11 +15,11 @@ def create_announcement(community_id: int, user_id: int, title: str, description
     If any errors arise then relevant error messages are returned.
     """
 
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    title_verify, title_error = verify_string(title, 4, 128)
-    description_verify, description_error = verify_string(description, 4, 2048)
-    tags_verify, tags_error = verify_list(tags, 0, 5)
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    title_verify, title_error = verify_string(title, 4, 128, 'Title')
+    description_verify, description_error = verify_string(description, 4, 2048, 'Description')
+    tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
     
     if False in [user_verify, community_verify, title_verify, description_verify, tags_verify]:
 
