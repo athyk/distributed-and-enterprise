@@ -18,6 +18,7 @@ from backend.common.services.community.community import CommunityClient
 from backend.common.services.community.announcement import CommunityAnnouncementClient
 from backend.common.services.community.joins import CommunityJoinsClient
 from backend.common.services.community.event import CommunityEventClient
+from backend.common.services.community.member import CommunityMemberClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
@@ -84,6 +85,11 @@ def serve():
     )
 
     CommunityEventClient.initialise(
+        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
+        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
+    )
+
+    CommunityMemberClient.initialise(
         "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )

@@ -6,7 +6,8 @@ export async function post<T>(url: string, data: Record<string, unknown>): Promi
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(data)
+			body: JSON.stringify(data),
+			credentials: 'include'
 		});
 
 		const responseData = await response.json();
