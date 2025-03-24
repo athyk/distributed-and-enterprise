@@ -196,3 +196,9 @@ This command builds the images and starts the containers in the background. (add
 docker compose down
 ```
 This command stops and removes the containers. If you used `-d` flag, you can use `docker-compose down` to stop the containers.
+
+## Size of the Images
+
+While the size is excessive, it's a prototype for python. Ideally it'd use a distroless image to reduce the size and improve security.
+
+I have tried using pyinstaller but for the complexity of the project, it's not feasible.

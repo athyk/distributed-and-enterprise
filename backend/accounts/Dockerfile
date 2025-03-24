@@ -1,6 +1,5 @@
 FROM python:3.13-slim AS base
 
-RUN mkdir /app
 WORKDIR /app
 
 # Prevents writing pyc files to disk
@@ -25,7 +24,7 @@ COPY --from=base /usr/local/bin/ /usr/local/bin/
 
 WORKDIR /app
 COPY --chown=appuser:appuser . .
-RUN rm -rf .git .github .venv docs frontend
+RUN rm -rf .git .github .venv docs frontend unihub_project backend/community backend/core backend/tag backend/degree backend/chat backend/tests
 
 # Prevents writing pyc files to disk
 ENV PYTHONDONTWRITEBYTECODE=1

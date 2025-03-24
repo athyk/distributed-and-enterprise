@@ -70,36 +70,6 @@ def serve():
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 
-    CommunityClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityAnnouncementClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityJoinsClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityEventClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityMemberClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunitySearchingClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
     confirm_database_exists()
 
     print('\nCreating All Tables')
