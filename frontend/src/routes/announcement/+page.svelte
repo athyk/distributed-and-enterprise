@@ -29,7 +29,7 @@
     console.log("Fetching announcements...");
 
     try {
-      const response: unknown = await get('community/announcements');
+      const response: unknown = await get('community/announcements') ;
       console.log("Announcements fetched:", response);
 
       // Cast the response to the expected type
