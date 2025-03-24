@@ -14,14 +14,14 @@ def create_event(user_id: int, community_id: int, title: str, description: str, 
     If any errors arise then relevant error messages are returned.
     """
 
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    title_verify, title_error = verify_string(title, 1, 50)
-    description_verify, description_error = verify_string(description, 1, 1024)
-    location_verify, location_error = verify_string(location, 1, 2048)
-    datetime_verify, datetime_error = verify_string(datetime, 10, 10)
-    duration_verify, duration_error = verify_integer(duration, 1, 672)
-    tags_verify, tags_error = verify_list(tags, 0, 5)
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    title_verify, title_error = verify_string(title, 1, 50, 'Title')
+    description_verify, description_error = verify_string(description, 1, 1024, 'Description')
+    location_verify, location_error = verify_string(location, 1, 2048, 'Location')
+    datetime_verify, datetime_error = verify_string(datetime, 10, 10, 'DateTime')
+    duration_verify, duration_error = verify_integer(duration, 1, 672, 'Duration')
+    tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
 
     if False in [user_verify, community_verify, title_verify, description_verify, location_verify, datetime_verify, duration_verify, tags_verify]:
 

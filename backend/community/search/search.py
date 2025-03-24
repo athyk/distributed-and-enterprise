@@ -14,15 +14,15 @@ def search_for_community(offset: int, limit: int, user_id: int, is_with: int, na
     If any errors arise then relevant error messages are returned.
     """
 
-    offset_verify, offset_error = verify_integer(offset, 0, INFINITY)
-    limit_verify, limit_error = verify_integer(limit, 1, 50)
-    user_verify, user_error = verify_integer(user_id, 0, INFINITY)
-    with_verify, with_error = verify_integer(is_with, 0, 2)
-    name_verify, name_error = verify_string(name, 0, 128)
-    public_verify, public_error = verify_integer(public, 0, 2)
-    members_verify, members_error = verify_integer(minimum_members, 0, INFINITY)
-    tags_verify, tags_error = verify_list(tags, 0, 5)
-    degrees_verify, degrees_error = verify_list(degrees, 0, 5)
+    offset_verify, offset_error = verify_integer(offset, 0, INFINITY, 'Offset')
+    limit_verify, limit_error = verify_integer(limit, 1, 50, 'Limit')
+    user_verify, user_error = verify_integer(user_id, 0, INFINITY, 'User ID')
+    with_verify, with_error = verify_integer(is_with, 0, 2, 'Is With')
+    name_verify, name_error = verify_string(name, 0, 128, 'Name')
+    public_verify, public_error = verify_integer(public, 0, 2, 'Public')
+    members_verify, members_error = verify_integer(minimum_members, 0, INFINITY, 'Minimum Members')
+    tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
+    degrees_verify, degrees_error = verify_list(degrees, 0, 5, 'Degrees')
 
     if False in [offset_verify, limit_verify, user_verify, with_verify, name_verify, public_verify, members_verify, tags_verify, degrees_verify]:
 
