@@ -1,4 +1,6 @@
 <script lang="ts">
+	import AnnouncementCard from "$components/announcementCard/announcementCard.svelte";
+
 	let isOpen = false;
 
 	function toggleMenu() {
@@ -8,7 +10,9 @@
 	let urls: { [key: string]: string } = {
 		Posts: '/posts',
 		Communities: '/communities',
-		Login: '/login'
+		Login: '/login',
+		Announcement: '/announcement'
+
 	};
 </script>
 
