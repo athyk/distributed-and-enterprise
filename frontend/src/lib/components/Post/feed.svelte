@@ -51,9 +51,9 @@
     </button>
 
     {#if showCreateModal}
-        <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="fixed inset-0 bg-gray bg-opacity-75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div class="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] overflow-y-auto relative">
-                <button 
+                <button
                     class="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
                     on:click={closeCreateModal}
                     aria-label="Close create modal"
@@ -62,15 +62,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <div class="p-6">
-                    <Create on:close={closeCreateModal} />
-                </div>
+                <Create on:close={closeCreateModal} bind:success={showCreateModal} />
             </div>
         </div>
     {/if}
 
 
-    <Masonry
+    <!-- <Masonry
         items={data}
         minColWidth={minColWidth}
         maxColWidth={maxColWidth}
@@ -79,5 +77,6 @@
         masonryHeight={height}
     >
         <slot  name="Posts" />
-    </Masonry>
+    </Masonry> -->
+    <slot  name="Posts" />
 </div>

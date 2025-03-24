@@ -57,9 +57,29 @@ export type postsData = {
 	"id": number,
 	"title": string,
 	"description": string,
-	"tags": number[],
+	"tags": string[],
 	"images" : string[],
 	"user_id": number,
+	"user_data": UserInfo,
 	"created_at": string,
 	"updated_at": string,
+}
+
+export type UserInfo = {
+	"user_id": number,
+	"first_name": string,
+	"last_name": string,
+	"picture_url": string,
+}
+
+export type postCreateResponse = {
+	"success": boolean,
+	"post": postsData,
+	"error_message": string[],
+}
+
+export type  ImageUploadResponse = {
+	"success": boolean,
+	"error": string[],
+	"file_url": string,
 }

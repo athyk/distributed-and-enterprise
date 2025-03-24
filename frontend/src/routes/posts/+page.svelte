@@ -8,7 +8,6 @@
 
 
     let annoucements: globalAnnouncementData[] = [];
-    let posts: postsData[] = [];
     let loading = true;
 
     async function GetAnnouncments(){
@@ -22,20 +21,6 @@
         }
     }
 
-    async function GetPosts(){
-        const response = await get("posts/list") as postResponse
-        if (response.success === true) {
-            posts = response.posts;
-            loading = false;
-        } else {
-            console.error("Error fetching posts:", response.error_message);
-            return [];
-        }
-    }
-
-    onMount(() => {
-        GetPosts();
-    });
 
 
 
@@ -52,7 +37,7 @@
 </script>
 
 
-<div class="settings-box p-4 bg-gray-100 rounded shadow-md mb-4">
+<!-- <div class="settings-box p-4 bg-gray-100 rounded shadow-md mb-4">
     <h2 class="text-lg font-bold mb-2">Column Settings</h2>
     {#each sliders as setting}
         <div class="mb-2">
@@ -68,25 +53,20 @@
             />
         </div>
     {/each}
-</div>
+</div> -->
+
+
 
 <div class="flex justify-center items-center min-h-screen">
-    {#if loading}
-        <div class="text-center">
-            <p class="text-gray-500">No announcements available.</p>
-        </div>
-    {:else}
-        <Feed
-            items={posts}
-            minColWidth={sliders[0].value}
-            maxColWidth={sliders[1].value}
-            gap={sliders[2].value}
-            width={sliders[3].value}
-            height={sliders[4].value}
-        >
-            <!-- <Annoucements data={annoucements} slot="Posts"/> -->
-            <Post data={posts} slot="Posts"/>
-        </Feed>
-    {/if}
+    <Feed
+        data={[1, 2, 3, 4, 5, 6]}
+        minColWidth={sliders[0].value}
+        maxColWidth={sliders[1].value}
+        gap={sliders[2].value}
+        width={sliders[3].value}
+        height={sliders[4].value}
+    >
+        <Post url="posts/list?offset=0&limit=10" slot="Posts"/>
+    </Feed>
 
 </div>

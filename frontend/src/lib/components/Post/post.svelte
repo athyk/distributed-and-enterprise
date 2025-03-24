@@ -1,45 +1,57 @@
 <script lang="ts">
     import Post from "./base.svelte";
-
     import Title from "./Sections/title.svelte";
     import Text from "./Sections/text.svelte";
     import Tags from "./Sections/tags.svelte";
     import Gallery from "./Sections/gallery.svelte";
 
-    import type { postsData } from "$lib/api/apiType";
+    import type { postsData,postResponse } from "$lib/api/apiType";
+    import { get } from "$lib/api/get";
+
+    import { onMount } from "svelte";
 
 
-    export let data: postsData[] = []
+    let data: postsData[] = []
+    export let url = '';
+
+    async function GetPosts(){
+        const response = await get(url) as postResponse
+        if (response.success === true) {
+            data = response.posts;
+            console.log(data);
+        } else {
+            console.error("Error fetching posts:", response.error_message);
+            return [];
+        }
+    }
+
+    onMount(() => {
+        GetPosts();
+    });
 
 </script>
 
 {#each data as post (post.id)}
     <Post
-        author={{
-            name: "I need an API",
-            profile_image: "https://picsum.photos/id/433/300/300",
-            URL: "/",
-        }}
+        author={post.user_data}
         date={post.created_at}
         id={post.id}
-        likes={0}
-        showLikes={true}
         ownPost={false}
     >
         {#if post.title}
             <Title>{post.title}</Title>
         {/if}
 
-        <!-- {#if post.tags}
+        {#if post.tags}
             <Tags tags={post.tags} />
-        {/if} -->
+        {/if}
 
         {#if post.description}
             <Text>{post.description}</Text>
         {/if}
 
-        <!-- {#if post.images}
+        {#if post.images.length > 0}
             <Gallery images={post.images} />
-        {/if} -->
+        {/if}
     </Post>
 {/each}

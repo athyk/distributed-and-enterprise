@@ -1,12 +1,10 @@
 const base_url = 'http://localhost:8000/';
-export async function post<T>(url: string, data: Record<string, unknown>): Promise<T> {
+export async function post<T>(url: string, data: Record<string, unknown>, formData?: FormData): Promise<T> {
 	try {
 		const response = await fetch(base_url + url, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(data),
+			headers: formData ? undefined : { 'Content-Type': 'application/json' },
+			body: formData || JSON.stringify(data),
 			credentials: 'include'
 		});
 
@@ -18,6 +16,6 @@ export async function post<T>(url: string, data: Record<string, unknown>): Promi
 
 		return responseData as T;
 	} catch (error) {
-		throw new Error('Failed to fetch' + error);
+		throw new Error('Failed to fetch: ' + error);
 	}
 }

@@ -22,6 +22,8 @@
 	export let multi_select = false;
 	export let max_select = 1;
 	export let selected: [string, number][] = [];
+	export let classStyle = 'mt-2 flex w-full flex-wrap items-center rounded-md border px-2 py-1 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600';
+	export let marginTop = 'mt-4';
 
 	let last_value = '';
 	let showDropdown = false;
@@ -71,7 +73,7 @@
 	}
 </script>
 
-<div class="relative mt-4" id={`searchbox-${instanceId}`}>
+<div class="relative {marginTop}" id={`searchbox-${instanceId}`}>
 	{#if showLabel}
 		<label for={`${Name}-${instanceId}`} class="mb-1 block text-gray-700">{Name}</label>
 	{/if}
@@ -82,7 +84,7 @@
 	{/if}
 
 	<div
-		class="mt-2 flex w-full flex-wrap items-center rounded-md border px-2 py-1 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600"
+		class={classStyle}
 	>
 		{#if multi_select && selected.length > 0}
 			<div

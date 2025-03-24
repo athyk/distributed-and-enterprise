@@ -1,21 +1,18 @@
 <script lang="ts">
-    export let author: {
-        name: string;
-        profile_image: string;
-        URL: string;
-        DegreeYear?: string;
-        Degree?: string;
-    };
+    import type { UserInfo } from "$lib/api/apiType";
+    export let author: UserInfo = {} as UserInfo;
     export let ownPost = false as boolean;
 
     let showdropdown = false;
 </script>
 
 <div class="flex items-center space-x-2 top-0 bg-white p-2 rounded-t-2xl">
-    <a href={author.URL} target="_blank" rel="noopener noreferrer">
-        <img src={author.profile_image} alt="Profile Icon" class="h-11 w-11 rounded-full" />
-    </a>
-    <span class="font-bold">{author.name}</span>
+    {#if author.picture_url}
+        <a href={author.user_id.toString()} target="_blank" rel="noopener noreferrer">
+            <img src={author.picture_url} alt="Profile Icon" class="h-11 w-11 rounded-full" />
+        </a>
+    {/if}
+    <span class="font-bold">{author.first_name} {author.last_name}</span>
 
     {#if ownPost}
         <span class="flex items-center space-x-2 ml-auto">
