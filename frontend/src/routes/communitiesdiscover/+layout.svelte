@@ -1,10 +1,9 @@
 <script lang="ts">
 	import SideBar from '$components/Sidebar/sidebar.svelte';
 	import { onMount, onDestroy } from 'svelte';
-	import { writable } from 'svelte/store';
 
 	let { children } = $props();
-	let isSidebarOpen: Boolean = false;
+	let isSidebarOpen: boolean = false;
 	let isMobile = false;
 
 	// Function to check if the screen size is mobile

@@ -6,14 +6,9 @@
 		name: '',
 		description: '',
 		public: false,
-		tags: [] as Number[],
+		tags: [] as number[],
 		degrees: [] as string[]
 	};
-
-	// Function to toggle public status
-	function togglePublic() {
-		formData.public = !formData.public;
-	}
 
 	// Function to add a new tag
 	function addTag() {

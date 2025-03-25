@@ -1,6 +1,4 @@
 <script lang="ts">
-	import Navbar from '$components/Navbar/navbar.svelte';
-
 	// Data model for the form
 
 	import { post } from '$lib/api/post';
@@ -15,9 +13,9 @@
 
 	type createResponse = {
 		success: boolean;
-		http_status: Number;
-		error_message: String[];
-		id: Number;
+		http_status: number;
+		error_message: string[];
+		id: number;
 	};
 
 	// Function to handle adding a tag
