@@ -39,50 +39,14 @@ def serve():
 
     print('----------------- Internal Server Setup Initialising ----------------\n')
 
-    print("Initialising Helper Clients")
+    print("Initialising Helper Client")
 
-    AccountsClient.initialise(
-        "account-service:" + os.environ.get('ACC_PORT', '50053'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    TagsClient.initialise(
-        "tag-service:" + os.environ.get('TAG_PORT', '50054'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
+    # Degrees only relies on itself, as it's a standalone service.
+    #
+    # If it did data validation such as checking if a user exists, it would need to initialise the AccountsClient.
+    # But as it only handles degrees, it doesn't need to do that.
     DegreesClient.initialise(
         "degree-service:" + os.environ.get('DEGREE_PORT', '50055'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityAnnouncementClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityJoinsClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityEventClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityMemberClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunitySearchingClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 

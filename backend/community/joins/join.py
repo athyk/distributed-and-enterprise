@@ -56,8 +56,8 @@ def add_user_to_community(community_id: int, user_id: int) -> tuple[bool, int, l
     If any errors arise then relevant error messages are returned.
     """
 
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
     
     if False in [user_verify, community_verify]:
 
