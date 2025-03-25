@@ -561,7 +561,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Community 3\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": []\r\n}",
+									"raw": "{\r\n    \"name\": \"Community 3\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [1, 2, 3],\r\n    \"degrees\": []\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -620,7 +620,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"Community 2\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [\"Fun\"],\r\n    \"degrees\": []\r\n}",
+									"raw": "{\r\n    \"name\": \"Community1\",\r\n    \"description\": \"Description Version 2\",\r\n    \"public\": false,\r\n    \"tags\": [1, 2, 3],\r\n    \"degrees\": []\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -628,14 +628,14 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:8000/community/34",
+									"raw": "localhost:8000/community/1",
 									"host": [
 										"localhost"
 									],
 									"port": "8000",
 									"path": [
 										"community",
-										"34"
+										"1"
 									]
 								}
 							},
@@ -850,6 +850,112 @@
 										"community",
 										"1",
 										"ban"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Searching",
+					"item": [
+						{
+							"name": "Community Search",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "localhost:8000/community/search?offset=0&limit=10",
+									"host": [
+										"localhost"
+									],
+									"port": "8000",
+									"path": [
+										"community",
+										"search"
+									],
+									"query": [
+										{
+											"key": "offset",
+											"value": "0"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "is_with",
+											"value": "0",
+											"description": "Only When Logged In [0 - All Communities | 1 - User With Community | 2 - User Not With Community]",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "Community3",
+											"disabled": true
+										},
+										{
+											"key": "public",
+											"value": "2",
+											"description": "0 - All Communities | 1 - Public Community | 2 - Private Community",
+											"disabled": true
+										},
+										{
+											"key": "minimum_members",
+											"value": "25",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "2",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "3",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "degrees",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "degrees",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "degrees",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "degrees",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "degrees",
+											"value": null,
+											"disabled": true
+										}
 									]
 								}
 							},

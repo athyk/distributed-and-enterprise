@@ -13,10 +13,10 @@ class Community_CRUD_Service(community_pb2_grpc.CommunityServicer):
     """
 
     def CommunityCreate(self, request: community_pb2.CommunityCreateRequest, context: grpc.ServicerContext) -> community_pb2.CommunityIDResponse:
-        '''
+        """
         This function verifies incoming data and creates a new community.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("CommunityCreate Request Made:")
         print(request)

@@ -23,7 +23,7 @@ COPY --from=base /usr/local/bin/ /usr/local/bin/
 
 WORKDIR /app
 COPY --chown=appuser:appuser . .
-RUN rm -rf .git .github .venv docs frontend
+RUN rm -rf .git .github .venv docs frontend backend/community backend/accounts backend/tag backend/degree backend/chat backend/tests
 
 # Prevents writing pyc files to disk
 ENV PYTHONDONTWRITEBYTECODE=1

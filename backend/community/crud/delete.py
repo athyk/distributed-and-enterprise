@@ -14,8 +14,8 @@ def delete_community(community_id: int, user_id: int) -> tuple[bool, list]:
 
     print(f'deletion user_id: {user_id}')
 
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
 
     if False in [community_verify, user_verify]:
 

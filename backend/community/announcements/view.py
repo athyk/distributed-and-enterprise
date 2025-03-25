@@ -12,10 +12,10 @@ def get_community_announcements(community_id: int, user_id: int, offset: int, li
     If any errors arise then relevant error messages are returned.
     """
 
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    offset_verify, offset_error = verify_integer(offset, 0, INFINITY)
-    limit_verify, limit_error = verify_integer(limit, 1, 50)
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    offset_verify, offset_error = verify_integer(offset, 0, INFINITY, 'Offset')
+    limit_verify, limit_error = verify_integer(limit, 1, 50, 'Limit')
 
     if False in [community_verify, user_verify, offset_verify, limit_verify]:
 
