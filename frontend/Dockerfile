@@ -21,6 +21,8 @@ COPY --from=base /app /app
 
 WORKDIR /app
 COPY --chown=appuser:appuser . .
+RUN rm -rf .git .github .venv docs backend unihub_project
+
 USER appuser
 
 EXPOSE 3000

@@ -5,7 +5,8 @@ export async function get<T>(url: string): Promise<T> {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json'
-			}
+			},
+			credentials: 'include'
 		});
 
 		if (!response.ok) {

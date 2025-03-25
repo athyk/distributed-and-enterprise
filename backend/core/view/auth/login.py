@@ -75,7 +75,7 @@ def login_user(request: WSGIRequest):
             session_id,
             max_age=max_age,
             secure=False,  # Changing this to True would only allow this to work over HTTPS and not HTTP
-            httponly=True  # Makes it so client side code cannot see the cookie
+            httponly=False  # Makes it so client side code cannot see the cookie
         )
 
     return response

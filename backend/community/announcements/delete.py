@@ -13,8 +13,8 @@ def delete_announcement(announcement_id: int, community_id: int, user_id: int) -
     If any errors arise then relevant error messages are returned.
     """
 
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
 
     if False in [community_verify, user_verify]:
 

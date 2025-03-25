@@ -13,10 +13,10 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
     """
 
     def CommunityCreateAnnouncement(self, request: community_announcement_pb2.CommunityAnnouncementCreateRequest, context: grpc.ServicerContext) -> community_announcement_pb2.CommunityAnnouncementResponse:
-        '''
+        """
         This function verifies incoming data and creates a new community announcement.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("CommunityCreateAnnouncement Request Made:")
         print(request)
@@ -28,13 +28,12 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
             http_code = 400
         
         return community_announcement_pb2.CommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message)
-    
 
     def CommunityViewSelectAnnouncement(self, request: community_announcement_pb2.CommunityAnnouncementViewSelectRequest, context: grpc.ServicerContext) -> community_announcement_pb2.AllCommunityAnnouncementResponse:
-        '''
+        """
         This function verifies incoming data and fetches a select number of community announcements.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
     
         print("CommunityViewSelectAnnouncement Request Made:")
         print(request)
@@ -63,13 +62,12 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
                 announcements.append(announce_object)
         
         return community_announcement_pb2.AllCommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message, announcements=announcements)
-    
 
     def CommunityUpdateAnnouncement(self, request: community_announcement_pb2.CommunityAnnouncementUpdateRequest, context: grpc.ServicerContext) -> community_announcement_pb2.CommunityAnnouncementResponse:
-        '''
+        """
         This function verifies incoming data and updates a community announcement.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("CommunityUpdateAnnouncement Request Made:")
         print(request)
@@ -81,13 +79,12 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
             http_code = 400
         
         return community_announcement_pb2.CommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message)
-    
 
     def CommunityDeleteAnnouncement(self, request: community_announcement_pb2.CommunityAnnouncementDeleteRequest, context: grpc.ServicerContext) -> community_announcement_pb2.CommunityAnnouncementResponse:
-        '''
+        """
         This function verifies incoming data and updates a community announcement.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
         
         print("CommunityDeleteAnnouncement Request Made:")
         print(request)
@@ -100,12 +97,11 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
         
         return community_announcement_pb2.CommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message)
 
-
     def CommunityViewSelectOneAnnouncement(self, request: community_announcement_pb2.CommunityAnnouncementViewSelectOneRequest, context: grpc.ServicerContext) -> community_announcement_pb2.SingleCommunityAnnouncementResponse:
-        '''
+        """
         This function verifies incoming data and fetches a select number of community announcements.
         If any errors arise then relevant error messages are returned.
-        '''
+        """
 
         print("CommunityViewSelectOneAnnouncement Request Made:")
         print(request)
@@ -138,11 +134,10 @@ class Community_Announcement_Service(community_announcement_pb2_grpc.CommunityAn
 
             return community_announcement_pb2.SingleCommunityAnnouncementResponse(success=success, http_status=http_code, error_message=message, announcement=announce_object)
 
-
     def CommunityViewGlobalAnnouncement(self, request: community_announcement_pb2.CommunityAnnouncementGlobalRequest, context: grpc.ServicerContext) -> community_announcement_pb2.GlobalCommunityAnnouncementResponse:
-        '''
+        """
         This function verifies incoming data and fetches a select number of announcements.
-        '''
+        """
 
         print("CommunityViewGlobalAnnouncement Request Made:")
         print(request)
