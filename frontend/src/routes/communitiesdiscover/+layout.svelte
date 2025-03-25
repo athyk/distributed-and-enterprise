@@ -4,7 +4,7 @@
 	import { writable } from 'svelte/store';
 
 	let { children } = $props();
-	let isSidebarOpen:Boolean = false;
+	let isSidebarOpen: Boolean = false;
 	let isMobile = false;
 
 	// Function to check if the screen size is mobile
