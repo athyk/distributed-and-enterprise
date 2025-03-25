@@ -22,14 +22,14 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         If OTP is not sent, the user will be emailed with the code.
         If a valid OTP is sent, the user will be logged in, ensure other fields are correct.
         """
-        email_verify, email_error = verify_string(req.email, 4, 255)  # Cannot exceed 255 rfc3696
-        password_verify, password_error = verify_string(req.password, 8, inf)
-        first_name_verify, first_name_error = verify_string(req.first_name, 1, inf)
-        last_name_verify, last_name_error = verify_string(req.last_name, 1, inf)
-        gender_verify, gender_error = verify_string(req.gender, 4, 12)
-        degree_id_verify, degree_id_error = verify_integer(req.degree_id, 1, inf)
-        year_of_study_verify, year_of_study_error = verify_integer(req.year_of_study, 1, 9)
-        tag_verify, tag_error = verify_list(list(req.tags), 0, 5)
+        email_verify, email_error = verify_string(req.email, 4, 255, 'Email')  # Cannot exceed 255 rfc3696
+        password_verify, password_error = verify_string(req.password, 8, inf, 'Password')
+        first_name_verify, first_name_error = verify_string(req.first_name, 1, inf, 'First Name')
+        last_name_verify, last_name_error = verify_string(req.last_name, 1, inf, 'Last Name')
+        gender_verify, gender_error = verify_string(req.gender, 4, 12, 'Gender')
+        degree_id_verify, degree_id_error = verify_integer(req.degree_id, 1, inf, 'Degree ID')
+        year_of_study_verify, year_of_study_error = verify_integer(req.year_of_study, 1, 9, 'Year Of Study')
+        tag_verify, tag_error = verify_list(list(req.tags), 0, 5, 'Tags')
         req.rank = req.rank.lower()
 
         # dates are validated below
@@ -150,8 +150,8 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         If OTP is not sent, the user will be emailed with the code.
         If a valid OTP is sent, the user will be logged in, ensure other fields are correct.
         """
-        email_verify, email_error = verify_string(req.email, 4, 255)  # Cannot exceed 255 rfc3696
-        password_verify, password_error = verify_string(req.password, 8, inf)
+        email_verify, email_error = verify_string(req.email, 4, 255, 'Email')  # Cannot exceed 255 rfc3696
+        password_verify, password_error = verify_string(req.password, 8, inf, 'Password')
 
         if False in [email_verify, password_verify]:
             all_errors = [email_error, password_error]

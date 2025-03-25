@@ -12,9 +12,9 @@ def ban_user(community_id: int, user_id: int, action_user_id: int) -> tuple[bool
     If any errors arise then relevant error messages are returned.
     """
 
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    action_verify, action_error = verify_integer(action_user_id, 1, INFINITY)
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    action_verify, action_error = verify_integer(action_user_id, 1, INFINITY, 'Action User ID')
     
     if False in [user_verify, community_verify, action_verify]:
 

@@ -16,11 +16,11 @@ class AccountsPostsServicer(account_post_pb2_grpc.AccountPostsServicer):
         """
         Create creates a new post
         """
-        user_verify, user_error = verify_integer(req.user_id, 1, inf)
-        title_verify, title_error = verify_string(req.title, 4, 128)
-        description_verify, description_error = verify_string(req.description, 4, 2048)
-        tags_verify, tags_error = verify_list(list(req.tags), 0, 5)
-        images_verify, images_error = verify_list(list(req.images), 0, 5)
+        user_verify, user_error = verify_integer(req.user_id, 1, inf, 'User ID')
+        title_verify, title_error = verify_string(req.title, 4, 128, 'Title')
+        description_verify, description_error = verify_string(req.description, 4, 2048, 'Description')
+        tags_verify, tags_error = verify_list(list(req.tags), 0, 5, 'Tags')
+        images_verify, images_error = verify_list(list(req.images), 0, 5, 'Images')
 
         if False in [user_verify, title_verify, description_verify, tags_verify, images_verify]:
 
@@ -104,11 +104,11 @@ class AccountsPostsServicer(account_post_pb2_grpc.AccountPostsServicer):
         Update updates a specified post
         """
         # Only the user who created the post can update it.
-        user_verify, user_error = verify_integer(req.user_id, 1, inf)
-        title_verify, title_error = verify_string(req.title, 4, 128)
-        description_verify, description_error = verify_string(req.description, 4, 2048)
-        tags_verify, tags_error = verify_list(list(req.tags), 0, 5)
-        images_verify, images_error = verify_list(list(req.images), 0, 5)
+        user_verify, user_error = verify_integer(req.user_id, 1, inf, 'User ID')
+        title_verify, title_error = verify_string(req.title, 4, 128, 'Title')
+        description_verify, description_error = verify_string(req.description, 4, 2048, 'Description')
+        tags_verify, tags_error = verify_list(list(req.tags), 0, 5, 'Tags')
+        images_verify, images_error = verify_list(list(req.images), 0, 5, 'Images')
 
         if False in [user_verify, title_verify, description_verify, tags_verify, images_verify]:
             all_errors = [user_error, title_error, description_error, tags_error, images_error]
