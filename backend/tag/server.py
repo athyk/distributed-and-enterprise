@@ -10,11 +10,7 @@ from backend.tag.services.rpc import TagServicer
 # But if any issues happen, use the docker compose command to run the server.
 from backend.common.proto import tag_pb2_grpc
 from backend.tag.database.database import engine, Base, confirm_database_exists
-from backend.common.services import AccountsClient, TagsClient, DegreesClient
-from backend.common.services.community.community import CommunityClient
-from backend.common.services.community.announcement import CommunityAnnouncementClient
-from backend.common.services.community.joins import CommunityJoinsClient
-from backend.common.services.community.event import CommunityEventClient
+from backend.common.services import TagsClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
@@ -37,40 +33,14 @@ def serve():
 
     print('----------------- Internal Server Setup Initialising ----------------\n')
 
-    print("Initialising Helper Clients")
+    print("Initialising Helper Client")
 
-    AccountsClient.initialise(
-        "account-service:" + os.environ.get('ACC_PORT', '50053'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
+    # Tags only relies on itself, as it's a standalone service.
+    #
+    # If it did data validation such as checking if a user exists, it would need to initialise the AccountsClient.
+    # But as it only handles tags, it doesn't need to do that.
     TagsClient.initialise(
         "tag-service:" + os.environ.get('TAG_PORT', '50054'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    DegreesClient.initialise(
-        "degree-service:" + os.environ.get('DEGREE_PORT', '50055'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityAnnouncementClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityJoinsClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
-        os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
-    )
-
-    CommunityEventClient.initialise(
-        "community-service:" + os.environ.get('COMMUNITY_PORT', '50052'),
         os.environ.get('REDIS_URL', 'redis://localhost:6379/0'),
     )
 

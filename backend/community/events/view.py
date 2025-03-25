@@ -12,9 +12,9 @@ def view_one_event(user_id: int, community_id: int, event_id: int) -> tuple[bool
     If any errors arise then relevant error messages are returned.
     """
 
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    event_verify, event_error = verify_integer(event_id, 1, INFINITY)
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    event_verify, event_error = verify_integer(event_id, 1, INFINITY, 'Event ID')
 
     if False in [user_verify, community_verify, event_verify]:
 

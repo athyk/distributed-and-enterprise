@@ -1,5 +1,5 @@
-insert into public.post (id, user_id, title, description, created_at, updated_at)
-values  (1, 1, 'Water Conservation Workshop', 'Learn about water conservation techniques and how to reduce your water usage at our free workshop.', '2025-03-21 23:24:48.000000', '2025-03-21 23:24:48.000000'),
+INSERT INTO public."post" (id, user_id, title, description, created_at, updated_at)
+VALUES  (1, 1, 'Water Conservation Workshop', 'Learn about water conservation techniques and how to reduce your water usage at our free workshop.', '2025-03-21 23:24:48.000000', '2025-03-21 23:24:48.000000'),
         (2, 19, 'Senior Health Day', 'Free health screenings and information for seniors. Join us this Friday at the community center.', '2025-03-21 23:24:48.000000', '2025-03-21 23:24:48.000000'),
         (3, 50, 'Community Choir Auditions', 'Audition for the community choir! We’re looking for singers of all levels to join us for the upcoming concert.', '2025-03-21 23:24:48.000000', '2025-03-21 23:24:48.000000'),
         (4, 5, 'Meditation Class', 'Relax and unwind in our free meditation class every Thursday evening at the community center.', '2025-03-21 23:24:48.000000', '2025-03-21 23:24:48.000000'),
@@ -184,8 +184,8 @@ values  (1, 1, 'Water Conservation Workshop', 'Learn about water conservation te
         (183, 3, 'Fireworks Show', 'Enjoy a spectacular fireworks display at the park this 4th of July! Show starts at 9 PM.', '2025-03-21 23:24:48.000000', '2025-03-21 23:24:48.000000'),
         (184, 2, 'Elder Care Fair', 'Find resources and support at our Elder Care Fair for seniors and their families.', '2025-03-21 23:24:48.000000', '2025-03-21 23:24:48.000000');
 
-insert into public.post_tag (id, tag_id, post_id)
-values  (167, 1, 1),
+INSERT INTO public."post_tag" (id, tag_id, post_id)
+VALUES  (167, 1, 1),
         (168, 1, 1),
         (169, 2, 2),
         (170, 2, 2),
@@ -651,8 +651,12 @@ values  (167, 1, 1),
         (630, 184, 184),
         (631, 184, 184);
 
-insert into public.post_image (id, post_id, image_url)
-values  (1, 41, 'https://www.liquor.com/thmb/p-obVQqfD529bLGLtnpe2NCs6fM=/2121x1414/filters:fill(auto,1)/GettyImages-843630694-13ab0d8e3f1f4b38b2271ee22be6d137.jpg'),
+INSERT INTO public."post_image" (id, post_id, image_url)
+VALUES  (1, 41, 'https://www.liquor.com/thmb/p-obVQqfD529bLGLtnpe2NCs6fM=/2121x1414/filters:fill(auto,1)/GettyImages-843630694-13ab0d8e3f1f4b38b2271ee22be6d137.jpg'),
         (2, 41, 'https://2.bp.blogspot.com/-x60WW-H2cUU/VjhandL-JZI/AAAAAAAAAbU/FYPXK9EcLx0/s1600/italian-pizza+guglielmo.jpg'),
         (3, 183, 'https://media.cntraveler.com/photos/649daf999b31895c2ec86af6/16:9/w_2560%2Cc_limit/July%25204%2520Events%2520in%2520NYC_GettyImages-1482783659.jpg'),
         (4, 56, 'https://www.pace.edu/sites/default/files/styles/16_9_1600x900/public/2023-03/article-hero-job-fair.jpg');
+
+SELECT setval(pg_get_serial_sequence('post', 'id'), COALESCE((SELECT MAX(id) FROM "user") + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('post_tag', 'id'), COALESCE((SELECT MAX(id) FROM "user") + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('post_image', 'id'), COALESCE((SELECT MAX(id) FROM "user") + 1, 1), FALSE);

@@ -13,9 +13,9 @@ def invite_user_to_community(community_id: int, user_id: int, invite_user_id: in
     If any errors arise then relevant error messages are returned.
     """
 
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    invite_verify, invite_error = verify_integer(invite_user_id, 1, INFINITY)
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    invite_verify, invite_error = verify_integer(invite_user_id, 1, INFINITY, 'Invite User ID')
     
     if False in [user_verify, community_verify, invite_verify]:
 

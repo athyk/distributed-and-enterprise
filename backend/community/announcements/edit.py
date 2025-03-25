@@ -14,12 +14,12 @@ def edit_announcement(announcement_id: int, community_id: int, user_id: int, tit
     This function verifies incoming data and creates a new community announcement
     If any errors arise then relevant error messages are returned.
     """
-    announcement_verify, announcement_error = verify_integer(announcement_id, 1, INFINITY)
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
-    title_verify, title_error = verify_string(title, 4, 128)
-    description_verify, description_error = verify_string(description, 4, 2048)
-    tags_verify, tags_error = verify_list(tags, 0, 5)
+    announcement_verify, announcement_error = verify_integer(announcement_id, 1, INFINITY, 'Announcement ID')
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
+    title_verify, title_error = verify_string(title, 4, 128, 'Title')
+    description_verify, description_error = verify_string(description, 4, 2048, 'Description')
+    tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
     
     if False in [announcement_verify, user_verify, community_verify, title_verify, description_verify, tags_verify]:
         all_errors = [announcement_error, user_error, community_error, title_error, description_error, tags_error]

@@ -13,9 +13,9 @@ def delete_event(event_id: int, user_id: int, community_id: int) -> tuple[bool, 
     If any errors arise then relevant error messages are returned.
     """
 
-    event_verify, event_error = verify_integer(event_id, 1, INFINITY)
-    user_verify, user_error = verify_integer(user_id, 1, INFINITY)
-    community_verify, community_error = verify_integer(community_id, 1, INFINITY)
+    event_verify, event_error = verify_integer(event_id, 1, INFINITY, 'Event ID')
+    user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
+    community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
 
 
     if False in [event_verify, user_verify, community_verify]:
