@@ -88,7 +88,7 @@
 		<h2 class="mb-4 text-lg font-bold text-gray-900 dark:text-gray-100">Community Settings</h2>
 		<nav class="space-y-2">
 			<button
-				on:click={() => (activeTab = 'update')}
+				onclick={() => (activeTab = 'update')}
 				class="w-full rounded-md px-3 py-2 text-left text-gray-800 transition hover:bg-gray-200 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-700 {activeTab ===
 				'update'
 					? 'bg-gray-200 font-semibold dark:bg-gray-700'
@@ -97,7 +97,7 @@
 				Update Community
 			</button>
 			<button
-				on:click={() => (activeTab = 'delete')}
+				onclick={() => (activeTab = 'delete')}
 				class="w-full rounded-md px-3 py-2 text-left text-gray-800 transition hover:bg-gray-200 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-700 {activeTab ===
 				'delete'
 					? 'bg-gray-200 font-semibold dark:bg-gray-700'
@@ -145,24 +145,29 @@
 
 				<!-- Tags -->
 				<div class="mb-3">
-					<label
-						for="tags-container"
-						class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label
+					<label for="tags-list" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+						>Tags</label
 					>
-					<div id="tags-container">
+					<div id="tags-list" role="group" aria-labelledby="tags-heading">
+						<span id="tags-heading" class="sr-only">Current tags</span>
 						{#each formData.tags as tag, i}
 							<div class="mt-1 flex items-center">
 								<span
 									class="mr-2 rounded bg-gray-300 px-2 py-1 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
 									>{tag}</span
 								>
-								<button on:click={() => removeTag(i)} class="text-red-500 hover:text-red-700"
-									>×</button
+								<button
+									onclick={() => removeTag(i)}
+									class="text-red-500 hover:text-red-700"
+									aria-label="Remove tag {tag}">×</button
 								>
 							</div>
 						{/each}
-						<button on:click={addTag} class="mt-2 text-sm text-blue-600 hover:text-blue-800"
-							>+ Add Tag</button
+						<button
+							onclick={addTag}
+							class="mt-2 text-sm text-blue-600 hover:text-blue-800"
+							id="add-tag-button"
+							aria-labelledby="tags-heading add-tag-button">+ Add Tag</button
 						>
 					</div>
 				</div>
@@ -170,29 +175,35 @@
 				<!-- Degrees -->
 				<div class="mb-3">
 					<label
-						for="degrees-container"
+						for="degrees-list"
 						class="block text-sm font-medium text-gray-700 dark:text-gray-300">Degrees</label
 					>
-					<div id="degrees-container">
+					<div id="degrees-list" role="group" aria-labelledby="degrees-heading">
+						<span id="degrees-heading" class="sr-only">Current degrees</span>
 						{#each formData.degrees as degree, i}
 							<div class="mt-1 flex items-center">
 								<span
 									class="mr-2 rounded bg-gray-300 px-2 py-1 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
 									>{degree}</span
 								>
-								<button on:click={() => removeDegree(i)} class="text-red-500 hover:text-red-700"
-									>×</button
+								<button
+									onclick={() => removeDegree(i)}
+									class="text-red-500 hover:text-red-700"
+									aria-label="Remove degree {degree}">×</button
 								>
 							</div>
 						{/each}
-						<button on:click={addDegree} class="mt-2 text-sm text-blue-600 hover:text-blue-800"
-							>+ Add Degree</button
+						<button
+							onclick={addDegree}
+							class="mt-2 text-sm text-blue-600 hover:text-blue-800"
+							id="add-degree-button"
+							aria-labelledby="degrees-heading add-degree-button">+ Add Degree</button
 						>
 					</div>
 				</div>
 
 				<button
-					on:click={updateCommunity}
+					onclick={updateCommunity}
 					class="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
 				>
 					Update Community
@@ -204,7 +215,7 @@
 				Permanently delete this community. This action cannot be undone.
 			</p>
 			<button
-				on:click={deleteCommunity}
+				onclick={deleteCommunity}
 				class="rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-700"
 			>
 				Delete Community
