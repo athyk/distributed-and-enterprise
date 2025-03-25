@@ -47,7 +47,9 @@
         {/if}
 
         {#if post.description}
-            <Text>{post.description}</Text>
+            <Text>
+                {post.description}
+            </Text>
         {/if}
 
         {#if post.images.length > 0}
@@ -55,3 +57,5 @@
         {/if}
     </Post>
 {/each}
+
+

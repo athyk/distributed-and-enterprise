@@ -9,7 +9,7 @@
     export let ownPost = false as boolean;
 </script>
 
-<div class="flex flex-col justify-between min-h-[50px] min-w-[100px] max-w-[500px] bg-white rounded-2xl border-black border-1 m-5 p-5" id={id.toString()}>
+<div class="flex flex-col justify-between w-full max-w-[500px] bg-white rounded-2xl border-black border-1 mx-auto my-3 sm:m-2 p-3 sm:p-5" id={id.toString()}>
     <Header {author} {ownPost} />
 
     <slot />

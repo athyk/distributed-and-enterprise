@@ -87,7 +87,6 @@
             {#if images.length > 0}
                 <div class="w-full max-w-2xl p-2 border-l border-r border-b">
                     <h1 class="text-lg font-bold mb-2">Images ({images.length})</h1>
-                    <!-- Horizontal scrollable container -->
                     <div class="flex flex-row gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
                         {#each images as image, i (i)}
                             <div class="flex-shrink-0">
@@ -96,7 +95,6 @@
                                     alt="User uploaded"
                                     class="h-[100px] w-auto object-cover rounded"
                                 />
-                                <!-- Optional: Add a remove button -->
                                 <button 
                                     class="mt-1 text-xs text-red-500 hover:text-red-700"
                                     on:click={() => images = images.filter((_, index) => index !== i)}

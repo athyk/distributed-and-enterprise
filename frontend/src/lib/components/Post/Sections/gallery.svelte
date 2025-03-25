@@ -1,7 +1,25 @@
 <script lang="ts">
-    export let images = [] as string[];
+    import { onMount } from "svelte";
+    export let images: string[] = [];
 
-    let image = 0;
+    let image: number = 0;
+    let showModal = false;
+
+    let hasLoadedImages = false;
+
+    function removeInvalidImages() {
+        images = images.filter((image) => {
+            const img = new Image();
+            img.src = image;
+            return img.complete;
+        });
+        if (images.length > 0) {
+            hasLoadedImages = true;
+        } else {
+            hasLoadedImages = false;
+        }
+    }
+
 
     function nextImage() {
         image = (image + 1) % images.length;
@@ -11,21 +29,73 @@
         image = (image - 1 + images.length) % images.length;
     }
 
+    function openModal() {
+        console.log("openModal", image);
+        showModal = true;
+    }
+
+    function closeModal() {
+        showModal = false;
+    }
+
+    function handleKeydown(event: KeyboardEvent) {
+        if (showModal) {
+            if (event.key === "ArrowRight") {
+                nextImage();
+            } else if (event.key === "ArrowLeft") {
+                prevImage();
+            } else if (event.key === "Escape") {
+                closeModal();
+            }
+        }
+    }
+
+    window.addEventListener("keydown", handleKeydown);
+    onMount(() => {
+        removeInvalidImages();
+    });
 </script>
 
-<div class="relative flex flex-col items-center">
-    <img src={images[image]} class="w-full h-auto shadow-2xl rounded-lg m-5 mb-0" alt="Post" />
-    {#if images.length > 1}
-        <div class="absolute inset-0 flex justify-between items-center px-5">
-            <button on:click={prevImage} class="text-3xl bg-opacity-5 rounded-2xl p-1 hover:bg-gray-900 transition duration-200 text-white">
-                &#8592;
-            </button>
-            <button on:click={nextImage} class="text-3xl bg-opacity-5 rounded-2xl p-1 hover:bg-gray-900 transition duration-200 text-white">
-                &#8594;
-            </button>
+{#if images.length > 0}
+    <div class="relative flex flex-col items-center overflow-hidden" on:click={openModal} aria-hidden="true">
+        <div class="w-full max-w-2xl p-2">
+            <div class="flex flex-row gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                {#each images as image, i (i)}
+                    <div class="flex-shrink-0">
+                        <img
+                            src={image}
+                            alt="User uploaded"
+                            class="h-[100px] w-auto object-cover rounded hover:cursor-pointer hover:opacity-75 hover:shadow-lg transition duration-200"
+                        />
+                    </div>
+                {/each}
+            </div>
         </div>
-        <div class="absolute bottom-0 right-0 p-2 bg-black bg-opacity-50 text-white rounded-tl-lg">
-            <span>{image + 1}/{images.length}</span>
-        </div>
-    {/if}
-</div>
+    </div>
+{/if}
+
+{#if showModal}
+    <div class="fixed inset-0 bg-gray bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50"
+        on:click={closeModal}
+        aria-hidden="true"
+    >
+        <img
+            src={images[image]}
+            class="max-w-[90%] max-h-[90%] object-contain shadow-lg rounded-md m-3"
+            alt="Post"
+        />
+        {#if images.length > 1}
+            <div class="absolute inset-0 flex justify-between items-center px-5">
+                <button on:click|stopPropagation={prevImage} class="text-3xl bg-black bg-opacity-25 rounded-full p-2 hover:bg-opacity-50 transition duration-200 text-white">
+                    &#8592;
+                </button>
+                <button on:click|stopPropagation={nextImage} class="text-3xl bg-black bg-opacity-25 rounded-full p-2 hover:bg-opacity-50 transition duration-200 text-white">
+                    &#8594;
+                </button>
+            </div>
+            <div class="absolute bottom-2 right-2 p-2 bg-black bg-opacity-50 text-white rounded-lg">
+                <span>{image + 1}/{images.length}</span>
+            </div>
+        {/if}
+    </div>
+{/if}
