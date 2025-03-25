@@ -16,6 +16,7 @@ export type PaginationData = {
 	name: string;
 	created_at: number;
 	updated_at: number;
+	count: number
 };
 
 export type PaginationDataResponse = {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import AnnouncementCard from "$components/announcementCard/announcementCard.svelte";
+	import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
 
 	let isOpen = false;
 
@@ -12,7 +12,6 @@
 		Communities: '/communities',
 		Login: '/login',
 		Announcement: '/announcement'
-
 	};
 </script>
 

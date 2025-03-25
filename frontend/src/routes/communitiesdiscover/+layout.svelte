@@ -1,6 +1,6 @@
 <script lang="ts">
-	import SideBar from '$components/Sidebar/sidebar.svelte';  
-	import { onMount, onDestroy } from 'svelte';  
+	import SideBar from '$components/Sidebar/sidebar.svelte';
+	import { onMount, onDestroy } from 'svelte';
 
 	let { children } = $props();
 	let isSidebarOpen = false;
@@ -10,7 +10,7 @@
 	function handleResize() {
 		isMobile = window.innerWidth < 768;
 		if (!isMobile) {
-			isSidebarOpen = false;  // Close sidebar when switching to desktop view
+			isSidebarOpen = false; // Close sidebar when switching to desktop view
 		}
 	}
 
@@ -37,11 +37,11 @@
 	*/
 </script>
 
-<div class="min-h-screen flex flex-col text-gray-900 dark:text-gray-100">
+<div class="flex min-h-screen flex-col text-gray-900 dark:text-gray-100">
 	<!-- Mobile Filter Button (Under Header) -->
-	<div class="md:hidden px-4 py-2 bg-gray-100 dark:bg-gray-900 shadow">
+	<div class="bg-gray-100 px-4 py-2 shadow md:hidden dark:bg-gray-900">
 		<button
-			class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg"
+			class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white shadow-lg"
 			on:click={toggleSidebar}
 		>
 			Filter
@@ -49,24 +49,24 @@
 	</div>
 
 	<!-- Sidebar & Page Content -->
-	<div class="flex flex-1 relative">
+	<div class="relative flex flex-1">
 		<!-- Sidebar for Large Screens -->
-		<div class="hidden md:block w-64">
+		<div class="hidden w-64 md:block">
 			<SideBar />
 		</div>
 
 		<!-- Mobile Sidebar Overlay -->
 		{#if isSidebarOpen}
 			<div
-				class="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+				class="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
 				on:click={closeSidebar}
 				aria-label="Close sidebar"
 			></div>
 		{/if}
 
 		<!-- Sidebar for Mobile -->
-		<div 
-			class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 overflow-y-auto transition-transform duration-300 ease-in-out transform"
+		<div
+			class="fixed inset-y-0 left-0 z-50 w-64 transform overflow-y-auto bg-white transition-transform duration-300 ease-in-out dark:bg-gray-800"
 			class:translate-x-0={isSidebarOpen}
 			class:-translate-x-full={!isSidebarOpen}
 		>
@@ -74,7 +74,7 @@
 		</div>
 
 		<!-- Page Content -->
-		<main class="flex-1 p-6 overflow-auto">
+		<main class="flex-1 overflow-auto p-6">
 			{@render children()}
 		</main>
 	</div>
