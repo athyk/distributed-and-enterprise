@@ -10,11 +10,6 @@
 		degrees: [] as string[]
 	};
 
-	// Function to toggle public status
-	function togglePublic() {
-		formData.public = !formData.public;
-	}
-
 	// Function to add a new tag
 	function addTag() {
 		const newTag = prompt('Enter a new tag:');
@@ -104,6 +99,7 @@
 
 				<!-- Tags -->
 				<div class="mb-3">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label>
 					{#each formData.tags as tag, i}
 						<div class="mt-1 flex items-center">
@@ -123,6 +119,7 @@
 
 				<!-- Degrees -->
 				<div class="mb-3">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Degrees</label>
 					{#each formData.degrees as degree, i}
 						<div class="mt-1 flex items-center">

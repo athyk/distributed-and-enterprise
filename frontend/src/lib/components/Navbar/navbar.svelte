@@ -1,6 +1,4 @@
 <script lang="ts">
-	import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
-
 	let isOpen = false;
 
 	function toggleMenu() {

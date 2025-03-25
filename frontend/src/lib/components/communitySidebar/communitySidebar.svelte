@@ -17,12 +17,14 @@
 
 <ul class="h-full space-y-2 bg-gray-800 p-4 text-white">
 	{#each communitiesInfo as community}
-		<li
-			on:click={() => selectCommunity(community.id)}
-			class="flex cursor-pointer items-center space-x-3 rounded p-2 hover:bg-gray-600"
-		>
-			<img src={community.imageUrl} alt={community.name} class="h-10 w-10 rounded-full" />
-			<span>{community.name}</span>
+		<li class="flex items-center space-x-3 rounded p-2 hover:bg-gray-600">
+			<button
+				on:click={() => selectCommunity(community.id)}
+				class="flex w-full items-center space-x-3 text-left"
+			>
+				<img src={community.imageUrl} alt={community.name} class="h-10 w-10 rounded-full" />
+				<span>{community.name}</span>
+			</button>
 		</li>
 	{/each}
 

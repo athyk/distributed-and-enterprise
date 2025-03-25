@@ -69,26 +69,6 @@
 			c.name.toLowerCase().includes(searchQuery.toLowerCase())
 		);
 	}
-
-	function create(): void {
-		console.log('Create button clicked');
-		// Add your create logic here
-	}
-
-	function remove(): void {
-		console.log('Remove button clicked');
-		// Add your remove logic here
-	}
-
-	function update(): void {
-		console.log('Update button clicked');
-		// Add your update logic here
-	}
-
-	function deleteItem(): void {
-		console.log('Delete button clicked');
-		// Add your delete logic here
-	}
 </script>
 
 <div

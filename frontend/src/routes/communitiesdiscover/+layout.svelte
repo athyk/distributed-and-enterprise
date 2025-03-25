@@ -1,40 +1,40 @@
 <script lang="ts">
 	import SideBar from '$components/Sidebar/sidebar.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import { writable } from 'svelte/store';
 
 	let { children } = $props();
-	let isSidebarOpen = false;
+	const isSidebarOpen = writable(false);
 	let isMobile = false;
 
 	// Function to check if the screen size is mobile
 	function handleResize() {
 		isMobile = window.innerWidth < 768;
 		if (!isMobile) {
-			isSidebarOpen = false; // Close sidebar when switching to desktop view
+			isSidebarOpen.set(false); // Close sidebar when switching to desktop view
 		}
 	}
 
 	// Toggle sidebar visibility
 	function toggleSidebar() {
-		isSidebarOpen = !isSidebarOpen;
+		isSidebarOpen.update((value) => !value);
 	}
 
 	// Close sidebar
 	function closeSidebar() {
-		isSidebarOpen = false;
+		isSidebarOpen.set(false);
 	}
 
-	/*
+	// Run on mount to check initial screen size and add resize event listener
 	onMount(() => {
 		handleResize();
 		window.addEventListener('resize', handleResize);
 	});
 
+	// Cleanup on destroy
 	onDestroy(() => {
 		window.removeEventListener('resize', handleResize);
 	});
-
-	*/
 </script>
 
 <div class="flex min-h-screen flex-col text-gray-900 dark:text-gray-100">
@@ -42,7 +42,7 @@
 	<div class="bg-gray-100 px-4 py-2 shadow md:hidden dark:bg-gray-900">
 		<button
 			class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white shadow-lg"
-			on:click={toggleSidebar}
+			onclick={toggleSidebar}
 		>
 			Filter
 		</button>
@@ -56,10 +56,12 @@
 		</div>
 
 		<!-- Mobile Sidebar Overlay -->
-		{#if isSidebarOpen}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		{#if $isSidebarOpen}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				class="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
-				on:click={closeSidebar}
+				onclick={closeSidebar}
 				aria-label="Close sidebar"
 			></div>
 		{/if}
@@ -67,8 +69,8 @@
 		<!-- Sidebar for Mobile -->
 		<div
 			class="fixed inset-y-0 left-0 z-50 w-64 transform overflow-y-auto bg-white transition-transform duration-300 ease-in-out dark:bg-gray-800"
-			class:translate-x-0={isSidebarOpen}
-			class:-translate-x-full={!isSidebarOpen}
+			class:translate-x-0={$isSidebarOpen}
+			class:-translate-x-full={!$isSidebarOpen}
 		>
 			<SideBar />
 		</div>
