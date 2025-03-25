@@ -1,11 +1,23 @@
 <script lang="ts">
+	import Navbar from '$components/Navbar/navbar.svelte';
+
 	// Data model for the form
+
+	import { post } from '$lib/api/post';
+
 	let formData = {
 		name: '',
 		description: '',
 		public: false,
-		tags: [] as string[],
+		tags: [] as number[],
 		degrees: [] as string[]
+	};
+
+	type createResponse = {
+		success: boolean;
+		http_status: Number;
+		error_message: String[];
+		id: Number;
 	};
 
 	// Function to handle adding a tag
@@ -33,10 +45,19 @@
 	}
 
 	// Function to handle form submission
-	function createCommunity() {
+	async function createCommunity() {
 		console.log('Creating community with data:', formData);
-		// Add your API call or store logic here
+
+		try {
+			let response = (await post('community/', formData)) as createResponse;
+
+			console.log(response.id);
+		} catch (error) {
+			console.error('Error creating community:', error);
+		}
 	}
+
+	// Add your API call or store logic here
 </script>
 
 <!-- Container -->
@@ -73,7 +94,7 @@
 
 	<!-- Tags -->
 	<div class="mb-4">
-		<label for="tags" class="mb-1 block text-sm font-medium">Tags</label>
+		<label class="mb-1 block text-sm font-medium">Tags</label>
 		<div class="flex flex-wrap gap-2">
 			{#each formData.tags as tag, index}
 				<span class="flex items-center rounded-md border border-gray-700 bg-gray-800 px-2 py-1">
@@ -95,7 +116,7 @@
 
 	<!-- Degrees -->
 	<div class="mb-4">
-		<label for="degrees" class="mb-1 block text-sm font-medium">Degrees</label>
+		<label class="mb-1 block text-sm font-medium">Degrees</label>
 		<div class="flex flex-wrap gap-2">
 			{#each formData.degrees as degree, index}
 				<span class="flex items-center rounded-md border border-gray-700 bg-gray-800 px-2 py-1">

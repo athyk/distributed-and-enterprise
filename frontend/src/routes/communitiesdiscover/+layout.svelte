@@ -4,25 +4,25 @@
 	import { writable } from 'svelte/store';
 
 	let { children } = $props();
-	const isSidebarOpen = writable(false);
+	let isSidebarOpen:Boolean = false;
 	let isMobile = false;
 
 	// Function to check if the screen size is mobile
 	function handleResize() {
 		isMobile = window.innerWidth < 768;
 		if (!isMobile) {
-			isSidebarOpen.set(false); // Close sidebar when switching to desktop view
+			isSidebarOpen = false; // Close sidebar when switching to desktop view
 		}
 	}
 
 	// Toggle sidebar visibility
 	function toggleSidebar() {
-		isSidebarOpen.update((value) => !value);
+		isSidebarOpen = !isSidebarOpen;
 	}
 
 	// Close sidebar
 	function closeSidebar() {
-		isSidebarOpen.set(false);
+		isSidebarOpen = false;
 	}
 
 	// Run on mount to check initial screen size and add resize event listener
@@ -42,7 +42,7 @@
 	<div class="bg-gray-100 px-4 py-2 shadow md:hidden dark:bg-gray-900">
 		<button
 			class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white shadow-lg"
-			onclick={toggleSidebar}
+			on:click={toggleSidebar}
 		>
 			Filter
 		</button>
@@ -57,11 +57,11 @@
 
 		<!-- Mobile Sidebar Overlay -->
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		{#if $isSidebarOpen}
+		{#if isSidebarOpen}
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				class="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
-				onclick={closeSidebar}
+				on:click={closeSidebar}
 				aria-label="Close sidebar"
 			></div>
 		{/if}
@@ -69,8 +69,8 @@
 		<!-- Sidebar for Mobile -->
 		<div
 			class="fixed inset-y-0 left-0 z-50 w-64 transform overflow-y-auto bg-white transition-transform duration-300 ease-in-out dark:bg-gray-800"
-			class:translate-x-0={$isSidebarOpen}
-			class:-translate-x-full={!$isSidebarOpen}
+			class:translate-x-0={isSidebarOpen}
+			class:-translate-x-full={!isSidebarOpen}
 		>
 			<SideBar />
 		</div>

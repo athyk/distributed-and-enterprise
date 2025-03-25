@@ -1,6 +1,6 @@
 <script lang="ts">
-	import CommunitySidebar from '$components/communitySidebar/communitySidebar.svelte';
-	import MessageSection from '$components/messageSection/messageSection.svelte';
+	import CommunitySidebar from '$components/communitySidebar/CommunitySidebar.svelte';
+	import MessageSection from '$components/messageSection/MessageSection.svelte';
 	import { goto } from '$app/navigation';
 
 	interface Community {

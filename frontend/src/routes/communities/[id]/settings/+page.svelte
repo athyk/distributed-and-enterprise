@@ -6,9 +6,14 @@
 		name: '',
 		description: '',
 		public: false,
-		tags: [] as string[],
+		tags: [] as Number[],
 		degrees: [] as string[]
 	};
+
+	// Function to toggle public status
+	function togglePublic() {
+		formData.public = !formData.public;
+	}
 
 	// Function to add a new tag
 	function addTag() {
@@ -31,6 +36,51 @@
 	function removeDegree(index: number) {
 		formData.degrees = formData.degrees.filter((_, i) => i !== index);
 	}
+
+	// Function to update the community (PUT request)
+	// Extract the community ID from the URL
+	const communityId = window.location.pathname.split('/')[2];
+
+	async function updateCommunity() {
+		console.log('Updating community with data:', formData);
+
+		try {
+			let response = await fetch(`http://localhost:8000/community/${communityId}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(formData)
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to update community');
+			}
+
+			let data = await response.json();
+			console.log(data.id);
+		} catch (error) {
+			console.error('Error updating community:', error);
+		}
+	}
+
+	async function deleteCommunity() {
+		console.log('Deleting community...');
+
+		try {
+			let response = await fetch(`http://localhost:8000/community/${communityId}`, {
+				method: 'DELETE'
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to delete community');
+			}
+
+			console.log('Community deleted successfully');
+		} catch (error) {
+			console.error('Error deleting community:', error);
+		}
+	}
 </script>
 
 <!-- Main container -->
@@ -41,9 +91,8 @@
 		<nav class="space-y-2">
 			<button
 				on:click={() => (activeTab = 'update')}
-				class="w-full rounded-md px-3 py-2 text-left
-          text-gray-800 transition hover:bg-gray-200 focus:outline-none
-          dark:text-gray-200 dark:hover:bg-gray-700 {activeTab === 'update'
+				class="w-full rounded-md px-3 py-2 text-left text-gray-800 transition hover:bg-gray-200 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-700 {activeTab ===
+				'update'
 					? 'bg-gray-200 font-semibold dark:bg-gray-700'
 					: ''}"
 			>
@@ -51,9 +100,8 @@
 			</button>
 			<button
 				on:click={() => (activeTab = 'delete')}
-				class="w-full rounded-md px-3 py-2 text-left
-          text-gray-800 transition hover:bg-gray-200 focus:outline-none
-          dark:text-gray-200 dark:hover:bg-gray-700 {activeTab === 'delete'
+				class="w-full rounded-md px-3 py-2 text-left text-gray-800 transition hover:bg-gray-200 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-700 {activeTab ===
+				'delete'
 					? 'bg-gray-200 font-semibold dark:bg-gray-700'
 					: ''}"
 			>
@@ -99,7 +147,6 @@
 
 				<!-- Tags -->
 				<div class="mb-3">
-					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label>
 					{#each formData.tags as tag, i}
 						<div class="mt-1 flex items-center">
@@ -119,7 +166,6 @@
 
 				<!-- Degrees -->
 				<div class="mb-3">
-					<!-- svelte-ignore a11y_label_has_associated_control -->
 					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Degrees</label>
 					{#each formData.degrees as degree, i}
 						<div class="mt-1 flex items-center">
@@ -137,7 +183,10 @@
 					>
 				</div>
 
-				<button class="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700">
+				<button
+					on:click={updateCommunity}
+					class="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+				>
 					Update Community
 				</button>
 			</div>
@@ -146,7 +195,10 @@
 			<p class="mb-4 text-gray-700 dark:text-gray-300">
 				Permanently delete this community. This action cannot be undone.
 			</p>
-			<button class="rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-700">
+			<button
+				on:click={deleteCommunity}
+				class="rounded bg-red-600 px-4 py-2 text-white transition hover:bg-red-700"
+			>
 				Delete Community
 			</button>
 		{/if}
