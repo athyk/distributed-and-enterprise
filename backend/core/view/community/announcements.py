@@ -8,8 +8,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from backend.common.proto import community_announcement_pb2
+from backend.common.proto.accounts_pb2 import GetRequest
 from backend.common.services.community.announcement import CommunityAnnouncementClient
-
+from backend.common.services.accounts import AccountsClient
 
 @csrf_exempt
 def community_announcement_action_paths(request: WSGIRequest, community_id, announcement_id):
@@ -135,9 +136,9 @@ def community_announcement_view(request: WSGIRequest, community_id):
                     "title": json_announcement['title'],
                     "description": json_announcement['description'],
                     "tags": json_announcement.get('tags', []),
-                    "user_id": json_announcement['userId'],
+                    "user": get_user_data(json_announcement['userId']),
                     "uploaded": json_announcement['uploaded'],
-                    "edit_user_id": json_announcement.get('editUserId', 0),
+                    "edit_user": get_user_data(json_announcement.get('editUserId', 0)),
                     "edit_uploaded": json_announcement.get('editUploaded', None)
                 }
 
@@ -180,9 +181,9 @@ def community_announcement_view_single(request: WSGIRequest, community_id, annou
             'title': response.announcement.title,
             'description': response.announcement.description,
             'tags': list(response.announcement.tags),
-            'user_id': response.announcement.user_id,
+            "user": get_user_data(response.announcement.user_id),
             'uploaded': response.announcement.uploaded,
-            'edit_user_id': response.announcement.edit_user_id,
+            "edit_user": get_user_data(response.announcement.edit_user_id),
             'edit_uploaded': response.announcement.edit_uploaded
         }
     })
@@ -226,9 +227,9 @@ def community_global_announcement_view(request: WSGIRequest):
                 "title": json_announcement['title'],
                 "description": json_announcement['description'],
                 "tags": json_announcement.get('tags', []),
-                "user_id": json_announcement['userId'],
+                "user": get_user_data(json_announcement['userId']),
                 "uploaded": json_announcement['uploaded'],
-                "edit_user_id": json_announcement.get('editUserId', 0),
+                "edit_user": get_user_data(json_announcement.get('editUserId', 0)),
                 "edit_uploaded": json_announcement.get('editUploaded', None),
                 "community_id": json_announcement['communityId']
             }
@@ -312,3 +313,30 @@ def community_announcement_delete(request: WSGIRequest, community_id, announceme
         'http_status': response.http_status,
         'error_message': list(response.error_message)
     })
+
+
+def get_user_data(user_id):
+    '''
+    Gets the minimum data from users
+    '''
+
+    user_data = {
+        'user_id': 0,
+        'first_name': '',
+        'last_name': '',
+        'picture_url': ''
+    }
+
+    if user_id == 0:
+        return user_data
+
+    user_client = AccountsClient()
+    req_user = GetRequest(user_id = user_id)
+    user_result = user_client.get(req_user)
+
+    user_data['user_id'] = user_result.users[0].id
+    user_data['first_name'] = user_result.users[0].first_name
+    user_data['last_name'] = user_result.users[0].last_name
+    user_data['picture_url'] = user_result.users[0].picture_url
+
+    return user_data
