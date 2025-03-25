@@ -8,7 +8,7 @@
 		id: number;
 		title: string;
 		description: string;
-		tags: string[]; // tags are strings per your API response
+		tags: string[];
 		user_id: number;
 		uploaded: string;
 		edit_user_id: number;
@@ -27,26 +27,23 @@
 	// Fetch announcements from the API endpoint.
 	async function fetchAnnouncements() {
 		console.log('Fetching announcements...');
-
 		try {
-			const response: unknown = await get('community/announcements');
-			console.log('Announcements fetched:', response);
-
-			// Cast the response to the expected type
-			const data = response as AnnouncementsResponse;
+			// Use the generic parameter to directly type the response.
+			const data = await get<AnnouncementsResponse>('community/announcements?offset=0&limit=50');
+			console.log('Announcements fetched:', data);
 			announcements = data.global_announcements;
 		} catch (error) {
 			console.error('Error fetching announcements:', error);
 		}
 	}
 
-	// Call the function when the component is mounted
+	// Call the function when the component is mounted.
 	onMount(fetchAnnouncements);
 </script>
 
 <main class="container mx-auto px-4 py-4">
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-		{#if announcements && announcements.length > 0}
+		{#if announcements.length > 0}
 			{#each announcements as announcement (announcement.id)}
 				<AnnouncementCard
 					title={announcement.title}

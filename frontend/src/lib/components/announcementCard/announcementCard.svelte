@@ -3,7 +3,7 @@
 	export let description: string = 'Announcement Description';
 	export let location: string = 'Location';
 	export let datetime: string = '2025-01-01';
-	export let duration: number = 1;
+
 	export let tags: number[] = [1, 2];
 </script>
 
@@ -21,7 +21,7 @@
 			{location}
 		</p>
 		<p class="text-lg font-semibold text-gray-900 dark:text-white">
-			{datetime} | {duration} hr{duration > 1 ? 's' : ''}
+			{datetime}
 		</p>
 	</div>
 

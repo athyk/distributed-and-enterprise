@@ -3,7 +3,7 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	let { children } = $props();
-	let isSidebarOpen: boolean = false;
+	let isSidebarOpen = $state(false);
 	let isMobile = false;
 
 	// Function to check if the screen size is mobile
@@ -41,7 +41,7 @@
 	<div class="bg-gray-100 px-4 py-2 shadow md:hidden dark:bg-gray-900">
 		<button
 			class="w-full rounded-lg bg-blue-600 px-4 py-2 text-white shadow-lg"
-			on:click={toggleSidebar}
+			onclick={toggleSidebar}
 		>
 			Filter
 		</button>
@@ -60,7 +60,7 @@
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div
 				class="bg-opacity-50 fixed inset-0 z-40 bg-black md:hidden"
-				on:click={closeSidebar}
+				onclick={closeSidebar}
 				aria-label="Close sidebar"
 			></div>
 		{/if}

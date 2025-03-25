@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+
 	let activeTab: string = 'update';
 
 	// Form data
@@ -10,10 +12,13 @@
 		degrees: [] as string[]
 	};
 
+	let id: string;
+	$: id = $page.params.id;
+
 	// Function to add a new tag
 	function addTag() {
 		const newTag = prompt('Enter a new tag:');
-		if (newTag) formData.tags = [...formData.tags, newTag];
+		if (newTag) formData.tags = [...formData.tags, Number(newTag)];
 	}
 
 	// Function to remove a tag
@@ -33,14 +38,11 @@
 	}
 
 	// Function to update the community (PUT request)
-	// Extract the community ID from the URL
-	const communityId = window.location.pathname.split('/')[2];
-
 	async function updateCommunity() {
 		console.log('Updating community with data:', formData);
 
 		try {
-			let response = await fetch(`http://localhost:8000/community/${communityId}`, {
+			let response = await fetch(`/community/${id}`, {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -59,11 +61,12 @@
 		}
 	}
 
+	// Function to delete the community (DELETE request)
 	async function deleteCommunity() {
 		console.log('Deleting community...');
 
 		try {
-			let response = await fetch(`http://localhost:8000/community/${communityId}`, {
+			let response = await fetch(`/community/${id}`, {
 				method: 'DELETE'
 			});
 
@@ -142,40 +145,50 @@
 
 				<!-- Tags -->
 				<div class="mb-3">
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label>
-					{#each formData.tags as tag, i}
-						<div class="mt-1 flex items-center">
-							<span
-								class="mr-2 rounded bg-gray-300 px-2 py-1 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
-								>{tag}</span
-							>
-							<button on:click={() => removeTag(i)} class="text-red-500 hover:text-red-700"
-								>×</button
-							>
-						</div>
-					{/each}
-					<button on:click={addTag} class="mt-2 text-sm text-blue-600 hover:text-blue-800"
-						>+ Add Tag</button
+					<label
+						for="tags-container"
+						class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tags</label
 					>
+					<div id="tags-container">
+						{#each formData.tags as tag, i}
+							<div class="mt-1 flex items-center">
+								<span
+									class="mr-2 rounded bg-gray-300 px-2 py-1 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
+									>{tag}</span
+								>
+								<button on:click={() => removeTag(i)} class="text-red-500 hover:text-red-700"
+									>×</button
+								>
+							</div>
+						{/each}
+						<button on:click={addTag} class="mt-2 text-sm text-blue-600 hover:text-blue-800"
+							>+ Add Tag</button
+						>
+					</div>
 				</div>
 
 				<!-- Degrees -->
 				<div class="mb-3">
-					<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Degrees</label>
-					{#each formData.degrees as degree, i}
-						<div class="mt-1 flex items-center">
-							<span
-								class="mr-2 rounded bg-gray-300 px-2 py-1 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
-								>{degree}</span
-							>
-							<button on:click={() => removeDegree(i)} class="text-red-500 hover:text-red-700"
-								>×</button
-							>
-						</div>
-					{/each}
-					<button on:click={addDegree} class="mt-2 text-sm text-blue-600 hover:text-blue-800"
-						>+ Add Degree</button
+					<label
+						for="degrees-container"
+						class="block text-sm font-medium text-gray-700 dark:text-gray-300">Degrees</label
 					>
+					<div id="degrees-container">
+						{#each formData.degrees as degree, i}
+							<div class="mt-1 flex items-center">
+								<span
+									class="mr-2 rounded bg-gray-300 px-2 py-1 text-gray-900 dark:bg-gray-700 dark:text-gray-100"
+									>{degree}</span
+								>
+								<button on:click={() => removeDegree(i)} class="text-red-500 hover:text-red-700"
+									>×</button
+								>
+							</div>
+						{/each}
+						<button on:click={addDegree} class="mt-2 text-sm text-blue-600 hover:text-blue-800"
+							>+ Add Degree</button
+						>
+					</div>
 				</div>
 
 				<button

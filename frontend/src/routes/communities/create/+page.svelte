@@ -92,7 +92,8 @@
 
 	<!-- Tags -->
 	<div class="mb-4">
-		<label class="mb-1 block text-sm font-medium">Tags</label>
+		<label for="tagInput" class="mb-1 block text-sm font-medium">Tags</label>
+		<input id="tagInput" type="text" class="hidden" aria-hidden="true" />
 		<div class="flex flex-wrap gap-2">
 			{#each formData.tags as tag, index}
 				<span class="flex items-center rounded-md border border-gray-700 bg-gray-800 px-2 py-1">
@@ -114,7 +115,8 @@
 
 	<!-- Degrees -->
 	<div class="mb-4">
-		<label class="mb-1 block text-sm font-medium">Degrees</label>
+		<label for="degreeInput" class="mb-1 block text-sm font-medium">Degrees</label>
+		<input id="degreeInput" type="text" class="hidden" aria-hidden="true" />
 		<div class="flex flex-wrap gap-2">
 			{#each formData.degrees as degree, index}
 				<span class="flex items-center rounded-md border border-gray-700 bg-gray-800 px-2 py-1">
