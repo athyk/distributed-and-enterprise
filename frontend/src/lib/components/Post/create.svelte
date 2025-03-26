@@ -2,9 +2,17 @@
     import SearchBox from "$components/SearchBox/searchBox.svelte";
     import type { postCreateResponse,ImageUploadResponse } from "$lib/api/apiType";
     import { post } from "$lib/api/post";
+
+    import Base from "./base.svelte";
+	import CreateTitle from "./Sections/Inputs/createTitle.svelte";
+    import CreateDescription from "./Sections/Inputs/createDescription.svelte";
+    import Title from "./Sections/title.svelte";
+
     let title = '';
     let text = '';
     let images = [] as string[];
+
+    export let showModal = false;
 
     export let success = false;
 
@@ -22,6 +30,7 @@
             text = '';
             images = [];
             success = true;
+            showModal = false;
         } else {
             console.error("Error creating post:", response.error_message);
         }
@@ -55,71 +64,58 @@
         }
     }
 
-    $: console.log("Images:", images);
+    function closeModal() {
+        showModal = false;
+    }
 
 </script>
 
-
-<div class="flex flex-col justify-between min-h-[50px] bg-white rounded-2xl border-black border-2 p-5">
-    <form>
-        <div class="w-full flex flex-col items-center p-4">
-            <h1 class="text-2xl font-bold mb-2">Create Post</h1>
-            <textarea
-                class="w-full max-w-2xl h-15 p-2 border rounded-t resize-none"
-                placeholder="Enter your title here..."
-                bind:value={title}
-            ></textarea>
-            <SearchBox
-                classStyle="w-[10000px] max-w-2xl h-16 p-2 border-l border-r border-b resize-none"
-                marginTop=""
-                placeholder="Search for Tags..."
-                url="tags/list"
-                id="tags"
-                multi_select={true}
-                max_select={5}
-            ></SearchBox>
-            <textarea
-                class="w-full max-w-2xl h-32 p-2 border-l border-r "
-                placeholder="Enter your post here..."
-                bind:value={text}
-            ></textarea>
-
-            {#if images.length > 0}
-                <div class="w-full max-w-2xl p-2 border-l border-r border-b">
-                    <h1 class="text-lg font-bold mb-2">Images ({images.length})</h1>
-                    <div class="flex flex-row gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-                        {#each images as image, i (i)}
-                            <div class="flex-shrink-0">
-                                <img 
-                                    src={image}
-                                    alt="User uploaded"
-                                    class="h-[100px] w-auto object-cover rounded"
-                                />
-                                <button 
-                                    class="mt-1 text-xs text-red-500 hover:text-red-700"
-                                    on:click={() => images = images.filter((_, index) => index !== i)}
-                                >
-                                    Remove
-                                </button>
-                            </div>
-                        {/each}
+<Base>
+    <Title>Create A Post</Title>
+    <CreateTitle bind:title />
+    <CreateDescription bind:text />
+    <SearchBox
+        classStyle="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500"
+        marginTop=""
+        placeholder="Search for Tags..."
+        url="tags/list"
+        id="tags"
+        multi_select={true}
+        max_select={5}
+    ></SearchBox>
+    {#if images.length > 0}
+        <div class="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500">
+            <h1 class="text-lg font-bold mb-2">Images ({images.length})</h1>
+            <div class="flex flex-row gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                {#each images as image, i (i)}
+                    <div class="flex-shrink-0">
+                        <img 
+                            src={image}
+                            alt="User uploaded"
+                            class="h-[100px] w-auto object-cover rounded"
+                        />
+                        <button 
+                            class="mt-1 text-xs text-red-500 hover:text-red-700"
+                            on:click={() => images = images.filter((_, index) => index !== i)}
+                        >
+                            Remove
+                        </button>
                     </div>
-                </div>
-            {/if}
-            <div class="w-full max-w-2xl h-15 p-5 border rounded-b flex items-center justify-between">
-                <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={onSubmit}>
-                    Post
-                </button>
-                <input
-                    type="file"
-                    accept="image/*"
-                    id="fileInput"
-                    class="hidden"
-                    on:change={fileSelected}
-                />
-                <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={() => document.getElementById('fileInput')?.click()}>
-                    Upload Image
-                </button>
+                {/each}
+            </div>
         </div>
-    </form>
-</div>
+    {/if}
+    <div class="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500 items-center justify-between flex">
+        <button class="bg-green-500 text-white px-4 py-2 rounded" on:click|preventDefault|stopPropagation={onSubmit}> Post </button>
+        <input
+            type="file"
+            accept="image/*"
+            id="fileInput"
+            class="hidden"
+            on:change={fileSelected}
+        />
+        <button class="bg-yellow-500 text-white px-4 py-2 rounded" on:click={() => document.getElementById('fileInput')?.click()}> Upload Image </button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded" on:click={closeModal}> Close </button>
+    </div>
+
+</Base>

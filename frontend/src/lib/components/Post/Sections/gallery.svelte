@@ -29,8 +29,12 @@
         image = (image - 1 + images.length) % images.length;
     }
 
-    function openModal() {
+    function openModal(event: MouseEvent) {
         console.log("openModal", image);
+        const clickedImage = event.currentTarget as HTMLElement;
+        if (clickedImage && clickedImage.id) {
+            image = parseInt(clickedImage.id, 10);
+        }
         showModal = true;
     }
 
@@ -51,17 +55,19 @@
     }
 
     window.addEventListener("keydown", handleKeydown);
+
     onMount(() => {
         removeInvalidImages();
     });
+
 </script>
 
 {#if images.length > 0}
-    <div class="relative flex flex-col items-center overflow-hidden" on:click={openModal} aria-hidden="true">
+    <div class="relative flex flex-col items-center overflow-hidden">
         <div class="w-full max-w-2xl p-2">
             <div class="flex flex-row gap-2 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
                 {#each images as image, i (i)}
-                    <div class="flex-shrink-0">
+                    <div class="flex-shrink-0" on:click={openModal}  aria-hidden="true" id={i.toString()}>
                         <img
                             src={image}
                             alt="User uploaded"

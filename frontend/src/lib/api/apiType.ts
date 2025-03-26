@@ -45,6 +45,7 @@ export type globalAnnouncementData = {
     "edit_user_id": number,
     "edit_uploaded": string | null,
     "community_id": number,
+	"user":UserInfo,
 }
 
 export type postResponse = {
@@ -82,4 +83,23 @@ export type  ImageUploadResponse = {
 	"success": boolean,
 	"error": string[],
 	"file_url": string,
+}
+
+export type EventResponse = {
+	"success": boolean,
+	"error_message": string[],
+	"global_events": EventDataResponse[]
+}
+
+export type EventDataResponse = {
+	"id": number,
+	"community_id": number,
+	"title": string,
+	"description": string,
+	"location": string,
+	"datetime": string,
+	"duration": string,
+	"latitude": number,
+	"longitude": number,
+	"tags": string[],
 }
