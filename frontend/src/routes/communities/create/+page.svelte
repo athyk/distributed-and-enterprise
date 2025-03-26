@@ -1,8 +1,6 @@
 <script lang="ts">
 	// Data model for the form
-
 	import { post } from '$lib/api/post';
-
 	let formData = {
 		name: '',
 		description: '',
@@ -10,18 +8,16 @@
 		tags: [] as number[],
 		degrees: [] as string[]
 	};
-
 	type createResponse = {
 		success: boolean;
 		http_status: number;
 		error_message: string[];
 		id: number;
 	};
-
 	// Function to handle adding a tag
 	function addTag() {
 		const newTag = prompt('Enter a new tag');
-		if (newTag) formData.tags = [...formData.tags, newTag];
+		if (newTag) formData.tags = [...formData.tags, Number(newTag)];
 	}
 
 	// Function to handle removing a tag
@@ -29,32 +25,26 @@
 		formData.tags.splice(index, 1);
 		formData.tags = [...formData.tags];
 	}
-
 	// Function to handle adding a degree
 	function addDegree() {
 		const newDegree = prompt('Enter a new degree');
 		if (newDegree) formData.degrees = [...formData.degrees, newDegree];
 	}
-
 	// Function to handle removing a degree
 	function removeDegree(index: number) {
 		formData.degrees.splice(index, 1);
 		formData.degrees = [...formData.degrees];
 	}
-
 	// Function to handle form submission
 	async function createCommunity() {
 		console.log('Creating community with data:', formData);
-
 		try {
 			let response = (await post('community/', formData)) as createResponse;
-
 			console.log(response.id);
 		} catch (error) {
 			console.error('Error creating community:', error);
 		}
 	}
-
 	// Add your API call or store logic here
 </script>
 
