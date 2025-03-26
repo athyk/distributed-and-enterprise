@@ -1,5 +1,6 @@
 <script lang="ts">
-    import CreatePost from "$components/Post/create.svelte";
+    import CreatePost from "$components/Post/createPost.svelte";
+    import { onMount, onDestroy } from 'svelte';
 
     type PostType = 'posts' | 'events' | 'announcements';
     export let feedType: PostType = 'posts';
@@ -8,6 +9,8 @@
     let refreshKey = 0;
 
     let modalShown = false;
+    let editShown = false;
+    let editID = 0;
 
     function showModal() {
         modalShown = true;
@@ -17,6 +20,29 @@
         modalShown = false;
         refreshKey += 1;
     }
+
+    function showEditModal(id: number) {
+        editShown = true;
+        editID = id;
+        modalShown = true;
+        console.log("Edit modal shown for post ID:", id);
+    }
+
+    function handleEditPost(event: CustomEvent) {
+        console.log("Edit post event received:", event);
+        if (event.detail && event.detail.id) {
+            showEditModal(event.detail.id);
+        }
+    }
+
+    onMount(() => {
+        document.addEventListener('editpost', handleEditPost as EventListener);
+    });
+
+    onDestroy(() => {
+        document.removeEventListener('editpost', handleEditPost as EventListener);
+    });
+
 </script>
 
 <div class="w-full flex flex-wrap justify-center">
@@ -34,7 +60,13 @@
         {#if modalShown}
             {#if feedType === 'posts'}
                 <div class="fixed inset-0 bg-gray bg-opacity-75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <CreatePost on:close={hideModal} bind:showModal={modalShown} />
+                    <CreatePost
+                        bind:showModal={modalShown}
+                        edit={editShown}
+                        editID={editID}
+                        onClose={() => hideModal()}
+                        onSuccess={() => refreshKey += 1}
+                    />
                 </div>
 
             {:else if feedType === 'events'}

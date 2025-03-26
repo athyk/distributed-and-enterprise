@@ -5,10 +5,11 @@
     import Tags from "./Sections/tags.svelte";
     import Gallery from "./Sections/gallery.svelte";
 
-    import type { postsData,postResponse } from "$lib/api/apiType";
+    import type { postsData,postResponse,response } from "$lib/api/apiType";
     import { get } from "$lib/api/get";
+    import { deleteCall } from "$lib/api/delete";
 
-    import { onMount } from "svelte";
+    import { onMount,onDestroy } from "svelte";
 
 
     let data: postsData[] = []
@@ -25,8 +26,27 @@
         }
     }
 
+    async function handleDelete(event: CustomEvent) {
+        const postId = event.detail.id;
+        console.log('Deleting post with ID:', postId);
+        const response = await deleteCall('posts/',{"id": postId}) as response;
+        if (response.success === true) {
+            console.log('Post deleted successfully');
+            data = data.filter(post => post.id !== postId);
+            alert("Post deleted successfully");
+            GetPosts();
+        } else {
+            console.error("Error deleting post:", response.error_message);
+        }
+    }
+
     onMount(() => {
         GetPosts();
+        document.addEventListener("deletePost", handleDelete as unknown as EventListener);
+    });
+
+    onDestroy(() => {
+        document.removeEventListener("deletePost", handleDelete as unknown as EventListener);
     });
 
 </script>
@@ -36,7 +56,6 @@
         author={post.user_data}
         date={post.created_at}
         id={post.id}
-        ownPost={false}
     >
         {#if post.title}
             <Title>{post.title}</Title>

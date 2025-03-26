@@ -6,11 +6,11 @@
     export let author: UserInfo = {} as UserInfo;
     export let date = '' as string;
     export let id = 0 as number;
-    export let ownPost = false as boolean;
+
 </script>
 
 <div class="flex flex-col justify-between w-full max-w-[500px] bg-white rounded-2xl border-black border-1 mx-auto my-3 sm:m-2 p-3 sm:p-5" id={id.toString()}>
-    <Header {author} {ownPost} />
+    <Header {author} {id}/>
 
     <slot />
 

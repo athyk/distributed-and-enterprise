@@ -39,7 +39,6 @@
         author={announcement.user}
         date={converTimetoUnix(announcement.uploaded)}
         id={announcement.id}
-        ownPost={false}
     >
         <Title>{announcement.title}</Title>
         <Tags tags={announcement.tags} />

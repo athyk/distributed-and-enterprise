@@ -35,7 +35,6 @@
 {#each data as event (event.id)}
     <Post
         id={event.id}
-        ownPost={false}
     >
         <Title>{event.title}</Title>
         <Time datetime={event.datetime}/>

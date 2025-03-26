@@ -54,6 +54,24 @@ export type postResponse = {
 	"posts": postsData[]
 }
 
+export type singlePostResponse = {
+	"success": boolean,
+	"error_message": string[],
+	"post": postsData
+}
+
+export type searchTagResponse = {
+	"success": boolean,
+	"error_message": string[],
+	"tag": {
+		"id": number,
+		"name": string,
+		"count": number,
+		"created_at": string,
+		"updated_at": string,
+	}
+}
+
 export type postsData = {
 	"id": number,
 	"title": string,
@@ -102,4 +120,27 @@ export type EventDataResponse = {
 	"latitude": number,
 	"longitude": number,
 	"tags": string[],
+}
+
+
+export type MeResponse = {
+	"success": boolean,
+	"error_message": string[],
+	"user": {
+		"id": number,
+		"email": string,
+		"email_verified": number,
+		"first_name": string,
+		"last_name": string,
+		"gender": string,
+		"date_of_birth": string,
+		"picture_url": string,
+		"degree_id": number,
+		"year_of_study": number,
+		"grad_date": string,
+		"tags": number[],
+		"rank": string,
+		"created_at": string,
+		"updated_at": string,
+	}
 }

@@ -1,11 +1,10 @@
 const base_url = 'http://localhost:8000/';
-export async function get<T>(url: string): Promise<T> {
+export async function Put<T>(url: string, data: Record<string, unknown>, formData?: FormData): Promise<T> {
 	try {
 		const response = await fetch(base_url + url, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
-			},
+			method: 'PUT',
+			headers: formData ? undefined : { 'Content-Type': 'application/json' },
+			body: formData || JSON.stringify(data),
 			credentials: 'include'
 		});
 
