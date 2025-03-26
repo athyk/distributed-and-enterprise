@@ -30,6 +30,7 @@
 		"prettier-plugin-tailwindcss": "^0.6.11",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
+		"tailwind-scrollbar": "^4.0.1",
 		"tailwindcss": "^4.0.0",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
@@ -39,5 +40,11 @@
 		"onlyBuiltDependencies": [
 			"esbuild"
 		]
+	},
+	"dependencies": {
+		"@types/leaflet": "^1.9.16",
+		"leaflet": "^1.9.4",
+		"sveaflet": "^0.1.4",
+		"svelte-bricks": "^0.3.1"
 	}
 }
