@@ -11,6 +11,7 @@
     let modalShown = false;
     let editShown = false;
     let editID = 0;
+    let communityID = 1;
 
     function showModal() {
         modalShown = true;
@@ -21,17 +22,18 @@
         refreshKey += 1;
     }
 
-    function showEditModal(id: number) {
+    function showEditModal(id: number,commID: number = 1) {
         editShown = true;
         editID = id;
         modalShown = true;
+        commID = communityID;
         console.log("Edit modal shown for post ID:", id);
     }
 
     function handleEditPost(event: CustomEvent) {
         console.log("Edit post event received:", event);
         if (event.detail && event.detail.id) {
-            showEditModal(event.detail.id);
+            showEditModal(event.detail.id, event.detail.communityID);
         }
     }
 
@@ -70,9 +72,19 @@
                 </div>
 
             {:else if feedType === 'events'}
-                <!-- <h1>Events</h1> -->
+                <h1>TBD</h1>
             {:else if feedType === 'announcements'}
-                <!-- <h1>Announcements</h1> -->
+                <div class="fixed inset-0 bg-gray bg-opacity-75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <CreatePost
+                        bind:showModal={modalShown}
+                        edit={editShown}
+                        editID={editID}
+                        onClose={() => hideModal()}
+                        onSuccess={() => refreshKey += 1}
+                        annnoucement={true}
+                        communityID={communityID}
+                    />
+                </div>
             {/if}
         {/if}
     {/if}

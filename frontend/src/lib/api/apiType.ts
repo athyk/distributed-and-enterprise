@@ -60,6 +60,12 @@ export type singlePostResponse = {
 	"post": postsData
 }
 
+export type singleAnnoucementResponse = {
+	"success": boolean,
+	"error_message": string[],
+	"announcement": globalAnnouncementData
+}
+
 export type searchTagResponse = {
 	"success": boolean,
 	"error_message": string[],
@@ -143,4 +149,19 @@ export type MeResponse = {
 		"created_at": string,
 		"updated_at": string,
 	}
+}
+
+export type communityData = {
+	"id": number,
+	"name": string,
+	"description": string,
+	"public": boolean,
+	"tags": string[],
+	"degrees": string[],
+	"member_count": number,
+}
+export type CommunitySearchResponse = {
+	"success": boolean,
+	"error_message": string[],
+	"communities": communityData[]
 }

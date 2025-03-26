@@ -1,6 +1,6 @@
 <script lang="ts">
     import SearchBox from "$components/SearchBox/searchBox.svelte";
-    import type { postCreateResponse, singlePostResponse, PaginationDataResponse } from "$lib/api/apiType";
+    import type { postCreateResponse, singlePostResponse, PaginationDataResponse,response,singleAnnoucementResponse } from "$lib/api/apiType";
     import { post } from "$lib/api/post";
     import { get } from "$lib/api/get";
     import { Put } from "$lib/api/Put";
@@ -23,6 +23,8 @@
     export let success = false;
     export let edit = false;
     export let editID: number | undefined = undefined;
+    export let annnoucement = false as boolean;
+    export let communityID = 1 as number;
 
     export let onClose = () => {};
     export let onSuccess = () => {};
@@ -35,12 +37,21 @@
         if (await checkUserPermission() === false) {
             return;
         }
-        if (edit) {
-            console.log("Editing post");
-            await editPost();
+        if (annnoucement) {
+            if (edit) {
+                await editAnnoucement();
+            } else {
+                await createAnnoucement();
+            }
+
         } else {
-            console.log("Creating post");
-            await createPost();
+            if (edit){
+                console.log("Editing post");
+                await editPost();
+            } else {
+                console.log("Creating post");
+                await createPost();
+            }
         }
         onSuccess();
         onClose();
@@ -63,6 +74,44 @@
             showModal = false;
         } else {
             console.error("Error creating post:", response.error_message);
+        }
+    }
+
+    async function createAnnoucement() {
+        let data = {
+            title: title,
+            description: text,
+            tags: tags.map(tag => tag[1]),
+        }
+        let response = await post("community/"+communityID+"/announcements", data) as response;
+        if (response.success === true) {
+            console.log("Announcement created successfully");
+            title = '';
+            text = '';
+            images = [];
+            success = true;
+            showModal = false;
+        } else {
+            console.error("Error creating announcement:", response.error_message);
+        }
+    }
+
+    async function editAnnoucement() {
+        let data = {
+            "title": title,
+            "description": text,
+            "tags": tags.map(tag => tag[1]),
+        }
+        let response = await Put("community/"+communityID+"/announcements/"+editID, data) as response;
+        if (response.success === true) {
+            console.log("Announcement edited successfully");
+            title = '';
+            text = '';
+            images = [];
+            success = true;
+            showModal = false;
+        } else {
+            console.error("Error editing announcement:", response.error_message);
         }
     }
 
@@ -141,15 +190,43 @@
         }
     }
 
+    async function getAnnoucementData() {
+        if (edit) {
+            let response = await get("community/"+communityID+"/announcements/"+editID) as singleAnnoucementResponse;
+            if (response.success === true) {
+                console.log("Announcement data fetched successfully");
+                title = response.announcement.title
+                text = response.announcement.description
+                let newTags: [string, number][] = [];
+                for (let i = 0; i < response.announcement.tags.length; i++) {
+                    newTags.push([response.announcement.tags[i], await getTagID(response.announcement.tags[i])])
+                }
+                tags = newTags;
+                console.log("Tags:", tags);
+            } else {
+                console.error("Error fetching announcement data:", response.error_message);
+            }
+        }
+    }
+
 
     function handleEditView() {
-        if (edit) {
-            ModalTitle = "Edit Post";
-            ButtonText = "Update Post";
-            getPostData();
+        if (annnoucement){
+            ModalTitle = "Create an Announcement";
+            ButtonText = "Announce";
+            if (edit) {
+                ModalTitle = "Edit Announcement";
+                ButtonText = "Update Announcement";
+                getAnnoucementData();
+            }
         } else {
             ModalTitle = "Create a Post";
             ButtonText = "Post";
+            if (edit) {
+                ModalTitle = "Edit Post";
+                ButtonText = "Update Post";
+                getPostData();
+            }
         }
     }
 
@@ -174,18 +251,22 @@
         classStyle="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500"
         marginTop=""
         placeholder="Search for Tags..."
-        url="tags/list"
+        url="tags/list/"
         id="tags"
         multi_select={true}
         max_select={5}
         bind:selected={tags}
     ></SearchBox>
-    <ImageInput
-        bind:images
-    />
+    {#if !annnoucement}
+        <ImageInput
+            bind:images
+        />
+    {/if}
     <div class="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500 items-center justify-between flex">
         <button class="bg-green-500 text-white px-4 py-2 rounded" on:click|preventDefault|stopPropagation={onSubmit}> {ButtonText} </button>
-        <button class="bg-yellow-500 text-white px-4 py-2 rounded" on:click={() => document.getElementById('fileInput')?.click()}> Upload Image </button>
+        {#if !annnoucement}
+            <button class="bg-yellow-500 text-white px-4 py-2 rounded" on:click={() => document.getElementById('fileInput')?.click()}> Upload Image </button>
+        {/if}
         <button class="bg-red-500 text-white px-4 py-2 rounded" on:click={closeModal}> Close </button>
     </div>
 

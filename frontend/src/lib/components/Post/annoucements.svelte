@@ -1,12 +1,13 @@
 <script lang="ts">
     import Post from "./base.svelte";
-    import type { globalAnnouncementData,globalAnnouncement } from "$lib/api/apiType.ts";
+    import type { globalAnnouncementData,globalAnnouncement,response } from "$lib/api/apiType.ts";
     import { get } from "$lib/api/get";
+    import { deleteCall } from "$lib/api/delete";
     import Title from "./Sections/title.svelte";
     import Text from "./Sections/text.svelte";
     import Tags from "./Sections/tags.svelte";
 
-    import { onMount } from "svelte";
+    import { onMount,onDestroy } from "svelte";
 
     export let url = '';
 
@@ -28,8 +29,29 @@
         }
     }
 
+    async function handleDelete(event: CustomEvent) {
+        const postId = event.detail.id;
+        const communityId = event.detail.communityId;
+        console.log('Deleting post with ID:', postId);
+        let url = 'community/' + communityId + '/announcements/'+ postId;
+        const response = await deleteCall(url,{}) as response;
+        if (response.success === true) {
+            console.log('Post deleted successfully');
+            data = data.filter(post => post.id !== postId);
+            alert("Annoucement deleted successfully");
+            GetAnnouncments();
+        } else {
+            console.error("Error deleting post:", response.error_message);
+        }
+    }
+
     onMount(() => {
         GetAnnouncments();
+        document.addEventListener("deletePost", handleDelete as unknown as EventListener);
+    });
+
+    onDestroy(() => {
+        document.removeEventListener("deletePost", handleDelete as unknown as EventListener);
     });
 
 </script>
@@ -39,6 +61,7 @@
         author={announcement.user}
         date={converTimetoUnix(announcement.uploaded)}
         id={announcement.id}
+        communityID={announcement.community_id}
     >
         <Title>{announcement.title}</Title>
         <Tags tags={announcement.tags} />

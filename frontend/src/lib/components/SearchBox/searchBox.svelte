@@ -24,16 +24,18 @@
 	export let selected: [string, number][] = [];
 	export let classStyle = 'mt-2 flex w-full flex-wrap items-center rounded-md border px-2 py-1 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600';
 	export let marginTop = 'mt-4';
+	export let extraSearchParams = '';
+	export let minCharacters = 2;
 
 	let last_value = '';
 	let showDropdown = false;
 	let dropdownItems: PaginationData[] = [];
 
 	async function search() {
-		if (value === last_value || value === '' || value.length < 2) {
+		if (value === last_value || value === '' || value.length < minCharacters) {
 			return;
 		}
-		let response = (await get(url + '/?limit=5&name=' + value)) as PaginationDataResponse;
+		let response = (await get(url + '?limit=5&name=' + value + extraSearchParams)) as PaginationDataResponse;
 		if (response.success != true) {
 			console.log('Error fetching data');
 			return;

@@ -121,7 +121,7 @@
 	<SearchBox
 		Name={tags[2]}
 		showLabel={tags[2] !== ''}
-		url={tags[1]}
+		url={tags[1]+"/"}
 		id={tags[0]}
 		multi_select={true}
 		max_select={5}
@@ -133,7 +133,7 @@
 	<SearchBox
 		Name={degree[2]}
 		showLabel={degree[2] !== ''}
-		url={degree[1]}
+		url={degree[1]+"/"}
 		id={degree[0]}
 		bind:selected={degree[0]}
 	/>

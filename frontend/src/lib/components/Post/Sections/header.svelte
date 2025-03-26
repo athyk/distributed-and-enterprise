@@ -4,6 +4,7 @@
 	import { onMount } from "svelte";
     export let author: UserInfo = {} as UserInfo;
     export let id = 0 as number;
+    export let communityID = 0 as number;
     let ownPost = false as boolean;
 
     async function isAuthor() {
@@ -20,7 +21,7 @@
         console.log('Sending edit event for post ID:', id);
         const event = new CustomEvent('editpost', {
             bubbles: true,
-            detail: { id }
+            detail: { id , communityId: communityID }
         });
         console.log('Dispatching event:', event);
         document.dispatchEvent(event);
@@ -31,7 +32,7 @@
         console.log('Sending delete event for post ID:', id);
         const event = new CustomEvent('deletePost', {
             bubbles: true,
-            detail: { id }
+            detail: { id , communityId: communityID }
         });
         console.log('Dispatching event:', event);
         document.dispatchEvent(event);
