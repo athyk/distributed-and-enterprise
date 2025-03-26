@@ -1,14 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { goto } from '$app/navigation'; // Import goto for navigation
 
 	export let communitiesInfo: { id: number; name: string; imageUrl: string }[] = [];
-
-	const dispatch = createEventDispatcher();
-
-	function selectCommunity(id: number) {
-		dispatch('selectCommunity', { id });
-	}
 
 	function createCommunity() {
 		goto('/communities/create'); // Redirects to /create page
@@ -20,7 +13,6 @@
 		<li class="list-none">
 			<button
 				type="button"
-				onclick={() => selectCommunity(community.id)}
 				class="flex w-full cursor-pointer items-center space-x-3 rounded p-2 text-left hover:bg-gray-600 focus:bg-gray-700 focus:outline-none"
 			>
 				<img src={community.imageUrl} alt={community.name} class="h-10 w-10 rounded-full" />
