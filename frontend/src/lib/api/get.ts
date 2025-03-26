@@ -9,11 +9,13 @@ export async function get<T>(url: string): Promise<T> {
 			credentials: 'include'
 		});
 
+		const responseData = await response.json();
+
 		if (!response.ok) {
-			throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+			return responseData as T;
 		}
 
-		return response.json();
+		return responseData as T;
 	} catch (error) {
 		throw new Error('Failed to fetch: ' + error);
 	}

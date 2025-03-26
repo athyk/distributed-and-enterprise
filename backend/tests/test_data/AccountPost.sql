@@ -657,6 +657,6 @@ VALUES  (1, 41, 'https://www.liquor.com/thmb/p-obVQqfD529bLGLtnpe2NCs6fM=/2121x1
         (3, 183, 'https://media.cntraveler.com/photos/649daf999b31895c2ec86af6/16:9/w_2560%2Cc_limit/July%25204%2520Events%2520in%2520NYC_GettyImages-1482783659.jpg'),
         (4, 56, 'https://www.pace.edu/sites/default/files/styles/16_9_1600x900/public/2023-03/article-hero-job-fair.jpg');
 
-SELECT setval(pg_get_serial_sequence('post', 'id'), COALESCE((SELECT MAX(id) FROM "user") + 1, 1), FALSE);
-SELECT setval(pg_get_serial_sequence('post_tag', 'id'), COALESCE((SELECT MAX(id) FROM "user") + 1, 1), FALSE);
-SELECT setval(pg_get_serial_sequence('post_image', 'id'), COALESCE((SELECT MAX(id) FROM "user") + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('post', 'id'), COALESCE((SELECT MAX(id) FROM "post") + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('post_tag', 'id'), COALESCE((SELECT MAX(id) FROM "post_tag") + 1, 1), FALSE);
+SELECT setval(pg_get_serial_sequence('post_image', 'id'), COALESCE((SELECT MAX(id) FROM "post_image") + 1, 1), FALSE);

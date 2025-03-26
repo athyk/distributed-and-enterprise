@@ -1,0 +1,106 @@
+<script lang="ts">
+	import CreatePost from '$components/Post/createPost.svelte';
+	import { onMount, onDestroy } from 'svelte';
+
+	type PostType = 'posts' | 'events' | 'announcements';
+	export let feedType: PostType = 'posts';
+	export let showActions = true;
+
+	let refreshKey = 0;
+
+	let modalShown = false;
+	let editShown = false;
+	let editID = 0;
+	let communityID = 1;
+
+	function showModal() {
+		modalShown = true;
+	}
+
+	function hideModal() {
+		modalShown = false;
+		refreshKey += 1;
+	}
+
+	function showEditModal(id: number, commID: number = 1) {
+		editShown = true;
+		editID = id;
+		modalShown = true;
+		communityID = commID;
+		console.log('Edit modal shown for post ID:', id);
+	}
+
+	function handleEditPost(event: CustomEvent) {
+		console.log('Edit post event received:', event);
+		if (event.detail && event.detail.id) {
+			showEditModal(event.detail.id, event.detail.communityID);
+		}
+	}
+
+	type EditPostEvent = CustomEvent<{ id: number; communityId?: number }>;
+	const eventHandler = (e: Event) => handleEditPost(e as EditPostEvent);
+
+	onMount(() => {
+		document.addEventListener('editpost', eventHandler);
+	});
+
+	onDestroy(() => {
+		document.removeEventListener('editpost', eventHandler);
+	});
+</script>
+
+<div class="flex w-full flex-wrap justify-center">
+	{#if showActions}
+		<button
+			type="button"
+			class="fixed right-4 bottom-4 z-40 flex h-16 w-16 items-center justify-center rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-700"
+			on:click={showModal}
+			aria-label="Open create modal"
+		>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="h-8 w-8"
+			>
+				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+			</svg>
+		</button>
+		{#if modalShown}
+			{#if feedType === 'posts'}
+				<div
+					class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+				>
+					<CreatePost
+						bind:showModal={modalShown}
+						edit={editShown}
+						{editID}
+						onClose={() => hideModal()}
+						onSuccess={() => (refreshKey += 1)}
+					/>
+				</div>
+			{:else if feedType === 'events'}
+				<h1>TBD</h1>
+			{:else if feedType === 'announcements'}
+				<div
+					class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+				>
+					<CreatePost
+						bind:showModal={modalShown}
+						edit={editShown}
+						{editID}
+						onClose={() => hideModal()}
+						onSuccess={() => (refreshKey += 1)}
+						annnoucement={true}
+						{communityID}
+					/>
+				</div>
+			{/if}
+		{/if}
+	{/if}
+	{#key refreshKey}
+		<slot name="Posts" />
+	{/key}
+</div>
