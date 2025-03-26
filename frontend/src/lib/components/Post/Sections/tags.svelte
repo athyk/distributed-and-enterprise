@@ -1,9 +1,11 @@
 <script lang="ts">
-    export let tags = [] as string[];
+	export let tags = [] as string[];
 </script>
 
-<div class="flex space-x-2 overflow-x-auto whitespace-nowrap scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 py-2">
-    {#each tags as tag}
-        <span class="bg-gray-200 text-black mt-3 p-2 rounded-xl">#{tag}</span>
-    {/each}
+<div
+	class="scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 flex space-x-2 overflow-x-auto py-2 whitespace-nowrap"
+>
+	{#each tags as tag}
+		<span class="mt-3 rounded-xl bg-gray-200 p-2 text-black">#{tag}</span>
+	{/each}
 </div>

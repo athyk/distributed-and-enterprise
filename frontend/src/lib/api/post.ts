@@ -1,5 +1,9 @@
 const base_url = 'http://localhost:8000/';
-export async function post<T>(url: string, data: Record<string, unknown>, formData?: FormData): Promise<T> {
+export async function post<T>(
+	url: string,
+	data: Record<string, unknown>,
+	formData?: FormData
+): Promise<T> {
 	try {
 		const response = await fetch(base_url + url, {
 			method: 'POST',

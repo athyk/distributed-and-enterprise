@@ -3,7 +3,6 @@
 	export let disabled = false;
 	export let onClick = () => {};
 	export let text = 'Submit';
-
 </script>
 
 <button

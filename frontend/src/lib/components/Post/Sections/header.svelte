@@ -1,77 +1,104 @@
 <script lang="ts">
-    import type { UserInfo } from "$lib/api/apiType";
-    import { isUserID }  from "$lib/api/checkUser";
-	import { onMount } from "svelte";
-    export let author: UserInfo = {} as UserInfo;
-    export let id = 0 as number;
-    export let communityID = 0 as number;
-    let ownPost = false as boolean;
+	import type { UserInfo } from '$lib/api/apiType';
+	import { isUserID } from '$lib/api/checkUser';
+	import { onMount } from 'svelte';
+	export let author: UserInfo = {} as UserInfo;
+	export let id = 0 as number;
+	export let communityID = 0 as number;
+	let ownPost = false as boolean;
 
-    async function isAuthor() {
-        return await isUserID(author.user_id);
-    }
+	async function isAuthor() {
+		return await isUserID(author.user_id);
+	}
 
-    onMount(() => {
-        isAuthor().then((result) => {
-            ownPost = result;
-        });
-    });
+	onMount(() => {
+		isAuthor().then((result) => {
+			ownPost = result;
+		});
+	});
 
-    function handleEdit() {
-        console.log('Sending edit event for post ID:', id);
-        const event = new CustomEvent('editpost', {
-            bubbles: true,
-            detail: { id , communityId: communityID }
-        });
-        console.log('Dispatching event:', event);
-        document.dispatchEvent(event);
-        showdropdown = false;
-    }
+	function handleEdit() {
+		console.log('Sending edit event for post ID:', id);
+		const event = new CustomEvent('editpost', {
+			bubbles: true,
+			detail: { id, communityId: communityID }
+		});
+		console.log('Dispatching event:', event);
+		document.dispatchEvent(event);
+		showdropdown = false;
+	}
 
-    function handleDelete() {
-        console.log('Sending delete event for post ID:', id);
-        const event = new CustomEvent('deletePost', {
-            bubbles: true,
-            detail: { id , communityId: communityID }
-        });
-        console.log('Dispatching event:', event);
-        document.dispatchEvent(event);
-    }
+	function handleDelete() {
+		console.log('Sending delete event for post ID:', id);
+		const event = new CustomEvent('deletePost', {
+			bubbles: true,
+			detail: { id, communityId: communityID }
+		});
+		console.log('Dispatching event:', event);
+		document.dispatchEvent(event);
+	}
 
-    let showdropdown = false;
+	let showdropdown = false;
 </script>
 
-<div class="flex items-center space-x-2 top-0 bg-white p-2 rounded-t-2xl" id={'header-' + id.toString()}>
-    {#if author.picture_url}
-        <a href={author.user_id.toString()} target="_blank" rel="noopener noreferrer">
-            <img src={author.picture_url} alt="Profile Icon" class="h-11 w-11 rounded-full" />
-        </a>
-    {/if}
-    <span class="font-bold">{author.first_name} {author.last_name}</span>
-    {#if ownPost}
-        <span class="text-gray-500 text-sm">(You)</span>
-    {/if}
+<div
+	class="top-0 flex items-center space-x-2 rounded-t-2xl bg-white p-2"
+	id={'header-' + id.toString()}
+>
+	{#if author.picture_url}
+		<a href={author.user_id.toString()} target="_blank" rel="noopener noreferrer">
+			<img src={author.picture_url} alt="Profile Icon" class="h-11 w-11 rounded-full" />
+		</a>
+	{/if}
+	<span class="font-bold">{author.first_name} {author.last_name}</span>
+	{#if ownPost}
+		<span class="text-sm text-gray-500">(You)</span>
+	{/if}
 
-    {#if ownPost}
-        <span class="flex items-center space-x-2 ml-auto">
-            <div class="relative">
-                <button type="button" class="text-black hover:text-gray-700 transition duration-200 cursor-pointer" aria-label="More options"  onclick="{() => showdropdown = !showdropdown}">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v.01M12 12v.01M12 18v.01" />
-                    </svg>
-                </button>
-                <div class="absolute right-0 bg-gray-500  w-40 rounded-xl {showdropdown ? 'block' : 'hidden'} shadow-lg">
-                    <ul class="ml-2 my-1 bg-gray-500 text-white rounded-xl p-2 space-y-2">
-                        <li>
-                            <button class="hover:bg-gray-600 rounded-lg p-2 w-full text-left" onclick={handleEdit}>Edit</button>
-                        </li>
-                        <li>
-                            <button class="hover:bg-gray-600 rounded-lg p-2 w-full text-left" onclick={handleDelete}>Delete</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </span>
-    {/if}
-
+	{#if ownPost}
+		<span class="ml-auto flex items-center space-x-2">
+			<div class="relative">
+				<button
+					type="button"
+					class="cursor-pointer text-black transition duration-200 hover:text-gray-700"
+					aria-label="More options"
+					onclick={() => (showdropdown = !showdropdown)}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						class="h-6 w-6"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 6v.01M12 12v.01M12 18v.01"
+						/>
+					</svg>
+				</button>
+				<div
+					class="absolute right-0 w-40 rounded-xl bg-gray-500 {showdropdown
+						? 'block'
+						: 'hidden'} shadow-lg"
+				>
+					<ul class="my-1 ml-2 space-y-2 rounded-xl bg-gray-500 p-2 text-white">
+						<li>
+							<button class="w-full rounded-lg p-2 text-left hover:bg-gray-600" onclick={handleEdit}
+								>Edit</button
+							>
+						</li>
+						<li>
+							<button
+								class="w-full rounded-lg p-2 text-left hover:bg-gray-600"
+								onclick={handleDelete}>Delete</button
+							>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</span>
+	{/if}
 </div>
