@@ -50,7 +50,7 @@ def create_community(name: str, description: str, public: bool, tags: list, degr
         new_admin = CommunityUser(
             community_id=new_community_id,
             user_id=user_id,
-            role='Admin'
+            role='admin'
         )
 
         session.add(new_admin)

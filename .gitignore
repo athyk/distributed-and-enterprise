@@ -247,3 +247,4 @@ fabric.properties
 
 #Docker File
 docker-compose-unedited.yml
+.qodo

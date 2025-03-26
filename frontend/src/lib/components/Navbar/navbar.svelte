@@ -8,7 +8,8 @@
 	let urls: { [key: string]: string } = {
 		Posts: '/posts',
 		Communities: '/communities',
-		Login: '/login'
+		Login: '/login',
+		Announcement: '/announcement'
 	};
 </script>
 
