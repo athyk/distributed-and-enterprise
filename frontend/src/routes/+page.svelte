@@ -1,8 +1,10 @@
 <script lang="ts">
 	import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
-	import EventCard from '$components/eventCard/eventCard.svelte';
+
 	import { get } from '$lib/api/get';
 	import { onMount } from 'svelte';
+	import Feed from '$components/Post/feed.svelte';
+	import Post from '$components/Post/post.svelte';
 
 	interface Announcement {
 		id: number;
@@ -21,7 +23,6 @@
 		global_announcements: Announcement[];
 	}
 
-	// Initialize an empty announcements array
 	let announcements: Announcement[] = [];
 
 	// Fetch announcements from the API endpoint.
@@ -37,7 +38,6 @@
 		}
 	}
 
-
 	onMount(fetchAnnouncements);
 </script>
 
@@ -47,20 +47,18 @@
 		<!-- Announcements -->
 		{#if announcements.length > 0}
 			{#each announcements as announcement (announcement.id)}
-			<AnnouncementCard
-			title={announcement.title}
-			description={announcement.description}
-			datetime={announcement.uploaded}
-			tags={announcement.tags}
-		
+				<AnnouncementCard
+					title={announcement.title}
+					description={announcement.description}
+					datetime={announcement.uploaded}
+					tags={announcement.tags}
 				/>
 			{/each}
 		{:else}
 			<p>No announcements found.</p>
 		{/if}
-		<!-- Events -->
-		<EventCard />
-		<EventCard />
-		<EventCard />
 	</main>
+	<Feed feedType="posts">
+		<Post url="posts/list?offset=0&limit=10" slot="Posts" />
+	</Feed>
 </div>
