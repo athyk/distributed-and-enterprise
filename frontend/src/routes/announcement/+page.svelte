@@ -49,6 +49,7 @@
 					title={announcement.title}
 					description={announcement.description}
 					datetime={announcement.uploaded}
+					tags={announcement.tags}
 				/>
 			{/each}
 		{:else}
