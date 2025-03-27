@@ -9,8 +9,7 @@
 		Posts: '/posts',
 		Communities: '/communities',
 		Announcement: '/announcement',
-		Login: '/login',
-
+		Login: '/login'
 	};
 </script>
 
