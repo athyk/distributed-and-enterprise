@@ -40,6 +40,7 @@
 		<Text>
 			{event.description}
 		</Text>
-		<Map lat={event.latitude} lon={event.longitude} />
+		<!-- <Map lat={event.latitude} lon={event.longitude} /> -->
+		<Map lat={51.501793} lon={-2.548713} />
 	</Post>
 {/each}

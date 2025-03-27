@@ -6,6 +6,7 @@
 	import Title from './Sections/title.svelte';
 	import Text from './Sections/text.svelte';
 	import Tags from './Sections/tags.svelte';
+	import { browser } from '$app/environment';
 
 	import { onMount, onDestroy } from 'svelte';
 
@@ -47,15 +48,19 @@
 
 	onMount(() => {
 		GetAnnouncments();
-		document.addEventListener('deletePost', (e: Event) =>
-			handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
-		);
+		if (browser) {
+			document.addEventListener('deletePost', (e: Event) =>
+				handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
+			);
+		}
 	});
 
 	onDestroy(() => {
-		document.removeEventListener('deletePost', (e: Event) =>
-			handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
-		);
+		if (browser) {
+			document.removeEventListener('deletePost', (e: Event) =>
+				handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
+			);
+		}
 	});
 </script>
 

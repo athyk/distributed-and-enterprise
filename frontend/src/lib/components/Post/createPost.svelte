@@ -19,6 +19,7 @@
 	import Title from './Sections/title.svelte';
 	import ImageInput from './Sections/Inputs/imageInput.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
 
 	let title = '';
 	let text = '';
@@ -242,13 +243,17 @@
 	}
 
 	onMount(() => {
-		window.addEventListener('keydown', handleKeydown);
+		if (browser) {
+			window.addEventListener('keydown', handleKeydown);
+		}
 		checkUserPermission();
 		handleEditView();
 	});
 
 	onDestroy(() => {
-		window.removeEventListener('keydown', handleKeydown);
+		if (browser) {
+			window.removeEventListener('keydown', handleKeydown);
+		}
 	});
 </script>
 
