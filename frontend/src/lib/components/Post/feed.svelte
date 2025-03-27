@@ -1,6 +1,7 @@
 <script lang="ts">
 	import CreatePost from '$components/Post/createPost.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import { browser } from '$app/environment';
 
 	type PostType = 'posts' | 'events' | 'announcements';
 	export let feedType: PostType = 'posts';
@@ -41,11 +42,15 @@
 	const eventHandler = (e: Event) => handleEditPost(e as EditPostEvent);
 
 	onMount(() => {
-		document.addEventListener('editpost', eventHandler);
+		if (browser) {
+			document.addEventListener('editpost', eventHandler);
+		}
 	});
 
 	onDestroy(() => {
-		document.removeEventListener('editpost', eventHandler);
+		if (browser) {
+			document.removeEventListener('editpost', eventHandler);
+		}
 	});
 </script>
 

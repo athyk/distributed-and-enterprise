@@ -8,6 +8,7 @@
 	import type { postsData, postResponse, response } from '$lib/api/apiType';
 	import { get } from '$lib/api/get';
 	import { deleteCall } from '$lib/api/delete';
+	import { browser } from '$app/environment';
 
 	import { onMount, onDestroy } from 'svelte';
 
@@ -44,11 +45,16 @@
 
 	onMount(() => {
 		GetPosts();
+		if (browser) {
+			document.addEventListener('deletePost', deleteEventHandler);
+		}
 		document.addEventListener('deletePost', deleteEventHandler);
 	});
 
 	onDestroy(() => {
-		document.removeEventListener('deletePost', deleteEventHandler);
+		if (browser) {
+			document.removeEventListener('deletePost', deleteEventHandler);
+		}
 	});
 </script>
 
