@@ -14,7 +14,7 @@ class AccountsPostsServicer(account_post_pb2_grpc.AccountPostsServicer):
     def Create(self, req: account_post_pb2.AccountPostCreateRequest,
                context: grpc.ServicerContext) -> account_post_pb2.AccountPostResponse:
         """
-        Create creates a new post
+        Create a new post
         """
         user_verify, user_error = verify_integer(req.user_id, 1, inf, 'User ID')
         title_verify, title_error = verify_string(req.title, 4, 128, 'Title')
@@ -101,7 +101,7 @@ class AccountsPostsServicer(account_post_pb2_grpc.AccountPostsServicer):
     def Update(self, req: account_post_pb2.AccountPostUpdateRequest,
                context: grpc.ServicerContext) -> account_post_pb2.AccountPostResponse:
         """
-        Update updates a specified post
+        Update a specified post
         """
         # Only the user who created the post can update it.
         user_verify, user_error = verify_integer(req.user_id, 1, inf, 'User ID')
@@ -197,7 +197,7 @@ class AccountsPostsServicer(account_post_pb2_grpc.AccountPostsServicer):
     def Delete(self, req: account_post_pb2.AccountPostGetRequest,
                context: grpc.ServicerContext) -> account_post_pb2.AccountPostResponse:
         """
-        Delete deletes a specified post
+        Delete a specified post
         """
         # Only need to check if Post ID exists, the user_id doesn't matter.
         # For admin purposes, the user_id can be -1 to delete any post - reducing complexity.
