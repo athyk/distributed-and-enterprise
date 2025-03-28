@@ -25,3 +25,9 @@ jobs:
         run: |
           cd frontend
           pnpm run build
+      - name: Check for JS alerts
+        run: |
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.py$' | xargs grep -nE 'alert\('; then
+            echo "❌ Found commented out a JavaScript alert() in changed files. Please remove them."
+            exit 1
+          fi
