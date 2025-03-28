@@ -15,7 +15,7 @@
 		</h1>
 	</div>
 
-	<!-- Location, Date and Duration Section -->
+	<!-- Date and Duration Section -->
 	<div class="mb-2 flex items-center justify-between">
 		<p class="text-lg font-semibold text-gray-900 dark:text-white">
 			{datetime}
