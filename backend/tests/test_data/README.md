@@ -9,4 +9,4 @@ Ensure that there is no data in the existing tables already. If unsure, delete t
 
 Once the project is running, open up `insert_data.py` and run the file
 
-This should insert all of the data into the respectable tables
+This should insert all the data into the respectable tables
