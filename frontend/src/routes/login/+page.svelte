@@ -63,13 +63,11 @@
 		bind:errorMessage
 	>
 		<svelte:fragment slot="pages">
-			<div class="p-15">
-				{#if otp_required}
-					<Page bind:email bind:password bind:otp />
-				{:else}
-					<Page bind:email bind:password />
-				{/if}
-			</div>
+			{#if otp_required}
+			<Page bind:email bind:password bind:otp />
+			{:else}
+				<Page bind:email bind:password />
+			{/if}
 		</svelte:fragment>
 	</AccountCard>
 </div>
