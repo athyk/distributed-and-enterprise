@@ -19,7 +19,14 @@ export async function isLoggedIn(): Promise<boolean> {
 	}
 }
 
-export async function isUserID(userId: number): Promise<boolean> {
+export async function isUserID(userId: number,useLocalStorage=false): Promise<boolean> {
+	if(useLocalStorage){
+		const userInfoString = localStorage.getItem('userInfo');
+		if (userInfoString) {
+			const userInfo = JSON.parse(userInfoString) as MeResponse;
+			return userInfo.user.id === userId;
+		}
+	}
 	const response = await getUserInfo();
 	if (response.success) {
 		return response.user.id === userId;

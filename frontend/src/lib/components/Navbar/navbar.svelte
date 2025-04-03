@@ -1,16 +1,36 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { isLoggedIn } from '$lib/api/checkUser';
+
 	let isOpen = false;
+	let LoggedIn = false;
 
 	function toggleMenu() {
 		isOpen = !isOpen;
 	}
 
+	onMount(() => {
+		if (localStorage.getItem('loggedin') === 'true') {
+			isLoggedIn().then(result => {
+				localStorage.setItem('loggedin', result.toString());
+			});
+		}
+		if (localStorage.getItem('loggedin') === 'true') {
+			console.log('2 | LoggedIn:', LoggedIn);
+			urls = {
+				Posts: '/posts',
+				Communities: '/communities',
+				Account: '/account',
+				Logout: '/logout',
+			};
+			LoggedIn = true;
+		}
+	});
+
 	let urls: { [key: string]: string } = {
-		Posts: '/posts',
-		Communities: '/communities',
-		Announcement: '/announcement',
-		Login: '/login'
+		Login: '/login',
 	};
+
 </script>
 
 <nav class="bg-gray-800 p-4">

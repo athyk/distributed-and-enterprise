@@ -2,6 +2,7 @@
 	import { get } from '$lib/api/get';
 	import type { PaginationDataResponse, PaginationData } from '$lib/api/apiType';
 	import { onMount, onDestroy } from 'svelte';
+	import Popup from '$components/ErrorPopUp/popup.svelte';
 
 	const instanceId = Math.random().toString(36).substring(2, 9);
 
@@ -31,6 +32,7 @@
 	let last_value = '';
 	let showDropdown = false;
 	let dropdownItems: PaginationData[] = [];
+	let errorMessage = '';
 
 	async function search() {
 		if (value === last_value || value === '' || value.length < minCharacters) {
@@ -67,7 +69,7 @@
 			if (selected.length < max_select) {
 				selected = [...selected, [item.name, item.id]];
 			} else {
-				alert('Max Select Limit Reached');
+				errorMessage = `You can only select ${max_select} items.`;
 			}
 		} else {
 			value = item.name;
@@ -78,6 +80,8 @@
 	}
 </script>
 
+
+<Popup bind:errorMessage />
 <div class="relative {marginTop}" id={`searchbox-${instanceId}`}>
 	{#if showLabel}
 		<label for={`${Name}-${instanceId}`} class="mb-1 block text-gray-700">{Name}</label>

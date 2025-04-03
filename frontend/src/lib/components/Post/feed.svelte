@@ -2,10 +2,12 @@
 	import CreatePost from '$components/Post/createPost.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
+	import { isLoggedIn } from '$lib/api/checkUser';
 
 	type PostType = 'posts' | 'events' | 'announcements';
 	export let feedType: PostType = 'posts';
 	export let showActions = true;
+	export let feedClass = 'flex w-full flex-wrap justify-center';
 
 	let refreshKey = 0;
 
@@ -45,6 +47,11 @@
 		if (browser) {
 			document.addEventListener('editpost', eventHandler);
 		}
+		isLoggedIn().then((result) => {
+			if (!result) {
+				showActions = false;
+			}
+		});
 	});
 
 	onDestroy(() => {
@@ -54,7 +61,8 @@
 	});
 </script>
 
-<div class="flex w-full flex-wrap justify-center">
+
+<div class={feedClass}>
 	{#if showActions}
 		<button
 			type="button"

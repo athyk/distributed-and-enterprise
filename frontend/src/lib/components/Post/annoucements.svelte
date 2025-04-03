@@ -7,10 +7,12 @@
 	import Text from './Sections/text.svelte';
 	import Tags from './Sections/tags.svelte';
 	import { browser } from '$app/environment';
+	import Popup from '$components/ErrorPopUp/popup.svelte';
 
 	import { onMount, onDestroy } from 'svelte';
 
-	export let url = '';
+	export let url = ''
+	let errorMessage = '';
 
 	let data: globalAnnouncementData[] = [];
 
@@ -39,10 +41,11 @@
 		if (response.success === true) {
 			console.log('Post deleted successfully');
 			data = data.filter((post) => post.id !== postId);
-			alert('Annoucement deleted successfully');
+			errorMessage = 'Post deleted successfully';
 			GetAnnouncments();
 		} else {
 			console.error('Error deleting post:', response.error_message);
+			errorMessage = response.error_message[0];
 		}
 	}
 
@@ -63,6 +66,9 @@
 		}
 	});
 </script>
+
+<Popup bind:errorMessage/>
+
 
 {#each data as announcement (announcement.id)}
 	<Post

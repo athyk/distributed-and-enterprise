@@ -159,7 +159,6 @@
 	async function checkUserPermission() {
 		if ((await isLoggedIn()) === false) {
 			console.log('User is not logged in');
-			alert('You need to be logged in to create a post');
 			showModal = false;
 			return false;
 		}

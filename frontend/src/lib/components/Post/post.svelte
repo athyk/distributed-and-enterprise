@@ -4,6 +4,7 @@
 	import Text from './Sections/text.svelte';
 	import Tags from './Sections/tags.svelte';
 	import Gallery from './Sections/gallery.svelte';
+	import Popup from '$components/ErrorPopUp/popup.svelte';
 
 	import type { postsData, postResponse, response } from '$lib/api/apiType';
 	import { get } from '$lib/api/get';
@@ -13,6 +14,7 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	let data: postsData[] = [];
+	let errorMessage = '';
 	export let url = '';
 
 	async function GetPosts() {
@@ -33,7 +35,7 @@
 		if (response.success === true) {
 			console.log('Post deleted successfully');
 			data = data.filter((post) => post.id !== postId);
-			alert('Post deleted successfully');
+			errorMessage = 'Post deleted successfully';
 			GetPosts();
 		} else {
 			console.error('Error deleting post:', response.error_message);
@@ -58,6 +60,7 @@
 	});
 </script>
 
+<Popup bind:errorMessage />
 {#each data as post (post.id)}
 	<Post author={post.user_data} date={post.created_at} id={post.id}>
 		{#if post.title}

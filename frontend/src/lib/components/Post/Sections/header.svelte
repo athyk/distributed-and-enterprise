@@ -8,7 +8,7 @@
 	let ownPost = false as boolean;
 
 	async function isAuthor() {
-		return await isUserID(author.user_id);
+		return await isUserID(author.user_id,true);
 	}
 
 	onMount(() => {
