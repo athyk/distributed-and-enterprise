@@ -28,24 +28,24 @@
 	/>
 </div>
 
-<!-- <Feed feedType="posts" feedClass="scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 flex space-x-2 overflow-x-auto py-2 whitespace-nowrap">
-	<Annoucements url="community/announcements?offset=0&limit=20" slot="Posts"/>
-</Feed> -->
-
 <div class="flex min-h-screen items-center justify-center px-4">
 	{#if choice === 0}
 		<div class="w-full max-w-4xl">
 			<Feed feedType="posts">
-				<Post url="posts/list?offset=0&limit=10" slot="Posts" />
+				<Post url="posts/list" slot="Posts"  limit={30} />
 			</Feed>
 		</div>
 	{:else if choice === 1}
-		<Feed feedType="events" showActions={false}>
-			<Event url="community/events?offset=0&limit=10" slot="Posts" />
-		</Feed>
+		<div class="w-full max-w-4xl">
+			<Feed feedType="events" showActions={false}>
+				<Event url="community/events?offset=0&limit=10" slot="Posts" />
+			</Feed>
+		</div>
 	{:else if choice === 2}
-		<Feed feedType="announcements">
-			<Annoucements url="community/announcements?offset=0&limit=10" slot="Posts" />
-		</Feed>
+		<div class="w-full max-w-4xl">
+			<Feed feedType="announcements">
+				<Annoucements url="community/announcements?offset=0&limit=10" slot="Posts" />
+			</Feed>
+		</div>
 	{/if}
 </div>

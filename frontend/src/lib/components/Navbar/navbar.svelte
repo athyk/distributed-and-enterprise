@@ -16,7 +16,6 @@
 			});
 		}
 		if (localStorage.getItem('loggedin') === 'true') {
-			console.log('2 | LoggedIn:', LoggedIn);
 			urls = {
 				Posts: '/posts',
 				Communities: '/communities',
@@ -24,6 +23,10 @@
 				Logout: '/logout',
 			};
 			LoggedIn = true;
+		}else {
+			urls = {
+				Login: '/login',
+			};
 		}
 	});
 

@@ -15,6 +15,7 @@
 	let editShown = false;
 	let editID = 0;
 	let communityID = 1;
+	let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	function showModal() {
 		modalShown = true;
@@ -40,12 +41,26 @@
 		}
 	}
 
+	function handleScroll() {
+		if (!browser || scrollTimeout) return;
+
+		const { scrollTop, scrollHeight, clientHeight } = document.documentElement || document.body;
+
+		if (scrollTop + clientHeight >= scrollHeight - 500) {
+			document.dispatchEvent(new CustomEvent('scrollbottomreach'));
+			scrollTimeout = setTimeout(() => (scrollTimeout = null), 1000);
+		}
+
+
+	}
+
 	type EditPostEvent = CustomEvent<{ id: number; communityId?: number }>;
 	const eventHandler = (e: Event) => handleEditPost(e as EditPostEvent);
 
 	onMount(() => {
 		if (browser) {
 			document.addEventListener('editpost', eventHandler);
+			document.addEventListener('scroll', handleScroll);
 		}
 		isLoggedIn().then((result) => {
 			if (!result) {
@@ -57,6 +72,7 @@
 	onDestroy(() => {
 		if (browser) {
 			document.removeEventListener('editpost', eventHandler);
+			document.removeEventListener('scroll', handleScroll);
 		}
 	});
 </script>
