@@ -1,5 +1,4 @@
 <script lang="ts">
-	import SearchBox from '$components/SearchBox/searchBox.svelte';
 	import type {
 		postCreateResponse,
 		singlePostResponse,
@@ -18,8 +17,10 @@
 	import CreateDescription from './Sections/Inputs/createDescription.svelte';
 	import Title from './Sections/title.svelte';
 	import ImageInput from './Sections/Inputs/imageInput.svelte';
+	import SearchBox from '$components/SearchBox/searchBox.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
+
 
 	let title = '';
 	let text = '';
@@ -30,7 +31,7 @@
 	export let success = false;
 	export let edit = false;
 	export let editID: number | undefined = undefined;
-	export let annnoucement = false as boolean;
+	export let feedType: 'posts' | 'events' | 'announcements' = 'posts';
 	export let communityID = 1 as number;
 
 	export let onClose = () => {};
@@ -43,20 +44,24 @@
 		if ((await checkUserPermission()) === false) {
 			return;
 		}
-		if (annnoucement) {
-			if (edit) {
-				await editAnnoucement();
-			} else {
-				await createAnnoucement();
-			}
-		} else {
-			if (edit) {
-				console.log('Editing post');
-				await editPost();
-			} else {
-				console.log('Creating post');
-				await createPost();
-			}
+		switch (feedType) {
+			case 'posts':
+				if (edit){
+					await editPost();
+				} else {
+					await createPost();
+				}
+				break;
+			case 'events':
+				break;
+			case 'announcements':
+				if (edit) {
+					await editAnnoucement();
+				} else {
+					await createAnnoucement();
+				}
+			default:
+				break;
 		}
 		onSuccess();
 		onClose();
@@ -222,22 +227,31 @@
 	}
 
 	function handleEditView() {
-		if (annnoucement) {
-			ModalTitle = 'Create an Announcement';
-			ButtonText = 'Announce';
-			if (edit) {
-				ModalTitle = 'Edit Announcement';
-				ButtonText = 'Update Announcement';
-				getAnnoucementData();
-			}
-		} else {
-			ModalTitle = 'Create a Post';
-			ButtonText = 'Post';
-			if (edit) {
-				ModalTitle = 'Edit Post';
-				ButtonText = 'Update Post';
-				getPostData();
-			}
+		switch (feedType) {
+			case 'posts':
+				ModalTitle = 'Create a Post';
+				ButtonText = 'Post';
+				if (edit) {
+					ModalTitle = 'Edit Post';
+					ButtonText = 'Update Post';
+					getPostData();
+				}
+				break;
+			case 'events':
+				ModalTitle = 'Create an Event';
+				ButtonText = 'Event';
+				break;
+			case 'announcements':
+				ModalTitle = 'Create an Announcement';
+				ButtonText = 'Announce';
+				if (edit) {
+					ModalTitle = 'Edit Announcement';
+					ButtonText = 'Update Announcement';
+					getAnnoucementData();
+				}
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -270,8 +284,20 @@
 		max_select={5}
 		bind:selected={tags}
 	></SearchBox>
-	{#if !annnoucement}
+	{#if feedType === 'posts'}
 		<ImageInput bind:images />
+	{/if}
+	{#if feedType === 'events'}
+		<SearchBox
+			classStyle="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500"
+			marginTop=""
+			placeholder="Search for location..."
+			url=""
+			id="location"
+			multi_select={false}
+			max_select={1}
+		></SearchBox>
+		<input type="datetime-local" class="mt-2 w-full rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none" />
 	{/if}
 	<div
 		class="mt-2 flex w-full items-center justify-between rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
@@ -282,7 +308,7 @@
 		>
 			{ButtonText}
 		</button>
-		{#if !annnoucement}
+		{#if feedType === 'posts'}
 			<button
 				class="rounded bg-yellow-500 px-4 py-2 text-white"
 				on:click={() => document.getElementById('fileInput')?.click()}

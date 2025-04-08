@@ -78,7 +78,8 @@ def community_event_creation(request: WSGIRequest, community_id):
             location=data['location'],
             datetime=data['datetime'],
             duration=data['duration'],
-            tags=data['tags']
+            tags=data['tags'],
+            lat_lng=data.get('lat_lng', None)
         )
 
     except json.JSONDecodeError:  # Occurs if the JSON is invalid
