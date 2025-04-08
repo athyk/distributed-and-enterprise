@@ -14,12 +14,6 @@ from backend.common.proto import account_post_pb2_grpc
 from backend.accounts.database.database import engine, Base, confirm_database_exists
 from backend.common.services import AccountsClient, TagsClient, DegreesClient
 from backend.common.services.account_posts import AccountPostsClient
-from backend.common.services.community.community import CommunityClient
-from backend.common.services.community.announcement import CommunityAnnouncementClient
-from backend.common.services.community.joins import CommunityJoinsClient
-from backend.common.services.community.event import CommunityEventClient
-from backend.common.services.community.member import CommunityMemberClient
-from backend.common.services.community.search import CommunitySearchingClient
 
 os.environ["GRPC_DNS_RESOLVER"] = "native"
 
