@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 from sqlalchemy.sql import text
+from sqlalchemy.pool import QueuePool
 
 import os
 
@@ -20,7 +21,15 @@ DATABASE_URL = GENERAL_DATABASE_URL + f'/{DATABASE_NAME}'
 POSTGRES_DATABASE_URL = GENERAL_DATABASE_URL + '/postgres'
 
 # Create engine
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(
+    DATABASE_URL,
+    poolclass=QueuePool,
+    pool_pre_ping=True,
+    pool_size=10,
+    max_overflow=20,
+    pool_timeout=30,
+    pool_recycle=1800
+)
 
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
