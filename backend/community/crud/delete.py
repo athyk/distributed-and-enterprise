@@ -1,7 +1,6 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityUser, CommunityTag, CommunityDegree
-from backend.community.utils import check_if_user_is_in_private_community, does_user_have_required_role
 
 from math import inf as INFINITY
 
