@@ -98,35 +98,41 @@
 			</svg>
 		</button>
 		{#if modalShown}
+		<div
+			class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+		>
 			{#if feedType === 'posts'}
-				<div
-					class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-				>
-					<CreatePost
-						bind:showModal={modalShown}
-						edit={editShown}
-						{editID}
-						onClose={() => hideModal()}
-						onSuccess={() => (refreshKey += 1)}
-					/>
-				</div>
+				<CreatePost
+					bind:showModal={modalShown}
+					edit={editShown}
+					{editID}
+					onClose={() => hideModal()}
+					feedType={feedType}
+					onSuccess={() => (refreshKey += 1)}
+					{communityID}
+				/>
 			{:else if feedType === 'events'}
-				<h1>TBD</h1>
+				<CreatePost
+					bind:showModal={modalShown}
+					edit={editShown}
+					{editID}
+					onClose={() => hideModal()}
+					onSuccess={() => (refreshKey += 1)}
+					feedType={feedType}
+					{communityID}
+				/>
 			{:else if feedType === 'announcements'}
-				<div
-					class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-				>
-					<CreatePost
-						bind:showModal={modalShown}
-						edit={editShown}
-						{editID}
-						onClose={() => hideModal()}
-						onSuccess={() => (refreshKey += 1)}
-						annnoucement={true}
-						{communityID}
-					/>
-				</div>
+				<CreatePost
+					bind:showModal={modalShown}
+					edit={editShown}
+					{editID}
+					onClose={() => hideModal()}
+					onSuccess={() => (refreshKey += 1)}
+					feedType={feedType}
+					{communityID}
+				/>
 			{/if}
+		</div>
 		{/if}
 	{/if}
 	{#key refreshKey}

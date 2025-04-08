@@ -37,7 +37,7 @@
 		</div>
 	{:else if choice === 1}
 		<div class="w-full max-w-4xl">
-			<Feed feedType="events" showActions={false}>
+			<Feed feedType="events" showActions={true}>
 				<Event url="community/events" slot="Posts" limit={30} />
 			</Feed>
 		</div>

@@ -163,3 +163,12 @@ export type CommunitySearchResponse = {
 	error_message: string[];
 	communities: communityData[];
 };
+
+
+export type OSMPlace = {
+    lat: string;
+    lon: string;
+    type: string;
+    name: string;
+    display_name: string;
+};

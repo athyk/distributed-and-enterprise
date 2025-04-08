@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { get } from '$lib/api/get';
-	import type { PaginationDataResponse, PaginationData } from '$lib/api/apiType';
+	import type { PaginationDataResponse, PaginationData, OSMPlace } from '$lib/api/apiType';
 	import { onMount, onDestroy } from 'svelte';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 
@@ -23,32 +23,51 @@
 	export let multi_select = false;
 	export let max_select = 1;
 	export let selected: [string, number][] = [];
+	export let location_selected: [string, string][] = [];
 	export let classStyle =
 		'mt-2 flex w-full flex-wrap items-center rounded-md border px-2 py-1 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600';
 	export let marginTop = 'mt-4';
 	export let extraSearchParams = '';
 	export let minCharacters = 2;
+	export let location = false;
 
 	let last_value = '';
 	let showDropdown = false;
 	let dropdownItems: PaginationData[] = [];
+	let locationDropdownItems: OSMPlace[] = [];
 	let errorMessage = '';
+
+	async function locationSearch(){
+		if (!value || value.length < 5) {
+			return;
+		}
+		console.log('Location Search: ', value);
+		let response = (await get(
+			'https://nominatim.openstreetmap.org/search?q=' + value + '&format=jsonv2',true,false
+		)) as OSMPlace[];
+		last_value = value;
+		locationDropdownItems = response || [];
+	}
 
 	async function search() {
 		if (value === last_value || value === '' || value.length < minCharacters) {
 			return;
 		}
-		let response = (await get(
-			url + '?limit=5&name=' + value + extraSearchParams
-		)) as PaginationDataResponse;
-		if (response.success != true) {
-			console.log('Error fetching data');
-			return;
+		if (location) {
+			await locationSearch();
+		} else {
+			let response = (await get(
+				url + '?limit=5&name=' + value + extraSearchParams
+			)) as PaginationDataResponse;
+			if (response.success != true) {
+				console.log('Error fetching data');
+				return;
+			}
+			last_value = value;
+			dropdownItems = response.degrees || response.tags || [];
+			console.log('Data Given: ', dropdownItems);
 		}
-		last_value = value;
-		dropdownItems = response.degrees || response.tags || [];
-		console.log('Data Given: ', dropdownItems);
-		if (dropdownItems.length > 0) {
+		if (dropdownItems.length > 0 || locationDropdownItems.length > 0) {
 			showDropdown = true;
 		} else {
 			showDropdown = false;
@@ -78,6 +97,14 @@
 			showDropdown = false;
 		}
 	}
+
+	function handleLocationClick(item: OSMPlace, event: MouseEvent) {
+		event.stopPropagation();
+		value = item.display_name;
+		location_selected = [[item.lat, item.lon]];
+		showDropdown = false;
+	}
+
 </script>
 
 
@@ -148,6 +175,15 @@
 					on:click={(e) => handleButtonClick(item, e)}
 				>
 					{item.name}
+				</button>
+			{/each}
+			{#each locationDropdownItems.slice(0, 5) as item}
+				<button
+					type="button"
+					class="block w-full px-4 py-2 text-left hover:bg-gray-200"
+					on:click={(e) => {handleLocationClick(item, e)}}
+				>
+						{item.display_name}
 				</button>
 			{/each}
 		</div>

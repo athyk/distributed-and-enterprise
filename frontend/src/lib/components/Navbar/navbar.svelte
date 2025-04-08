@@ -1,12 +1,25 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { isLoggedIn } from '$lib/api/checkUser';
+	import { post } from '$lib/api/post';
+	import type { response } from '$lib/api/apiType';
 
 	let isOpen = false;
 	let LoggedIn = false;
 
 	function toggleMenu() {
 		isOpen = !isOpen;
+	}
+
+	async function logout() {
+		console.log('Logging out...');
+		let response = await post('auth/logout', {}) as response;
+		if (response.success === true) {
+			localStorage.setItem('loggedin', 'false');
+			window.location.href = '/login';
+		} else {
+			console.error('Logout failed');
+		}
 	}
 
 	onMount(() => {
@@ -20,7 +33,7 @@
 				Posts: '/posts',
 				Communities: '/communities',
 				Account: '/account',
-				Logout: '/logout',
+				Logout: '',
 			};
 			LoggedIn = true;
 		}else {
@@ -57,13 +70,37 @@
 		</button>
 		<div class="hidden space-x-4 md:flex">
 			{#each Object.keys(urls) as url}
-				<a href={urls[url]} class="text-[20px] text-gray-300 hover:text-white">{url}</a>
+				{#if url !== 'Logout'}
+					<a href={urls[url]} class="text-[20px] text-gray-300 hover:text-white">{url}</a>
+				{/if}
+				{#if LoggedIn && url === 'Logout'}
+					<button
+						type="button"
+						class="text-[20px] text-gray-300 hover:text-white"
+						on:click={logout}
+						aria-label="Logout"
+					>
+						Logout
+					</button>
+				{/if}
 			{/each}
 		</div>
 	</div>
 	<div class={`mt-5  rounded bg-gray-600 pl-3 md:hidden ${isOpen ? 'block' : 'hidden'}`}>
 		{#each Object.keys(urls) as url}
-			<a href={urls[url]} class="block p-2 text-gray-300 hover:text-white">{url}</a>
+			{#if url !== 'Logout'}
+				<a href={urls[url]} class="block p-2 text-gray-300 hover:text-white">{url}</a>
+			{/if}
+			{#if LoggedIn && url === 'Logout'}
+				<button
+					type="button"
+					class="block w-full text-left p-2 text-gray-300 hover:text-white"
+					on:click={logout}
+					aria-label="Logout"
+				>
+					Logout
+				</button>
+			{/if}
 		{/each}
 	</div>
 </nav>

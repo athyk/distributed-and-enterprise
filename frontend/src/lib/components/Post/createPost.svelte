@@ -26,6 +26,10 @@
 	let text = '';
 	let images = [] as string[];
 	let tags: [string, number][] = [];
+	let location: [string, string][] = [];
+	let datetime_value = '';
+	let duration_value = 1;
+	const today = new Date().toISOString().slice(0, 16);
 
 	export let showModal = false;
 	export let success = false;
@@ -53,6 +57,11 @@
 				}
 				break;
 			case 'events':
+				if (edit) {
+					editEvent();
+				} else {
+					await createEvent();
+				}
 				break;
 			case 'announcements':
 				if (edit) {
@@ -103,6 +112,54 @@
 			showModal = false;
 		} else {
 			console.error('Error creating announcement:', response.error_message);
+		}
+	}
+
+	async function createEvent(){
+		const formattedDatetime = new Date(datetime_value).toISOString().split('T')[0];
+		let data = {
+			title: title,
+			description: text,
+			location: "",
+			datetime: formattedDatetime,
+			duration: duration_value,
+			tags: tags.map((tag) => tag[1]),
+			lat_lng: [parseFloat(location[0][0]), parseFloat(location[0][1])]
+		}
+		let response = (await post('community/' + communityID + '/events', data)) as response;
+		if (response.success === true) {
+			console.log('Event created successfully');
+			title = '';
+			text = '';
+			images = [];
+			success = true;
+			showModal = false;
+		} else {
+			console.error('Error creating event:', response.error_message);
+		}
+	}
+
+	async function editEvent() {
+		const formattedDatetime = new Date(datetime_value).toISOString().split('T')[0];
+		let data = {
+			title: title,
+			description: text,
+			location: "",
+			datetime: formattedDatetime,
+			duration: duration_value,
+			tags: tags.map((tag) => tag[1]),
+			lat_lng: [parseFloat(location[0][0]), parseFloat(location[0][1])]
+		}
+		let response = (await Put('community/' + communityID + '/events', data)) as response;
+		if (response.success === true) {
+			console.log('Event edited successfully');
+			title = '';
+			text = '';
+			images = [];
+			success = true;
+			showModal = false;
+		} else {
+			console.error('Error editing event:', response.error_message);
 		}
 	}
 
@@ -226,6 +283,27 @@
 		}
 	}
 
+	async function getEvent(){
+		if (edit) {
+			let response = (await get(
+				'community/' + communityID + '/events/' + editID
+			)) as singlePostResponse;
+			if (response.success === true) {
+				console.log('Event data fetched successfully');
+				title = response.post.title;
+				text = response.post.description;
+				let newTags: [string, number][] = [];
+				for (let i = 0; i < response.post.tags.length; i++) {
+					newTags.push([response.post.tags[i], await getTagID(response.post.tags[i])]);
+				}
+				tags = newTags;
+				console.log('Tags:', tags);
+			} else {
+				console.error('Error fetching event data:', response.error_message);
+			}
+		}
+	}
+
 	function handleEditView() {
 		switch (feedType) {
 			case 'posts':
@@ -239,8 +317,12 @@
 				break;
 			case 'events':
 				ModalTitle = 'Create an Event';
-				ButtonText = 'Event';
-				break;
+				ButtonText = 'Create Event';
+				if (edit) {
+					ModalTitle = 'Edit Event';
+					ButtonText = 'Update Event';
+					getEvent();
+				}
 			case 'announcements':
 				ModalTitle = 'Create an Announcement';
 				ButtonText = 'Announce';
@@ -296,8 +378,11 @@
 			id="location"
 			multi_select={false}
 			max_select={1}
+			location={true}
+			bind:location_selected={location}
 		></SearchBox>
-		<input type="datetime-local" class="mt-2 w-full rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none" />
+		<input type="datetime-local" min={today} class="mt-2 w-full rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none" bind:value={datetime_value} />
+		<input type="number" min=1 class="mt-2 w-full rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none" placeholder="Duration" bind:value={duration_value} />
 	{/if}
 	<div
 		class="mt-2 flex w-full items-center justify-between rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none"
