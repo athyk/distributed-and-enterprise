@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import backend.common.proto.chat_pb2 as chat__pb2
+import chat_pb2 as chat__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__
@@ -39,6 +39,41 @@ class ChatStub(object):
                 request_serializer=chat__pb2.MessageRequest.SerializeToString,
                 response_deserializer=chat__pb2.MessageResponse.FromString,
                 _registered_method=True)
+        self.GetMessage = channel.unary_unary(
+                '/Chat/GetMessage',
+                request_serializer=chat__pb2.MessageGetRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageResponse.FromString,
+                _registered_method=True)
+        self.DeleteMessage = channel.unary_unary(
+                '/Chat/DeleteMessage',
+                request_serializer=chat__pb2.MessageGetRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageResponse.FromString,
+                _registered_method=True)
+        self.UpdateMessage = channel.unary_unary(
+                '/Chat/UpdateMessage',
+                request_serializer=chat__pb2.MessageUpdateRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageResponse.FromString,
+                _registered_method=True)
+        self.ListMessages = channel.unary_unary(
+                '/Chat/ListMessages',
+                request_serializer=chat__pb2.MessageListRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageListResponse.FromString,
+                _registered_method=True)
+        self.CreateMessageChannel = channel.unary_unary(
+                '/Chat/CreateMessageChannel',
+                request_serializer=chat__pb2.MessageChannelCreateRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageChannelResponse.FromString,
+                _registered_method=True)
+        self.UpdateMessageChannel = channel.unary_unary(
+                '/Chat/UpdateMessageChannel',
+                request_serializer=chat__pb2.MessageChannelUpdateRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageChannelResponse.FromString,
+                _registered_method=True)
+        self.ListMessageChannels = channel.unary_unary(
+                '/Chat/ListMessageChannels',
+                request_serializer=chat__pb2.MessageChannelListRequest.SerializeToString,
+                response_deserializer=chat__pb2.MessageChannelListResponse.FromString,
+                _registered_method=True)
 
 
 class ChatServicer(object):
@@ -51,6 +86,59 @@ class ChatServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetMessage(self, request, context):
+        """GetMessage allows getting an individual message, although would be unused.
+
+        Unless when using forwarding
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteMessage(self, request, context):
+        """DeleteMessage allows for the deleting of a message
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateMessage(self, request, context):
+        """UpdateMessage allows for updating a specific message
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListMessages(self, request, context):
+        """ListMessages allows for getting a channel messages' and searching of content in that channel
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def CreateMessageChannel(self, request, context):
+        """CreateMessageChannel allows for the creation of a message channel to send messages in it
+
+        either a group or 1:1.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UpdateMessageChannel(self, request, context):
+        """UpdateMessageChannel allows for updating a group's name
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListMessageChannels(self, request, context):
+        """ListMessageChannels allows for fetching all channels a user is part of
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_ChatServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -58,6 +146,41 @@ def add_ChatServicer_to_server(servicer, server):
                     servicer.SendMessage,
                     request_deserializer=chat__pb2.MessageRequest.FromString,
                     response_serializer=chat__pb2.MessageResponse.SerializeToString,
+            ),
+            'GetMessage': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetMessage,
+                    request_deserializer=chat__pb2.MessageGetRequest.FromString,
+                    response_serializer=chat__pb2.MessageResponse.SerializeToString,
+            ),
+            'DeleteMessage': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteMessage,
+                    request_deserializer=chat__pb2.MessageGetRequest.FromString,
+                    response_serializer=chat__pb2.MessageResponse.SerializeToString,
+            ),
+            'UpdateMessage': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateMessage,
+                    request_deserializer=chat__pb2.MessageUpdateRequest.FromString,
+                    response_serializer=chat__pb2.MessageResponse.SerializeToString,
+            ),
+            'ListMessages': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListMessages,
+                    request_deserializer=chat__pb2.MessageListRequest.FromString,
+                    response_serializer=chat__pb2.MessageListResponse.SerializeToString,
+            ),
+            'CreateMessageChannel': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateMessageChannel,
+                    request_deserializer=chat__pb2.MessageChannelCreateRequest.FromString,
+                    response_serializer=chat__pb2.MessageChannelResponse.SerializeToString,
+            ),
+            'UpdateMessageChannel': grpc.unary_unary_rpc_method_handler(
+                    servicer.UpdateMessageChannel,
+                    request_deserializer=chat__pb2.MessageChannelUpdateRequest.FromString,
+                    response_serializer=chat__pb2.MessageChannelResponse.SerializeToString,
+            ),
+            'ListMessageChannels': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListMessageChannels,
+                    request_deserializer=chat__pb2.MessageChannelListRequest.FromString,
+                    response_serializer=chat__pb2.MessageChannelListResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -87,6 +210,195 @@ class Chat(object):
             '/Chat/SendMessage',
             chat__pb2.MessageRequest.SerializeToString,
             chat__pb2.MessageResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetMessage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Chat/GetMessage',
+            chat__pb2.MessageGetRequest.SerializeToString,
+            chat__pb2.MessageResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteMessage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Chat/DeleteMessage',
+            chat__pb2.MessageGetRequest.SerializeToString,
+            chat__pb2.MessageResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateMessage(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Chat/UpdateMessage',
+            chat__pb2.MessageUpdateRequest.SerializeToString,
+            chat__pb2.MessageResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListMessages(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Chat/ListMessages',
+            chat__pb2.MessageListRequest.SerializeToString,
+            chat__pb2.MessageListResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreateMessageChannel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Chat/CreateMessageChannel',
+            chat__pb2.MessageChannelCreateRequest.SerializeToString,
+            chat__pb2.MessageChannelResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UpdateMessageChannel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Chat/UpdateMessageChannel',
+            chat__pb2.MessageChannelUpdateRequest.SerializeToString,
+            chat__pb2.MessageChannelResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListMessageChannels(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/Chat/ListMessageChannels',
+            chat__pb2.MessageChannelListRequest.SerializeToString,
+            chat__pb2.MessageChannelListResponse.FromString,
             options,
             channel_credentials,
             insecure,

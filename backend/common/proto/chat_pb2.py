@@ -24,17 +24,39 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nchat.proto\"1\n\x0eMessageRequest\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x0e\n\x06is_bot\x18\x02 \x01(\x08\"B\n\x0fMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t2:\n\x04\x43hat\x12\x32\n\x0bSendMessage\x12\x0f.MessageRequest\x1a\x10.MessageResponse\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\nchat.proto\"[\n\x0eMessageChannel\x12\n\n\x02id\x18\x01 \x01(\t\x12\x10\n\x08owner_id\x18\x02 \x01(\x03\x12\x0b\n\x03ids\x18\x03 \x03(\x03\x12\x0c\n\x04name\x18\x04 \x01(\t\x12\x10\n\x08is_group\x18\x05 \x01(\x08\"<\n\x1bMessageChannelCreateRequest\x12\x0b\n\x03ids\x18\x01 \x03(\x03\x12\x10\n\x08owner_id\x18\x02 \x01(\x03\"\xb0\x01\n\x1bMessageChannelUpdateRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x18\n\x10member_to_remove\x18\x03 \x01(\x03\x12\x15\n\rmember_to_add\x18\x04 \x01(\x03\x12\x1a\n\x12member_to_be_owner\x18\x05 \x01(\x03\x12\x0e\n\x06\x64\x65lete\x18\x06 \x01(\x08\x12\x1a\n\x12requesting_user_id\x18\x07 \x01(\x03\"Z\n\x16MessageChannelResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12 \n\x07\x63hannel\x18\x03 \x01(\x0b\x32\x0f.MessageChannel\"\x93\x01\n\x07Message\x12\n\n\x02id\x18\x01 \x01(\t\x12\x12\n\nchannel_id\x18\x02 \x01(\t\x12\x0f\n\x07user_id\x18\x03 \x01(\x03\x12\x0f\n\x07\x63ontent\x18\x04 \x01(\t\x12\x0e\n\x06\x65\x64ited\x18\x05 \x01(\x08\x12\x0e\n\x06is_bot\x18\x06 \x01(\x08\x12\x12\n\ncreated_at\x18\x07 \x01(\x03\x12\x12\n\nupdated_at\x18\x08 \x01(\x03\"V\n\x0eMessageRequest\x12\x0f\n\x07message\x18\x01 \x01(\t\x12\x0e\n\x06is_bot\x18\x02 \x01(\x08\x12\x12\n\nchannel_id\x18\x03 \x01(\t\x12\x0f\n\x07user_id\x18\x04 \x01(\x03\"L\n\x0fMessageResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x19\n\x07message\x18\x03 \x01(\x0b\x32\x08.Message\";\n\x11MessageGetRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x1a\n\x12requesting_user_id\x18\x02 \x01(\x03\"O\n\x14MessageUpdateRequest\x12\n\n\x02id\x18\x01 \x01(\t\x12\x0f\n\x07message\x18\x02 \x01(\t\x12\x1a\n\x12requesting_user_id\x18\x03 \x01(\x03\"i\n\x12MessageListRequest\x12\x12\n\nchannel_id\x18\x01 \x01(\t\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\x0f\n\x07\x63ontent\x18\x03 \x01(\t\x12\r\n\x05limit\x18\x04 \x01(\x05\x12\x0e\n\x06offset\x18\x05 \x01(\x05\"Q\n\x13MessageListResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12\x1a\n\x08messages\x18\x03 \x03(\x0b\x32\x08.Message\",\n\x19MessageChannelListRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"_\n\x1aMessageChannelListResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\r\n\x05\x65rror\x18\x02 \x01(\t\x12!\n\x08\x63hannels\x18\x03 \x03(\x0b\x32\x0f.MessageChannel2\x96\x04\n\x04\x43hat\x12\x32\n\x0bSendMessage\x12\x0f.MessageRequest\x1a\x10.MessageResponse\"\x00\x12\x34\n\nGetMessage\x12\x12.MessageGetRequest\x1a\x10.MessageResponse\"\x00\x12\x37\n\rDeleteMessage\x12\x12.MessageGetRequest\x1a\x10.MessageResponse\"\x00\x12:\n\rUpdateMessage\x12\x15.MessageUpdateRequest\x1a\x10.MessageResponse\"\x00\x12;\n\x0cListMessages\x12\x13.MessageListRequest\x1a\x14.MessageListResponse\"\x00\x12O\n\x14\x43reateMessageChannel\x12\x1c.MessageChannelCreateRequest\x1a\x17.MessageChannelResponse\"\x00\x12O\n\x14UpdateMessageChannel\x12\x1c.MessageChannelUpdateRequest\x1a\x17.MessageChannelResponse\"\x00\x12P\n\x13ListMessageChannels\x12\x1a.MessageChannelListRequest\x1a\x1b.MessageChannelListResponse\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'chat_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_MESSAGEREQUEST']._serialized_start=14
-  _globals['_MESSAGEREQUEST']._serialized_end=63
-  _globals['_MESSAGERESPONSE']._serialized_start=65
-  _globals['_MESSAGERESPONSE']._serialized_end=131
-  _globals['_CHAT']._serialized_start=133
-  _globals['_CHAT']._serialized_end=191
+  _globals['_MESSAGECHANNEL']._serialized_start=14
+  _globals['_MESSAGECHANNEL']._serialized_end=105
+  _globals['_MESSAGECHANNELCREATEREQUEST']._serialized_start=107
+  _globals['_MESSAGECHANNELCREATEREQUEST']._serialized_end=167
+  _globals['_MESSAGECHANNELUPDATEREQUEST']._serialized_start=170
+  _globals['_MESSAGECHANNELUPDATEREQUEST']._serialized_end=346
+  _globals['_MESSAGECHANNELRESPONSE']._serialized_start=348
+  _globals['_MESSAGECHANNELRESPONSE']._serialized_end=438
+  _globals['_MESSAGE']._serialized_start=441
+  _globals['_MESSAGE']._serialized_end=588
+  _globals['_MESSAGEREQUEST']._serialized_start=590
+  _globals['_MESSAGEREQUEST']._serialized_end=676
+  _globals['_MESSAGERESPONSE']._serialized_start=678
+  _globals['_MESSAGERESPONSE']._serialized_end=754
+  _globals['_MESSAGEGETREQUEST']._serialized_start=756
+  _globals['_MESSAGEGETREQUEST']._serialized_end=815
+  _globals['_MESSAGEUPDATEREQUEST']._serialized_start=817
+  _globals['_MESSAGEUPDATEREQUEST']._serialized_end=896
+  _globals['_MESSAGELISTREQUEST']._serialized_start=898
+  _globals['_MESSAGELISTREQUEST']._serialized_end=1003
+  _globals['_MESSAGELISTRESPONSE']._serialized_start=1005
+  _globals['_MESSAGELISTRESPONSE']._serialized_end=1086
+  _globals['_MESSAGECHANNELLISTREQUEST']._serialized_start=1088
+  _globals['_MESSAGECHANNELLISTREQUEST']._serialized_end=1132
+  _globals['_MESSAGECHANNELLISTRESPONSE']._serialized_start=1134
+  _globals['_MESSAGECHANNELLISTRESPONSE']._serialized_end=1229
+  _globals['_CHAT']._serialized_start=1232
+  _globals['_CHAT']._serialized_end=1766
 # @@protoc_insertion_point(module_scope)
