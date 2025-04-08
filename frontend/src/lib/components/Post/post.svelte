@@ -18,6 +18,7 @@
 	export let url = '';
 	export let offset = 0;
 	export let limit = 10;
+	export let fixed = false;
 	let lastIndex = 0;
 	let formatted_url = '';
 	let end = false;
@@ -62,7 +63,7 @@
 
 	function handleBottomSroll() {
 		console.log('Bottom scroll reached');
-		if (end) {
+		if (end || fixed) {
 			console.log('No more posts to load');
 			return;
 		}

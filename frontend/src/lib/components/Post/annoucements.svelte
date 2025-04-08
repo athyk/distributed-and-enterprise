@@ -11,7 +11,12 @@
 
 	import { onMount, onDestroy } from 'svelte';
 
-	export let url = ''
+	export let url = '';
+	export let offset = 0;
+	export let limit = 10;
+	export let fixed = false;
+	let end = false;
+	let formatted_url = '';
 	let errorMessage = '';
 
 	let data: globalAnnouncementData[] = [];
@@ -23,9 +28,22 @@
 	}
 
 	async function GetAnnouncments() {
-		const response = (await get(url)) as globalAnnouncement;
+		formatted_url = url + '?offset=' + offset + '&limit=' + limit;
+		const response = (await get(formatted_url)) as globalAnnouncement;
 		if (response.http_status === 200) {
-			data = response.global_announcements;
+			if (response.global_announcements.length === 0) {
+				console.log('No announcements found');
+				end = true;
+			} else if (response.global_announcements.length < limit) {
+				end = true;
+			}
+
+			if (data.length > 0) {
+				data = [...data, ...response.global_announcements];
+			} else {
+				data = response.global_announcements;
+			}
+
 		} else {
 			console.error('Error fetching announcements:', response.error_message);
 			return [];
@@ -49,12 +67,23 @@
 		}
 	}
 
+	function handleBottomSroll() {
+		console.log('Bottom scroll reached');
+		if (end || fixed) {
+			console.log('No more posts to load');
+			return;
+		}
+		offset += limit;
+		GetAnnouncments();
+	}
+
 	onMount(() => {
 		GetAnnouncments();
 		if (browser) {
 			document.addEventListener('deletePost', (e: Event) =>
 				handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
 			);
+			document.addEventListener('scrollbottomreach', handleBottomSroll);
 		}
 	});
 
@@ -63,14 +92,14 @@
 			document.removeEventListener('deletePost', (e: Event) =>
 				handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
 			);
+			document.removeEventListener('scrollbottomreach', handleBottomSroll);
 		}
 	});
 </script>
 
 <Popup bind:errorMessage/>
 
-
-{#each data as announcement (announcement.id)}
+{#each data as announcement,index (announcement.id + '-' + index)}
 	<Post
 		author={announcement.user}
 		date={converTimetoUnix(announcement.uploaded)}

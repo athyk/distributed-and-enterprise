@@ -38,13 +38,13 @@
 	{:else if choice === 1}
 		<div class="w-full max-w-4xl">
 			<Feed feedType="events" showActions={false}>
-				<Event url="community/events?offset=0&limit=10" slot="Posts" />
+				<Event url="community/events" slot="Posts" limit={30} />
 			</Feed>
 		</div>
 	{:else if choice === 2}
 		<div class="w-full max-w-4xl">
 			<Feed feedType="announcements">
-				<Annoucements url="community/announcements?offset=0&limit=10" slot="Posts" />
+				<Annoucements url="community/announcements" slot="Posts" limit={30} />
 			</Feed>
 		</div>
 	{/if}
