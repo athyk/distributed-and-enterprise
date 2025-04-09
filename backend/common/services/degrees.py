@@ -139,7 +139,7 @@ class DegreesClient:
         Format the degree object into a dictionary for use in a JSON response.
 
         :param degree: The degree object to format
-        :return: A dictionary containing the user's details
+        :return: A dictionary containing the degree's details
         """
         return {
             "id": degree.id,
