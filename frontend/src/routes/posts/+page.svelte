@@ -7,7 +7,9 @@
 	let choice = 0;
 </script>
 
+<h1 class="text-center text-3xl font-bold pt-5">Testing </h1>
 <div class="mt-4 flex items-center justify-center">
+
 	<input
 		type="button"
 		class="rounded bg-blue-500 px-4 py-2 text-white"
@@ -17,7 +19,7 @@
 	<input
 		type="button"
 		class="m-2 rounded bg-blue-500 px-4 py-2 text-white"
-		value="Events"
+		value="Events Community 1"
 		on:click={() => (choice = 1)}
 	/>
 	<input
@@ -37,8 +39,8 @@
 		</div>
 	{:else if choice === 1}
 		<div class="w-full max-w-4xl">
-			<Feed feedType="events" showActions={true}>
-				<Event url="community/events" slot="Posts" limit={30} />
+			<Feed feedType="events" showActions={true} communityID={1}>
+				<Event url="community/1/events" slot="Posts" limit={30} />
 			</Feed>
 		</div>
 	{:else if choice === 2}

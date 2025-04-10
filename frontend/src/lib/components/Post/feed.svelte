@@ -1,20 +1,24 @@
 <script lang="ts">
-	import CreatePost from '$components/Post/createPost.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 	import { isLoggedIn } from '$lib/api/checkUser';
+
+	import CreateEditPost from '$components/Post/CreateEdit/Edit-Create-Post.svelte';
+	import CreateEditAnnoucement from '$components/Post/CreateEdit/Edit-Create-Annoucement.svelte';
+	import CreateEditEvent from '$components/Post/CreateEdit/Edit-Create-Event.svelte';
 
 	type PostType = 'posts' | 'events' | 'announcements';
 	export let feedType: PostType = 'posts';
 	export let showActions = true;
 	export let feedClass = 'flex w-full flex-wrap justify-center';
+	export let communityID = 1;
 
 	let refreshKey = 0;
 
-	let modalShown = false;
+	let modalShown = true;
 	let editShown = false;
 	let editID = 0;
-	let communityID = 1;
+
 	let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	function showModal() {
@@ -42,7 +46,8 @@
 	}
 
 	function handleScroll() {
-		if (!browser || scrollTimeout) return;
+		if (!browser) return;
+		if (scrollTimeout) return;
 
 		const { scrollTop, scrollHeight, clientHeight } = document.documentElement || document.body;
 
@@ -102,34 +107,30 @@
 			class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
 		>
 			{#if feedType === 'posts'}
-				<CreatePost
+				<CreateEditPost
 					bind:showModal={modalShown}
-					edit={editShown}
-					{editID}
 					onClose={() => hideModal()}
-					feedType={feedType}
 					onSuccess={() => (refreshKey += 1)}
-					{communityID}
+					edit={editShown}
+					editID={editID}
 				/>
 			{:else if feedType === 'events'}
-				<CreatePost
+				<CreateEditEvent
 					bind:showModal={modalShown}
-					edit={editShown}
-					{editID}
 					onClose={() => hideModal()}
 					onSuccess={() => (refreshKey += 1)}
-					feedType={feedType}
-					{communityID}
+					edit={editShown}
+					editID={editID}
+					communityID={communityID}
 				/>
 			{:else if feedType === 'announcements'}
-				<CreatePost
+				<CreateEditAnnoucement
 					bind:showModal={modalShown}
-					edit={editShown}
-					{editID}
 					onClose={() => hideModal()}
 					onSuccess={() => (refreshKey += 1)}
-					feedType={feedType}
-					{communityID}
+					edit={editShown}
+					editID={editID}
+					communityID={communityID}
 				/>
 			{/if}
 		</div>

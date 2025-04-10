@@ -4,7 +4,8 @@
 		singlePostResponse,
 		PaginationDataResponse,
 		response,
-		singleAnnoucementResponse
+		singleAnnoucementResponse,
+		EventSingleResponse
 	} from '$lib/api/apiType';
 	import { post } from '$lib/api/post';
 	import { get } from '$lib/api/get';
@@ -26,7 +27,7 @@
 	let text = '';
 	let images = [] as string[];
 	let tags: [string, number][] = [];
-	let location: [string, string][] = [];
+	let location: [string, string, string][] = [];
 	let datetime_value = '';
 	let duration_value = 1;
 	const today = new Date().toISOString().slice(0, 16);
@@ -43,6 +44,8 @@
 
 	let ModalTitle = 'Create a Post';
 	let ButtonText = 'Post';
+
+	let event_data: EventSingleResponse;
 
 	async function onSubmit() {
 		if ((await checkUserPermission()) === false) {
@@ -120,7 +123,7 @@
 		let data = {
 			title: title,
 			description: text,
-			location: "",
+			location: location[0][2],
 			datetime: formattedDatetime,
 			duration: duration_value,
 			tags: tags.map((tag) => tag[1]),
@@ -144,12 +147,11 @@
 		let data = {
 			title: title,
 			description: text,
-			location: "",
+			location: event_data.event.location,
 			datetime: formattedDatetime,
-			duration: duration_value,
-			tags: tags.map((tag) => tag[1]),
-			lat_lng: [parseFloat(location[0][0]), parseFloat(location[0][1])]
+			duration: duration_value
 		}
+		console.log(data)
 		let response = (await Put('community/' + communityID + '/events', data)) as response;
 		if (response.success === true) {
 			console.log('Event edited successfully');
@@ -287,16 +289,20 @@
 		if (edit) {
 			let response = (await get(
 				'community/' + communityID + '/events/' + editID
-			)) as singlePostResponse;
+			)) as EventSingleResponse;
 			if (response.success === true) {
 				console.log('Event data fetched successfully');
-				title = response.post.title;
-				text = response.post.description;
+				title = response.event.title;
+				text = response.event.description;
+				duration_value = parseInt(response.event.duration, 10);
+				datetime_value = response.event.datetime;
 				let newTags: [string, number][] = [];
-				for (let i = 0; i < response.post.tags.length; i++) {
-					newTags.push([response.post.tags[i], await getTagID(response.post.tags[i])]);
+				console.log('Tags:', response.event);
+				for (let i = 0; i < response.event.tags.length; i++) {
+					newTags.push([response.event.tags[i], await getTagID(response.event.tags[i])]);
 				}
 				tags = newTags;
+				event_data = response;
 				console.log('Tags:', tags);
 			} else {
 				console.error('Error fetching event data:', response.error_message);
@@ -305,6 +311,8 @@
 	}
 
 	function handleEditView() {
+		console.log('Edit view:', edit);
+		console.log('Feed type:', feedType);
 		switch (feedType) {
 			case 'posts':
 				ModalTitle = 'Create a Post';
@@ -323,7 +331,9 @@
 					ButtonText = 'Update Event';
 					getEvent();
 				}
+				break;
 			case 'announcements':
+				console.log('ANNOUCEMENT!!!');
 				ModalTitle = 'Create an Announcement';
 				ButtonText = 'Announce';
 				if (edit) {
@@ -370,17 +380,21 @@
 		<ImageInput bind:images />
 	{/if}
 	{#if feedType === 'events'}
-		<SearchBox
-			classStyle="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500"
-			marginTop=""
-			placeholder="Search for location..."
-			url=""
-			id="location"
-			multi_select={false}
-			max_select={1}
-			location={true}
-			bind:location_selected={location}
-		></SearchBox>
+		{#if edit}
+			<input type="text" class="mt-2 w-full rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none" id='place-search' placeholder="Enter Location" bind:value={event_data.event.location} />
+		{:else}
+			<SearchBox
+				classStyle="w-full border-2 border-gray-300 rounded-lg p-2 mt-2 focus:outline-none focus:border-blue-500"
+				marginTop=""
+				placeholder="Search for location..."
+				url=""
+				id="location"
+				multi_select={false}
+				max_select={1}
+				location={true}
+				bind:location_selected={location}
+			></SearchBox>
+		{/if}
 		<input type="datetime-local" min={today} class="mt-2 w-full rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none" bind:value={datetime_value} />
 		<input type="number" min=1 class="mt-2 w-full rounded-lg border-2 border-gray-300 p-2 focus:border-blue-500 focus:outline-none" placeholder="Duration" bind:value={duration_value} />
 	{/if}
