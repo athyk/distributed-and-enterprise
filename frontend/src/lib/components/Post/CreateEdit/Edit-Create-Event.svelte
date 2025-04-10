@@ -10,6 +10,7 @@
 
     import { post } from '$lib/api/post';
 	import { Put } from '$lib/api/Put';
+	import { getEventData } from '$lib/api/singleItem/event';
 
     export let showModal = false;
     export let onClose = () => {};
@@ -41,41 +42,45 @@
 			tags: tags.map((tag) => tag[1]),
 			lat_lng: [parseFloat(location[0][0]), parseFloat(location[0][1])]
 		}
-		let response = (await post('community/' + communityID + '/events', data)) as response;
-		if (response.success === true) {
+        let response = {} as response;
+        if (edit) {
+            console.log('Edit event:', editID);
+            console.log(data);
+            response = (await Put('community/' + communityID + '/events/'+editID, data)) as response;
+        } else {
+            response = (await post('community/' + communityID + '/events', data)) as response;
+        }
+        if (response.success === true) {
 			console.log('Event created successfully');
 			title = '';
 			text = '';
 			success = true;
 			showModal = false;
+            onSuccess();
+            onClose();
 		} else {
 			console.error('Error creating event:', response.error_message);
 		}
 	}
 
     async function getEvent(){
-		if (edit) {
-			let response = (await get(
-				'community/' + communityID + '/events/' + editID
-			)) as EventSingleResponse;
-			if (response.success === true) {
-				console.log('Event data fetched successfully');
-				title = response.event.title;
-				text = response.event.description;
-				duration_value = parseInt(response.event.duration, 10);
-				datetime_value = response.event.datetime;
-				let newTags: [string, number][] = [];
-				console.log('Tags:', response.event);
-				for (let i = 0; i < response.event.tags.length; i++) {
-					newTags.push([response.event.tags[i], await getTagID(response.event.tags[i])]);
-				}
-				tags = newTags;
-				event_data = response;
-				console.log('Tags:', tags);
-			} else {
-				console.error('Error fetching event data:', response.error_message);
-			}
-		}
+        if (editID === 0) return;
+		getEventData(communityID,editID).then((response) => {
+            if (response){
+                title = response.title;
+                text = response.description;
+                if (response.latitude && response.longitude) {
+                    location = [[response.latitude.toString(), response.longitude.toString(),response.location]];
+                } else {
+                    location = [['', '', response.location]];
+                }
+                datetime_value = new Date(response.datetime).toISOString().slice(0, 16);
+                duration_value = parseInt(response.duration, 10);
+                tags = (response.tags as [string, number][]).map((tag) => [tag[0], tag[1]]);
+            } else {
+                console.error('Error fetching event data');
+            }
+        });
 	}
 
     onMount(() => {

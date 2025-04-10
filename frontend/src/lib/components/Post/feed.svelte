@@ -15,7 +15,7 @@
 
 	let refreshKey = 0;
 
-	let modalShown = true;
+	let modalShown = false;
 	let editShown = false;
 	let editID = 0;
 

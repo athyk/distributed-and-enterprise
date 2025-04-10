@@ -132,7 +132,7 @@ export type EventDataResponse = {
 	duration: string;
 	latitude: number;
 	longitude: number;
-	tags: string[];
+	tags: string[] | [string, number][] | number[];
 };
 
 export type MeResponse = {
