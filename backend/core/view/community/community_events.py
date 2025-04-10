@@ -197,7 +197,8 @@ def community_event_view_single(request: WSGIRequest, community_id, event_id):
             'datetime': response.event[0].datetime,
             'duration': response.event[0].duration,
             'latitude': latitude,
-            'longitude': longitude
+            'longitude': longitude,
+            'tags': list(response.event[0].tags)
         }
     })
 
