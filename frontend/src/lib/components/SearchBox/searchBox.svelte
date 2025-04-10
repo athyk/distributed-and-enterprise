@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { get } from '$lib/api/get';
+	import { browser } from '$app/environment';
 	import type { PaginationDataResponse, PaginationData, OSMPlace } from '$lib/api/apiType';
 	import { onMount, onDestroy } from 'svelte';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
@@ -7,10 +8,12 @@
 	const instanceId = Math.random().toString(36).substring(2, 9);
 
 	onMount(() => {
+		if (!browser) return;
 		document.addEventListener('click', handleClickOutside);
 	});
 
 	onDestroy(() => {
+		if (!browser) return;
 		document.removeEventListener('click', handleClickOutside);
 	});
 
@@ -23,7 +26,7 @@
 	export let multi_select = false;
 	export let max_select = 1;
 	export let selected: [string, number][] = [];
-	export let location_selected: [string, string][] = [];
+	export let location_selected: [string, string, string][] = [];
 	export let classStyle =
 		'mt-2 flex w-full flex-wrap items-center rounded-md border px-2 py-1 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600';
 	export let marginTop = 'mt-4';
@@ -101,7 +104,7 @@
 	function handleLocationClick(item: OSMPlace, event: MouseEvent) {
 		event.stopPropagation();
 		value = item.display_name;
-		location_selected = [[item.lat, item.lon]];
+		location_selected = [[item.lat, item.lon, item.display_name]];
 		showDropdown = false;
 	}
 

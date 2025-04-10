@@ -18,7 +18,7 @@ def create_event(user_id: int, community_id: int, title: str, description: str, 
     community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
     title_verify, title_error = verify_string(title, 1, 50, 'Title')
     description_verify, description_error = verify_string(description, 1, 1024, 'Description')
-    location_verify, location_error = verify_string(location, 1, 2048, 'Location') if location else (True, '')
+    location_verify, location_error = verify_string(location, 1, 2048, 'Location') if location else (True, 'None')
     datetime_verify, datetime_error = verify_string(datetime, 10, 10, 'DateTime')
     duration_verify, duration_error = verify_integer(duration, 1, 672, 'Duration')
     tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
