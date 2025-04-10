@@ -46,9 +46,11 @@ def create_event(user_id: int, community_id: int, title: str, description: str, 
             duration=duration
         )
 
-        print(f"lat_lng: {lat_lng}")
+        success = True
+
         if lat_lng and len(lat_lng) == 2:
             lng, lat = lat_lng
+
         else:
             success, lng, lat, message = location_name_to_coords(location)
 
