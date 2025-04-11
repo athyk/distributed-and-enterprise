@@ -1,10 +1,12 @@
+
 <script lang="ts">
 	import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
-
 	import { get } from '$lib/api/get';
 	import { onMount } from 'svelte';
 	import Feed from '$components/Post/feed.svelte';
 	import Post from '$components/Post/post.svelte';
+	import Annoucements from '$components/Post/annoucements.svelte';
+	import Event from '$lib/components/Post/event.svelte';
 
 	interface Announcement {
 		id: number;
@@ -41,24 +43,36 @@
 	onMount(fetchAnnouncements);
 </script>
 
-<div class="flex min-h-screen flex-col items-center p-4 sm:p-8 lg:p-12">
-	<!-- Main Content -->
-	<main class="grid w-full max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-		<!-- Announcements -->
-		{#if announcements.length > 0}
-			{#each announcements as announcement (announcement.id)}
-				<AnnouncementCard
-					title={announcement.title}
-					description={announcement.description}
-					datetime={announcement.uploaded}
-					tags={announcement.tags}
-				/>
-			{/each}
-		{:else}
-			<p>No announcements found.</p>
-		{/if}
-	</main>
-	<Feed feedType="posts">
-		<Post url="posts/list?offset=0&limit=10" slot="Posts" />
-	</Feed>
+<div class="flex min-h-screen bg-gray-100 p-8 sm:p-12 lg:p-20">
+	<!-- Two-Column Layout -->
+	<div class="mx-auto flex w-full max-w-7xl flex-col lg:flex-row lg:gap-20">
+		<!-- Left Column: Announcements -->
+		<div class="w-full lg:w-1/3 mb-12 lg:mb-0">
+			<div class="space-y-10 p-2">
+				{#if announcements.length > 0}
+					{#each announcements as announcement (announcement.id)}
+						<AnnouncementCard
+							title={announcement.title}
+							description={announcement.description}
+							datetime={announcement.uploaded}
+							tags={announcement.tags}
+						/>
+					{/each}
+				{:else}
+					<div class="flex h-32 items-center justify-center rounded-xl bg-white p-6 shadow-md">
+						<p class="text-gray-500">No announcements found.</p>
+					</div>
+				{/if}
+			</div>
+		</div>
+		
+		<!-- Right Column: Posts Feed -->
+		<div class="w-full lg:w-2/3">
+			<div class="p-2">
+				<Feed feedType="posts">
+					<Post url="posts/list?offset=0&limit=15" slot="Posts" />
+				</Feed>
+			</div>
+		</div>
+	</div>
 </div>

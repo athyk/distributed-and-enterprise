@@ -1,38 +1,45 @@
+
 <script lang="ts">
 	export let title: string = 'Announcement Title';
 	export let description: string = 'Announcement Description';
-
 	export let datetime: string = '2025-01-01';
-
 	export let tags: string[] = [];
 </script>
 
-<div class="w-full max-w-2xl rounded-lg bg-gray-100 p-4 shadow-md dark:bg-gray-800">
+<div class="mx-auto my-3 flex w-full max-w-[500px] flex-col justify-between rounded-2xl bg-white p-3 shadow-xl sm:m-2 sm:p-5">
 	<!-- Title Section -->
-	<div class="mb-2 flex items-center justify-between">
-		<h1 class="text-xl font-bold text-gray-900 dark:text-white">
+	<div class="flex items-center justify-between">
+		<h1 class="text-xl font-bold text-gray-800">
 			{title}
 		</h1>
 	</div>
 
-	<!-- Date and Duration Section -->
-	<div class="mb-2 flex items-center justify-between">
-		<p class="text-lg font-semibold text-gray-900 dark:text-white">
-			{datetime}
-		</p>
-	</div>
-
 	<!-- Description -->
-	<p class="text-sm text-gray-700 dark:text-gray-300">
+	<p class="text-sm text-gray-600 my-2">
 		{description}
 	</p>
 
 	<!-- Tags -->
-	<div class="mt-3 flex flex-wrap gap-2">
-		{#each tags as tag}
-			<span class="rounded bg-gray-300 px-2 py-1 text-sm dark:bg-gray-600">
-				{tag}
-			</span>
-		{/each}
+	<!-- Tags Section -->
+{#if tags.length > 0}
+<div class="flex flex-wrap gap-2 my-2">
+	{#each tags as tag}
+		<span
+			class="rounded-lg bg-gray-200 px-3 py-1.5 text-sm font-medium text-black
+					shadow-sm border border-gray-300 hover:shadow-md transition-shadow
+					duration-200 transform hover:-translate-y-0.5"
+		>
+			{"#" + tag}
+		</span>
+	{/each}
+</div>
+{/if}
+
+
+	<!-- Date Section -->
+	<div class="mt-2 flex items-center justify-between text-gray-500 text-sm">
+		<p>
+			{datetime}
+		</p>
 	</div>
 </div>
