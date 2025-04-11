@@ -6,7 +6,7 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class EventDataRequest(_message.Message):
-    __slots__ = ("user_id", "community_id", "title", "description", "location", "datetime", "duration", "tags")
+    __slots__ = ("user_id", "community_id", "title", "description", "location", "datetime", "duration", "tags", "lat_lng")
     USER_ID_FIELD_NUMBER: _ClassVar[int]
     COMMUNITY_ID_FIELD_NUMBER: _ClassVar[int]
     TITLE_FIELD_NUMBER: _ClassVar[int]
@@ -15,6 +15,7 @@ class EventDataRequest(_message.Message):
     DATETIME_FIELD_NUMBER: _ClassVar[int]
     DURATION_FIELD_NUMBER: _ClassVar[int]
     TAGS_FIELD_NUMBER: _ClassVar[int]
+    LAT_LNG_FIELD_NUMBER: _ClassVar[int]
     user_id: int
     community_id: int
     title: str
@@ -23,7 +24,8 @@ class EventDataRequest(_message.Message):
     datetime: str
     duration: int
     tags: _containers.RepeatedScalarFieldContainer[int]
-    def __init__(self, user_id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ..., tags: _Optional[_Iterable[int]] = ...) -> None: ...
+    lat_lng: _containers.RepeatedScalarFieldContainer[float]
+    def __init__(self, user_id: _Optional[int] = ..., community_id: _Optional[int] = ..., title: _Optional[str] = ..., description: _Optional[str] = ..., location: _Optional[str] = ..., datetime: _Optional[str] = ..., duration: _Optional[int] = ..., tags: _Optional[_Iterable[int]] = ..., lat_lng: _Optional[_Iterable[float]] = ...) -> None: ...
 
 class EventResponse(_message.Message):
     __slots__ = ("success", "http_status", "error_message")

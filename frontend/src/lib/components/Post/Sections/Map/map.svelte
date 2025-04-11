@@ -20,6 +20,11 @@
 	async function initializeMap() {
 		await tick();
 
+		if (leafletMap) {
+			leafletMap.remove();
+			leafletMap = null;
+		}
+
 		if (!leafletMap) {
 			leafletMap = L.map(mapContainer).setView([lat, lon], 16);
 			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -49,7 +54,7 @@
 
 {#if showModal}
 	<div
-		class="bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black"
+		class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
 		role="dialog"
 		aria-modal="true"
 		aria-label="Map modal"
