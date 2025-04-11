@@ -11,7 +11,6 @@ from .view.tags.tags import tag_paths
 from .view.users.self.profile import update_profile_picture
 from .view.users.self.users import user_self_paths
 from .view.users.users import user_paths
-from .views import chat_message
 
 from backend.core.view.community.announcements import community_announcement_paths, community_announcement_action_paths, community_global_announcement_view
 from backend.core.view.community.community_events import community_event_action_paths, community_event_paths, community_global_event_view
@@ -26,8 +25,6 @@ from backend.core.view.auth.register import register_user
 
 
 urlpatterns = [
-    path('chat/message/', chat_message),
-
     path('auth/login', login_user),
     path('auth/register', register_user),
     path('auth/logout', logout_self),

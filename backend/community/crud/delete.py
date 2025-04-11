@@ -1,7 +1,6 @@
 from backend.common.utils import verify_integer
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityUser, CommunityTag, CommunityDegree
-from backend.community.utils import check_if_user_is_in_private_community, does_user_have_required_role
 
 from math import inf as INFINITY
 
@@ -23,7 +22,7 @@ def delete_community(community_id: int, user_id: int) -> tuple[bool, list]:
         error_messages = [item for item in all_errors if item.strip()]
 
         return False, error_messages
-    
+
     with get_db() as session:
         role_result = session.query(CommunityUser.role).filter(
             Community.id == community_id,
@@ -33,32 +32,32 @@ def delete_community(community_id: int, user_id: int) -> tuple[bool, list]:
 
         if not role_result:
             return False, ['User Or Community Does Not Exist']
-        
+
         else:
             if role_result[0] != 'admin':
                 return False, ['User Does Not Have The Required Permission To Perform Requested Action']
 
         tag_result = session.query(CommunityTag).filter(
-                Community.id == community_id,
-                Community.id == CommunityTag.community_id
-            ).all()
-        
+            Community.id == community_id,
+            Community.id == CommunityTag.community_id
+        ).all()
+
         for tag in tag_result:
             session.delete(tag)
 
         degree_result = session.query(CommunityDegree).filter(
-                Community.id == community_id,
-                Community.id == CommunityDegree.community_id
-            ).all()
-        
+            Community.id == community_id,
+            Community.id == CommunityDegree.community_id
+        ).all()
+
         for degree in degree_result:
             session.delete(degree)
 
         user_result = session.query(CommunityUser).filter(
-                Community.id == community_id,
-                Community.id == CommunityUser.community_id
-            ).all()
-        
+            Community.id == community_id,
+            Community.id == CommunityUser.community_id
+        ).all()
+
         for user in user_result:
             session.delete(user)
 

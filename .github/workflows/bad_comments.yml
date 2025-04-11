@@ -17,13 +17,13 @@ jobs:
 
       - name: Check for region tags
         run: |
-          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.py$' | xargs grep -nE '#region|#endregion'; then
+          if git ls-files '*.py' | xargs grep -nE '#region|#endregion'; then
             echo "❌ Found #region or #endregion in changed files. Please remove them."
             exit 1
           fi
       - name: Check for commented out code
         run: |
-          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.py$' | xargs grep -nE '^\s*#\s*(if|else|endif|print|include|\w+\s*=)'; then
-            echo "❌ Found commented out code in changed files. Please remove them."
-            exit 1
+          if git ls-files '*.py' | xargs grep -nE '^\s*#\s*(if|else|endif|print|include|\w+\s*=)'; then
+              echo "❌ Found commented out code in changed files. Please remove them."
+              exit 1
           fi

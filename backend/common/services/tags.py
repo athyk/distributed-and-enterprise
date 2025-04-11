@@ -139,7 +139,7 @@ class TagsClient:
         Format the tag object into a dictionary for use in a JSON response.
 
         :param tag: The tag object to format
-        :return: A dictionary containing the user's details
+        :return: A dictionary containing the tag's details
         """
         return {
             "id": tag.id,

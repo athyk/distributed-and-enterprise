@@ -25,3 +25,9 @@ jobs:
         run: |
           cd frontend
           pnpm run build
+      - name: Check for JS alerts
+        run: |
+          if git ls-files '*.svelte' | xargs grep -nE 'alert\('; then
+              echo "❌ Found a JavaScript alert() in .svelte files. Please remove them."
+              exit 1
+          fi
