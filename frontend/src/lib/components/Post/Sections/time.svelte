@@ -22,6 +22,6 @@
 >
 	{datetime}
 	{#if duration !== ''}
-		<span class="text-gray-500 pl-1"> ({duration} hours)</span>
+		<span class="pl-1 text-gray-500"> ({duration} hours)</span>
 	{/if}
 </div>

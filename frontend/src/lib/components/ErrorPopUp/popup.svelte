@@ -1,14 +1,5 @@
 <script lang="ts">
 	export let errorMessage = '';
-	export let positive = false;
-
-	let colour = 'bg-red-500';
-
-	$:if (positive) {
-		colour = 'bg-green-500';
-	}else {
-		colour = 'bg-red-500';
-	}
 </script>
 
 {#if errorMessage}

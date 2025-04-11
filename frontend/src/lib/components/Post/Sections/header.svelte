@@ -8,7 +8,7 @@
 	let url = '';
 
 	async function isAuthor() {
-		return await isUserID(author.user_id,true);
+		return await isUserID(author.user_id, true);
 	}
 
 	onMount(() => {
@@ -19,9 +19,8 @@
 			console.warn('No User ID is not defined');
 			return;
 		}
-		url = "/user/" + author.user_id.toString();
+		url = '/user/' + author.user_id.toString();
 	});
-
 </script>
 
 <div
@@ -32,12 +31,14 @@
 		<a href={url} target="_blank" rel="noopener noreferrer">
 			<img src={author.picture_url} alt="Profile Icon" class="h-11 w-11 rounded-full" />
 		</a>
-	{:else}
-		{#if url != ''}
-			<a href={url} target="_blank" rel="noopener noreferrer">
-				<img src='https://picsum.photos/id/63/200/200' alt="Profile Icon" class="h-11 w-11 rounded-full" />
-			</a>
-		{/if}
+	{:else if url != ''}
+		<a href={url} target="_blank" rel="noopener noreferrer">
+			<img
+				src="https://picsum.photos/id/63/200/200"
+				alt="Profile Icon"
+				class="h-11 w-11 rounded-full"
+			/>
+		</a>
 	{/if}
 	<span class="font-bold">{author.first_name} {author.last_name}</span>
 	{#if ownPost && author.user_id}

@@ -172,11 +172,10 @@ export type CommunitySearchResponse = {
 	communities: communityData[];
 };
 
-
 export type OSMPlace = {
-    lat: string;
-    lon: string;
-    type: string;
-    name: string;
-    display_name: string;
+	lat: string;
+	lon: string;
+	type: string;
+	name: string;
+	display_name: string;
 };

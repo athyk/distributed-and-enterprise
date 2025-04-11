@@ -19,7 +19,6 @@
 	export let offset = 0;
 	export let limit = 10;
 	export let fixed = false;
-	let lastIndex = 0;
 	let formatted_url = '';
 	let end = false;
 
@@ -36,11 +35,9 @@
 
 			if (data.length > 0) {
 				data = [...data, ...response.posts];
-			}else {
+			} else {
 				data = response.posts;
 			}
-
-			lastIndex = offset;
 		} else {
 			console.error('Error fetching posts:', response.error_message);
 			return [];
@@ -92,22 +89,22 @@
 
 <Popup bind:errorMessage />
 {#each data as post, index (post.id + '-' + index)}
-    <Post author={post.user_data} date={post.created_at} id={post.id}>
-        {#if post.title}
-            <Title>{post.title}</Title>
-        {/if}
-        {#if post.tags.length > 0}
-            <Tags tags={post.tags} />
-        {/if}
+	<Post author={post.user_data} date={post.created_at} id={post.id}>
+		{#if post.title}
+			<Title>{post.title}</Title>
+		{/if}
+		{#if post.tags.length > 0}
+			<Tags tags={post.tags} />
+		{/if}
 
-        {#if post.description}
-            <Text>
-                {post.description}
-            </Text>
-        {/if}
+		{#if post.description}
+			<Text>
+				{post.description}
+			</Text>
+		{/if}
 
-        {#if post.images.length > 0}
-            <Gallery images={post.images} />
-        {/if}
-    </Post>
+		{#if post.images.length > 0}
+			<Gallery images={post.images} />
+		{/if}
+	</Post>
 {/each}

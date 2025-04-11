@@ -13,7 +13,7 @@
 
 	async function logout() {
 		console.log('Logging out...');
-		let response = await post('auth/logout', {}) as response;
+		let response = (await post('auth/logout', {})) as response;
 		if (response.success === true) {
 			localStorage.setItem('loggedin', 'false');
 			window.location.href = '/login';
@@ -24,7 +24,7 @@
 
 	onMount(() => {
 		if (localStorage.getItem('loggedin') === 'true') {
-			isLoggedIn().then(result => {
+			isLoggedIn().then((result) => {
 				localStorage.setItem('loggedin', result.toString());
 			});
 		}
@@ -33,20 +33,19 @@
 				Posts: '/posts',
 				Communities: '/communities',
 				Account: '/account',
-				Logout: '',
+				Logout: ''
 			};
 			LoggedIn = true;
-		}else {
+		} else {
 			urls = {
-				Login: '/login',
+				Login: '/login'
 			};
 		}
 	});
 
 	let urls: { [key: string]: string } = {
-		Login: '/login',
+		Login: '/login'
 	};
-
 </script>
 
 <nav class="bg-gray-800 p-4">
@@ -94,7 +93,7 @@
 			{#if LoggedIn && url === 'Logout'}
 				<button
 					type="button"
-					class="block w-full text-left p-2 text-gray-300 hover:text-white"
+					class="block w-full p-2 text-left text-gray-300 hover:text-white"
 					on:click={logout}
 					aria-label="Logout"
 				>

@@ -21,9 +21,9 @@
 		await tick();
 
 		if (leafletMap) {
-            leafletMap.remove();
-            leafletMap = null;
-        }
+			leafletMap.remove();
+			leafletMap = null;
+		}
 
 		if (!leafletMap) {
 			leafletMap = L.map(mapContainer).setView([lat, lon], 16);

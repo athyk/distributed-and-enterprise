@@ -40,13 +40,15 @@
 	let locationDropdownItems: OSMPlace[] = [];
 	let errorMessage = '';
 
-	async function locationSearch(){
+	async function locationSearch() {
 		if (!value || value.length < 5) {
 			return;
 		}
 		console.log('Location Search: ', value);
 		let response = (await get(
-			'https://nominatim.openstreetmap.org/search?q=' + value + '&format=jsonv2',true,false
+			'https://nominatim.openstreetmap.org/search?q=' + value + '&format=jsonv2',
+			true,
+			false
 		)) as OSMPlace[];
 		last_value = value;
 		locationDropdownItems = response || [];
@@ -107,9 +109,7 @@
 		location_selected = [[item.lat, item.lon, item.display_name]];
 		showDropdown = false;
 	}
-
 </script>
-
 
 <Popup bind:errorMessage />
 <div class="relative {marginTop}" id={`searchbox-${instanceId}`}>
@@ -184,9 +184,11 @@
 				<button
 					type="button"
 					class="block w-full px-4 py-2 text-left hover:bg-gray-200"
-					on:click={(e) => {handleLocationClick(item, e)}}
+					on:click={(e) => {
+						handleLocationClick(item, e);
+					}}
 				>
-						{item.display_name}
+					{item.display_name}
 				</button>
 			{/each}
 		</div>

@@ -55,8 +55,6 @@
 			document.dispatchEvent(new CustomEvent('scrollbottomreach'));
 			scrollTimeout = setTimeout(() => (scrollTimeout = null), 1000);
 		}
-
-
 	}
 
 	type EditPostEvent = CustomEvent<{ id: number; communityId?: number }>;
@@ -82,7 +80,6 @@
 	});
 </script>
 
-
 <div class={feedClass}>
 	{#if showActions}
 		<button
@@ -103,37 +100,37 @@
 			</svg>
 		</button>
 		{#if modalShown}
-		<div
-			class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-		>
-			{#if feedType === 'posts'}
-				<CreateEditPost
-					bind:showModal={modalShown}
-					onClose={() => hideModal()}
-					onSuccess={() => (refreshKey += 1)}
-					edit={editShown}
-					editID={editID}
-				/>
-			{:else if feedType === 'events'}
-				<CreateEditEvent
-					bind:showModal={modalShown}
-					onClose={() => hideModal()}
-					onSuccess={() => (refreshKey += 1)}
-					edit={editShown}
-					editID={editID}
-					communityID={communityID}
-				/>
-			{:else if feedType === 'announcements'}
-				<CreateEditAnnoucement
-					bind:showModal={modalShown}
-					onClose={() => hideModal()}
-					onSuccess={() => (refreshKey += 1)}
-					edit={editShown}
-					editID={editID}
-					communityID={communityID}
-				/>
-			{/if}
-		</div>
+			<div
+				class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+			>
+				{#if feedType === 'posts'}
+					<CreateEditPost
+						bind:showModal={modalShown}
+						onClose={() => hideModal()}
+						onSuccess={() => (refreshKey += 1)}
+						edit={editShown}
+						{editID}
+					/>
+				{:else if feedType === 'events'}
+					<CreateEditEvent
+						bind:showModal={modalShown}
+						onClose={() => hideModal()}
+						onSuccess={() => (refreshKey += 1)}
+						edit={editShown}
+						{editID}
+						{communityID}
+					/>
+				{:else if feedType === 'announcements'}
+					<CreateEditAnnoucement
+						bind:showModal={modalShown}
+						onClose={() => hideModal()}
+						onSuccess={() => (refreshKey += 1)}
+						edit={editShown}
+						{editID}
+						{communityID}
+					/>
+				{/if}
+			</div>
 		{/if}
 	{/if}
 	{#key refreshKey}

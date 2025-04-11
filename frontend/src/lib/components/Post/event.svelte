@@ -7,11 +7,11 @@
 	import Time from './Sections/time.svelte';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 
-	import { onMount,onDestroy } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 
 	import { get } from '$lib/api/get';
-	import type { EventDataResponse, EventResponse,response} from '$lib/api/apiType';
+	import type { EventDataResponse, EventResponse, response } from '$lib/api/apiType';
 	import { deleteCall } from '$lib/api/delete';
 
 	let data: EventDataResponse[] = [];
@@ -23,7 +23,6 @@
 	let formatted_url = '';
 	let errorMessage = '';
 
-
 	async function GetPosts() {
 		formatted_url = url + '?offset=' + offset + '&limit=' + limit;
 		const response = (await get(formatted_url)) as EventResponse;
@@ -34,7 +33,7 @@
 
 			if (globalEvents.length === 0) {
 				chosenEvents = events;
-			}else {
+			} else {
 				chosenEvents = globalEvents;
 			}
 
@@ -60,7 +59,10 @@
 	async function handleDelete(event: CustomEvent) {
 		const postId = event.detail.id;
 		console.log('Deleting post with ID:', postId);
-		const response = (await deleteCall('community/' + event.detail.communityId + '/events/' + postId, {})) as response;
+		const response = (await deleteCall(
+			'community/' + event.detail.communityId + '/events/' + postId,
+			{}
+		)) as response;
 		if (response.success === true) {
 			console.log('Event deleted successfully');
 			data = data.filter((post) => post.id !== postId);
@@ -84,7 +86,6 @@
 	type DeletePostEvent = CustomEvent<{ id: number; communityId?: number }>;
 	const deleteEventHandler = (e: Event) => handleDelete(e as DeletePostEvent);
 
-
 	onMount(() => {
 		GetPosts();
 		if (browser) {
@@ -99,7 +100,6 @@
 			document.removeEventListener('scrollbottomreach', handleBottomSroll);
 		}
 	});
-
 </script>
 
 <Popup bind:errorMessage />

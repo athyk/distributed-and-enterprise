@@ -1,15 +1,14 @@
 <script lang="ts">
-	import Annoucements from '$components/Post/annoucements.svelte';
 	import Feed from '$components/Post/feed.svelte';
+	import Annoucements from '$components/Post/annoucements.svelte';
 	import Post from '$components/Post/post.svelte';
 	import Event from '$lib/components/Post/event.svelte';
 
 	let choice = 0;
 </script>
 
-<h1 class="text-center text-3xl font-bold pt-5">Testing </h1>
+<h1 class="pt-5 text-center text-3xl font-bold">Testing</h1>
 <div class="mt-4 flex items-center justify-center">
-
 	<input
 		type="button"
 		class="rounded bg-blue-500 px-4 py-2 text-white"
@@ -34,7 +33,7 @@
 	{#if choice === 0}
 		<div class="w-full max-w-4xl">
 			<Feed feedType="posts">
-				<Post url="posts/list" slot="Posts"  limit={30} />
+				<Post url="posts/list" slot="Posts" limit={30} />
 			</Feed>
 		</div>
 	{:else if choice === 1}

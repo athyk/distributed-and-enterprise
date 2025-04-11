@@ -5,8 +5,7 @@
 	import type { RegiserResponse } from '$lib/api/apiType';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import {getUserInfo} from '$lib/api/checkUser';
-
+	import { getUserInfo } from '$lib/api/checkUser';
 
 	let errorMessage = '';
 	let email: [string, string, string] = ['', 'Email', 'Enter your email'];
@@ -68,7 +67,7 @@
 	>
 		<svelte:fragment slot="pages">
 			{#if otp_required}
-			<Page bind:email bind:password bind:otp />
+				<Page bind:email bind:password bind:otp />
 			{:else}
 				<Page bind:email bind:password />
 			{/if}

@@ -43,7 +43,6 @@
 			} else {
 				data = response.global_announcements;
 			}
-
 		} else {
 			console.error('Error fetching announcements:', response.error_message);
 			return [];
@@ -97,9 +96,9 @@
 	});
 </script>
 
-<Popup bind:errorMessage/>
+<Popup bind:errorMessage />
 
-{#each data as announcement,index (announcement.id + '-' + index)}
+{#each data as announcement, index (announcement.id + '-' + index)}
 	<Post
 		author={announcement.user}
 		date={converTimetoUnix(announcement.uploaded)}

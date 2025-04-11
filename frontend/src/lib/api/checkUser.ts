@@ -19,8 +19,8 @@ export async function isLoggedIn(): Promise<boolean> {
 	}
 }
 
-export async function isUserID(userId: number,useLocalStorage=false): Promise<boolean> {
-	if(useLocalStorage){
+export async function isUserID(userId: number, useLocalStorage = false): Promise<boolean> {
+	if (useLocalStorage) {
 		const userInfoString = localStorage.getItem('userInfo');
 		if (userInfoString) {
 			const userInfo = JSON.parse(userInfoString) as MeResponse;
@@ -35,12 +35,12 @@ export async function isUserID(userId: number,useLocalStorage=false): Promise<bo
 	}
 }
 
-export async function checkPermisions(communityId:number): Promise<boolean> {
-	const response = await get(`community/${communityId}/members`) as response;
-	let msg = response.error_message[0].toUpperCase();
+export async function checkPermisions(communityId: number): Promise<boolean> {
+	const response = (await get(`community/${communityId}/members`)) as response;
+	const msg = response.error_message[0].toUpperCase();
 	if (msg === 'USER ROLE: ADMIN' || msg === 'USER ROLE: MODERATOR') {
 		return true;
-	}else{
+	} else {
 		return false;
 	}
 }
