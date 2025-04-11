@@ -124,12 +124,10 @@
 
 	<div class={classStyle}>
 		{#if multi_select && selected.length > 0}
-			<div
-				class="scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 flex items-center space-x-2 overflow-x-auto"
-			>
+			<div class="flex flex-wrap items-center space-x-2">
 				{#each selected as [name, itemId]}
 					<div
-						class="flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs whitespace-nowrap text-blue-800"
+						class="flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs whitespace-nowrap text-blue-800 mb-2"
 					>
 						<span>{name}</span>
 						<button
