@@ -127,7 +127,7 @@
 			<div class="flex flex-wrap items-center space-x-2">
 				{#each selected as [name, itemId]}
 					<div
-						class="flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs whitespace-nowrap text-blue-800 mb-2"
+						class="mb-2 flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs whitespace-nowrap text-blue-800"
 					>
 						<span>{name}</span>
 						<button
