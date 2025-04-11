@@ -8,7 +8,7 @@ from backend.community.events.local_functions import location_name_to_coords, ad
 from math import inf as INFINITY
 
 
-def create_event(user_id: int, community_id: int, title: str, description: str, location: str, datetime: str, duration: int, tags: list) -> tuple[bool, int, list, int]:
+def create_event(user_id: int, community_id: int, title: str, description: str, location: str, datetime: str, duration: int, tags: list,lat_lng: list[float] = None) -> tuple[bool, int, list, int]:
     """
     This function verifies incoming data and creates a new community event
     If any errors arise then relevant error messages are returned.
@@ -18,14 +18,15 @@ def create_event(user_id: int, community_id: int, title: str, description: str, 
     community_verify, community_error = verify_integer(community_id, 1, INFINITY, 'Community ID')
     title_verify, title_error = verify_string(title, 1, 50, 'Title')
     description_verify, description_error = verify_string(description, 1, 1024, 'Description')
-    location_verify, location_error = verify_string(location, 1, 2048, 'Location')
+    location_verify, location_error = verify_string(location, 1, 2048, 'Location') if location else (True, 'None')
     datetime_verify, datetime_error = verify_string(datetime, 10, 10, 'DateTime')
     duration_verify, duration_error = verify_integer(duration, 1, 672, 'Duration')
     tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
+    lat_lng_verify, lat_lng_error = verify_list(lat_lng, 2, 2, 'Latitude and Longitude') if lat_lng else (True, '')
 
-    if False in [user_verify, community_verify, title_verify, description_verify, location_verify, datetime_verify, duration_verify, tags_verify]:
+    if False in [user_verify, community_verify, title_verify, description_verify, location_verify, datetime_verify, duration_verify, tags_verify,lat_lng_verify]:
 
-        all_errors = [user_error, community_error, title_error, description_error, location_error, datetime_error, duration_error, tags_error]
+        all_errors = [user_error, community_error, title_error, description_error, location_error, datetime_error, duration_error, tags_error,lat_lng_error]
         error_messages = [item for item in all_errors if item.strip()]
 
         return False, 400, error_messages, -1
@@ -45,7 +46,13 @@ def create_event(user_id: int, community_id: int, title: str, description: str, 
             duration=duration
         )
 
-        success, lng, lat, message = location_name_to_coords(location)
+        success = True
+
+        if lat_lng and len(lat_lng) == 2:
+            lng, lat = lat_lng
+
+        else:
+            success, lng, lat, message = location_name_to_coords(location)
 
         if success:
             new_event.longitude = lng

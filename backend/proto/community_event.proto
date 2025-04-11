@@ -18,6 +18,8 @@ message EventDataRequest {
     int32 duration = 7;
     // tags to be applied to the event
     repeated int32 tags = 8;
+    // longitude latitude of the event location
+    repeated float lat_lng = 9;
 }
 
 // EventResponse is the basic return data needed for every response

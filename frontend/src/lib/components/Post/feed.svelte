@@ -1,18 +1,25 @@
 <script lang="ts">
-	import CreatePost from '$components/Post/createPost.svelte';
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
+	import { isLoggedIn } from '$lib/api/checkUser';
+
+	import CreateEditPost from '$components/Post/CreateEdit/Edit-Create-Post.svelte';
+	import CreateEditAnnoucement from '$components/Post/CreateEdit/Edit-Create-Annoucement.svelte';
+	import CreateEditEvent from '$components/Post/CreateEdit/Edit-Create-Event.svelte';
 
 	type PostType = 'posts' | 'events' | 'announcements';
 	export let feedType: PostType = 'posts';
 	export let showActions = true;
+	export let feedClass = 'flex w-full flex-wrap justify-center';
+	export let communityID = 1;
 
 	let refreshKey = 0;
 
 	let modalShown = false;
 	let editShown = false;
 	let editID = 0;
-	let communityID = 1;
+
+	let scrollTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	function showModal() {
 		modalShown = true;
@@ -38,23 +45,42 @@
 		}
 	}
 
+	function handleScroll() {
+		if (!browser) return;
+		if (scrollTimeout) return;
+
+		const { scrollTop, scrollHeight, clientHeight } = document.documentElement || document.body;
+
+		if (scrollTop + clientHeight >= scrollHeight - 500) {
+			document.dispatchEvent(new CustomEvent('scrollbottomreach'));
+			scrollTimeout = setTimeout(() => (scrollTimeout = null), 1000);
+		}
+	}
+
 	type EditPostEvent = CustomEvent<{ id: number; communityId?: number }>;
 	const eventHandler = (e: Event) => handleEditPost(e as EditPostEvent);
 
 	onMount(() => {
 		if (browser) {
 			document.addEventListener('editpost', eventHandler);
+			document.addEventListener('scroll', handleScroll);
 		}
+		isLoggedIn().then((result) => {
+			if (!result) {
+				showActions = false;
+			}
+		});
 	});
 
 	onDestroy(() => {
 		if (browser) {
 			document.removeEventListener('editpost', eventHandler);
+			document.removeEventListener('scroll', handleScroll);
 		}
 	});
 </script>
 
-<div class="flex w-full flex-wrap justify-center">
+<div class={feedClass}>
 	{#if showActions}
 		<button
 			type="button"
@@ -74,35 +100,37 @@
 			</svg>
 		</button>
 		{#if modalShown}
-			{#if feedType === 'posts'}
-				<div
-					class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-				>
-					<CreatePost
+			<div
+				class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+			>
+				{#if feedType === 'posts'}
+					<CreateEditPost
 						bind:showModal={modalShown}
-						edit={editShown}
-						{editID}
 						onClose={() => hideModal()}
 						onSuccess={() => (refreshKey += 1)}
+						edit={editShown}
+						{editID}
 					/>
-				</div>
-			{:else if feedType === 'events'}
-				<h1>TBD</h1>
-			{:else if feedType === 'announcements'}
-				<div
-					class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
-				>
-					<CreatePost
+				{:else if feedType === 'events'}
+					<CreateEditEvent
 						bind:showModal={modalShown}
-						edit={editShown}
-						{editID}
 						onClose={() => hideModal()}
 						onSuccess={() => (refreshKey += 1)}
-						annnoucement={true}
+						edit={editShown}
+						{editID}
 						{communityID}
 					/>
-				</div>
-			{/if}
+				{:else if feedType === 'announcements'}
+					<CreateEditAnnoucement
+						bind:showModal={modalShown}
+						onClose={() => hideModal()}
+						onSuccess={() => (refreshKey += 1)}
+						edit={editShown}
+						{editID}
+						{communityID}
+					/>
+				{/if}
+			</div>
 		{/if}
 	{/if}
 	{#key refreshKey}

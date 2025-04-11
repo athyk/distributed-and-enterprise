@@ -5,6 +5,7 @@
 	import type { RegiserResponse } from '$lib/api/apiType';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
+	import { getUserInfo } from '$lib/api/checkUser';
 
 	let errorMessage = '';
 	let email: [string, string, string] = ['', 'Email', 'Enter your email'];
@@ -14,7 +15,6 @@
 	let otp_required = false;
 
 	onMount(() => {
-		// Use the $page store to access URL search parameters
 		const searchParams = new URLSearchParams($page.url.search);
 		if (searchParams.get('otp') === 'true') {
 			otp_required = true;
@@ -38,6 +38,9 @@
 		let response = (await post('auth/login', data)) as RegiserResponse;
 		if (response.success) {
 			errorMessage = '';
+			localStorage.setItem('loggedin', 'true');
+			let userInfo = await getUserInfo();
+			localStorage.setItem('userInfo', JSON.stringify(userInfo));
 			window.location.href = '/';
 		} else {
 			errorMessage = '';
@@ -63,13 +66,11 @@
 		bind:errorMessage
 	>
 		<svelte:fragment slot="pages">
-			<div class="p-15">
-				{#if otp_required}
-					<Page bind:email bind:password bind:otp />
-				{:else}
-					<Page bind:email bind:password />
-				{/if}
-			</div>
+			{#if otp_required}
+				<Page bind:email bind:password bind:otp />
+			{:else}
+				<Page bind:email bind:password />
+			{/if}
 		</svelte:fragment>
 	</AccountCard>
 </div>
