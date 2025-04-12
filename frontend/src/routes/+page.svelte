@@ -1,132 +1,165 @@
-
 <script lang="ts">
-	import AnnouncementCard from '$components/announcementCard/announcementCard.svelte';
-	import { get } from '$lib/api/get';
+    import Feed from '$components/Post/feed.svelte';
+    import Post from '$components/Post/post.svelte';
+    import Annoucements from '$components/Post/annoucements.svelte';
+    import Event from '$lib/components/Post/event.svelte';
+
 	import { onMount } from 'svelte';
-	import Feed from '$components/Post/feed.svelte';
-	import Post from '$components/Post/post.svelte';
-	import Annoucements from '$components/Post/annoucements.svelte';
-	import Event from '$lib/components/Post/event.svelte';
 
-	interface Announcement {
-		id: number;
-		title: string;
-		description: string;
-		tags: string[];
-		user_id: number;
-		uploaded: string;
-		edit_user_id: number;
-		edit_uploaded: string | null;
-		community_id: number;
-	}
+    let choice = 0;
+	let name = '';
+	let userUrl = 'https://picsum.photos/id/63/200/200';
+	let picture_url = '';
 
-	// Define the structure of the API response
-	interface AnnouncementsResponse {
-		global_announcements: Announcement[];
-	}
+	const tabs = [
+        { label: 'Posts', component: Post, feedType: 'posts', url: 'posts/list' },
+        { label: 'Events', component: Event, feedType: 'events', url: 'community/events', showActions: true },
+        { label: 'Announcements', component: Annoucements, feedType: 'announcements', url: 'community/announcements' }
+    ];
 
-	let announcements: Announcement[] = [];
-	let visibleAnnouncements = 10;
-	let loadingMoreAnnouncements = false;
+	const communities = [
+		{ name: 'Community 1', description: 'Description Text Here' , member_count: 10},
+		{ name: 'Community 2', description: 'Another description here.' , member_count: 5},
+		{ name: 'Community 3', description: 'Yet another description.' , member_count: 20},
+	];
 
-	// Fetch announcements from the API endpoint.
-	async function fetchAnnouncements() {
-		console.log('Fetching announcements...');
-		try {
-			// Use the generic parameter to directly type the response.
-			const data = await get<AnnouncementsResponse>('community/announcements?offset=0&limit=50');
-			console.log('Announcements fetched:', data);
-			announcements = data.global_announcements;
-		} catch (error) {
-			console.error('Error fetching announcements:', error);
-		}
-	}
+	const recent_Posts = [
+		{ name: 'Post 1', created_at: '1742949086', description: 'Description Text Here' },
+		{ name: 'Post 2', created_at: '1742949086', description: 'Another description here.' },
+		{ name: 'Post 3', created_at: '1742949086', description: 'Yet another description.' },
+	]
 
-	function loadMoreAnnouncements() {
-		if (visibleAnnouncements < announcements.length) {
-			loadingMoreAnnouncements = true;
-			setTimeout(() => {
-				visibleAnnouncements += 10;
-				loadingMoreAnnouncements = false;
-			}, 500);
-		}
-	}
+	//localhost:8000/community/search?offset=0&limit=10&is_with=1
+	//localhost:8000/posts/list?user_id=1&offset=0&limit=5
 
-	// Function to check if we need to load more content when scrolling
-	function handleScroll(e) {
-		const announcementsContainer = document.getElementById('announcements-container');
-		if (!announcementsContainer) return;
-		
-		const rect = announcementsContainer.getBoundingClientRect();
-		const isNearBottom = rect.bottom < window.innerHeight + 200;
-		
-		if (isNearBottom && !loadingMoreAnnouncements && visibleAnnouncements < announcements.length) {
-			loadMoreAnnouncements();
-		}
-	}
 
 	onMount(() => {
-		fetchAnnouncements();
-		window.addEventListener('scroll', handleScroll);
-		return () => {
-			window.removeEventListener('scroll', handleScroll);
-		};
+		if (localStorage.getItem('loggedin') === 'true') {
+			const userInfo = localStorage.getItem('userInfo');
+			try {
+				let user = JSON.parse(userInfo).user;
+				name = user.first_name+' ' + user.last_name;
+				picture_url = user.picture_url;
+				userUrl = '/user/' + user.id.toString();
+			} catch (error) {
+				console.error('Error parsing user info:', error);
+				name = 'Guest';
+			}
+		} else {
+			name = 'Guest';
+		}
 	});
+
 </script>
 
-<div class="flex min-h-screen bg-gray-100 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
-	<!-- Two-Column Layout -->
-	<div class="mx-auto flex w-full max-w-7xl flex-col lg:flex-row lg:gap-8 xl:gap-12">
-		<!-- Left Column: Announcements -->
-		<div class="w-full mb-8 lg:mb-0 lg:w-1/3" id="announcements-container">
-			<div class="grid grid-cols-1 gap-4 sm:gap-5">
-				{#if announcements.length > 0}
-					{#each announcements.slice(0, visibleAnnouncements) as announcement (announcement.id)}
-						<AnnouncementCard
-							title={announcement.title}
-							description={announcement.description}
-							datetime={announcement.uploaded}
-							tags={announcement.tags}
-						/>
-					{/each}
-					{#if loadingMoreAnnouncements}
-						<div class="flex justify-center p-4">
-							<div class="loader h-8 w-8 rounded-full border-t-2 border-b-2 border-gray-500 animate-spin"></div>
-						</div>
-					{/if}
-					{#if visibleAnnouncements < announcements.length && !loadingMoreAnnouncements}
-						<button 
-							class="w-full py-3 text-sm text-gray-600 bg-white rounded-lg shadow-md hover:bg-gray-50"
-							on:click={loadMoreAnnouncements}
-						>
-							Load More Announcements
-						</button>
-					{/if}
-				{:else}
-					<div class="flex h-32 items-center justify-center rounded-xl bg-white p-6 shadow-md">
-						<p class="text-gray-500">No announcements found.</p>
-					</div>
-				{/if}
-			</div>
-		</div>
-		
-		<!-- Right Column: Posts Feed -->
-		<div class="w-full lg:w-2/3">
-			<div>
-				<Feed feedType="posts">
-					<Post url="posts/list?offset=0&limit=50" slot="Posts" />
-				</Feed>
-			</div>
-		</div>
-	</div>
-</div>
 
-<style>
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
-	}
-	.animate-spin {
-		animation: spin 1s linear infinite;
-	}
-</style>
+<div class="flex flex-col h-screen">
+    <div class="sticky top-0 bg-gray-300 z-50 shadow-md">
+        <div class="flex flex-col items-center pt-5">
+            {#if picture_url != ''}
+                <a href={userUrl} target="_blank" rel="noopener noreferrer">
+                    <img
+                        src={picture_url}
+                        alt="Profile Icon"
+                        class="h-11 w-11 rounded-full border"
+                    />
+                </a>
+            {/if}
+            <h1 class="pt-5 text-center text-3xl font-bold">Welcome {name}</h1>
+        </div>
+
+        <div class="mt-4 flex justify-center border-b border-gray-300">
+            {#each tabs as { label }, index}
+                <button
+                    class={`px-4 py-2 text-lg font-semibold ${
+                        choice === index ? 'border-b-4 border-blue-500 text-blue-500' : 'text-gray-500'
+                    }`}
+                    on:click={() => (choice = index)}
+                >
+                    {label}
+                </button>
+            {/each}
+        </div>
+    </div>
+
+
+    <div class="flex flex-1 overflow-hidden">
+        <div class="w-1/4 p-4 hidden md:block">
+            <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5">
+                <h1 class="text-lg font-bold text-gray-700">Unlock the full potential of UniHub</h1>
+                <ul class="mt-2 space-y-2 list-disc list-inside text-gray-600">
+                    <li>Communicate with fellow Students</li>
+                    <li>Find out about the latest news</li>
+                    <li>Join events and activities</li>
+                </ul>
+                <a class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block" href="/register">
+                    Create an account
+                </a>
+				<p class="mt-2 text-center text-sm text-gray-500">
+					Already have an account? <a href="/login" class="text-blue-500">Login</a>
+				</p>
+            </div>
+
+			<div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
+				<h1 class="text-lg font-bold text-gray-700">My Recent Posts</h1>
+				<div class="mt-4 space-y-4">
+					{#each recent_Posts as post}
+						<div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
+							<h2 class="text-gray-800 font-semibold ">{post.name}</h2>
+							<p class="mt-1 text-sm text-gray-600">{post.description}</p>
+						</div>
+					{/each}
+				</div>
+				<a class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600" href="/communities">
+					View All
+				</a>
+			</div>
+        </div>
+
+
+        <div class="w-full md:w-1/2 px-4 overflow-y-auto scrollbar-none">
+            <div class="min-h-screen">
+                {#if choice === 0}
+                    <div class="w-full max-w-4xl">
+                        <Feed feedType="posts">
+                            <Post url="posts/list" slot="Posts" limit={30} />
+                        </Feed>
+                    </div>
+                {:else if choice === 1}
+                    <div class="w-full max-w-4xl">
+                        <Feed feedType="events" showActions={true} communityID={1}>
+                            <Event url="community/events" slot="Posts" limit={30} />
+                        </Feed>
+                    </div>
+                {:else if choice === 2}
+                    <div class="w-full max-w-4xl">
+                        <Feed feedType="announcements">
+                            <Annoucements url="community/announcements" slot="Posts" limit={30} />
+                        </Feed>
+                    </div>
+                {/if}
+            </div>
+        </div>
+
+		<div class="w-1/4 p-4 hidden md:block">
+			<div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5">
+				<h1 class="text-lg font-bold text-gray-700">My Top Communities</h1>
+				<div class="mt-4 space-y-4">
+					{#each communities as community}
+						<div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
+							<h2 class="text-gray-800 font-semibold ">{community.name}</h2>
+							<p class="mt-1 text-sm text-gray-600">{community.member_count} members</p>
+							<p class="mt-1 text-sm text-gray-600">{community.description}</p>
+							<a class="mt-2 text-blue-500 hover:underline" href="/community/{community.name}">
+								Go to
+							</a>
+						</div>
+					{/each}
+				</div>
+				<a class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600" href="/communities">
+					Find More
+				</a>
+			</div>
+		</div>
+    </div>
+</div>
