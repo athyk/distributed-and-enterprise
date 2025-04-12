@@ -19,12 +19,13 @@
 	export let offset = 0;
 	export let limit = 10;
 	export let fixed = false;
+	export let params = '';
 	let end = false;
 	let formatted_url = '';
 	let errorMessage = '';
 
 	async function GetPosts() {
-		formatted_url = url + '?offset=' + offset + '&limit=' + limit;
+		formatted_url = url + '?offset=' + offset + '&limit=' + limit+"&"+params;
 		const response = (await get(formatted_url)) as EventResponse;
 		if (response.success === true) {
 			const globalEvents = response.global_events || [];
