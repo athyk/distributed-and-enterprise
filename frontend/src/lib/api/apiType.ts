@@ -38,7 +38,7 @@ export type globalAnnouncementData = {
 	id: number;
 	title: string;
 	description: string;
-	tags: string[];
+	tags: string[] | [string, number][] | number[];
 	user_id: number;
 	uploaded: string;
 	edit_user_id: number;
@@ -81,7 +81,7 @@ export type postsData = {
 	id: number;
 	title: string;
 	description: string;
-	tags: string[];
+	tags: string[] | [string, number][] | number[];
 	images: string[];
 	user_id: number;
 	user_data: UserInfo;
@@ -112,6 +112,14 @@ export type EventResponse = {
 	success: boolean;
 	error_message: string[];
 	global_events: EventDataResponse[];
+	events: EventDataResponse[];
+};
+
+export type EventSingleResponse = {
+	success: boolean;
+	error_message: string[];
+	http_status: number;
+	event: EventDataResponse;
 };
 
 export type EventDataResponse = {
@@ -124,7 +132,7 @@ export type EventDataResponse = {
 	duration: string;
 	latitude: number;
 	longitude: number;
-	tags: string[];
+	tags: string[] | [string, number][] | number[];
 };
 
 export type MeResponse = {
@@ -162,4 +170,12 @@ export type CommunitySearchResponse = {
 	success: boolean;
 	error_message: string[];
 	communities: communityData[];
+};
+
+export type OSMPlace = {
+	lat: string;
+	lon: string;
+	type: string;
+	name: string;
+	display_name: string;
 };

@@ -63,7 +63,8 @@ class Community_Event_Service(community_event_pb2_grpc.CommunityEventServicer):
             request.location,
             request.datetime,
             request.duration,
-            list(request.tags)
+            list(request.tags),
+            list(request.lat_lng)
             )
         
         status = community_event_pb2.EventResponse(

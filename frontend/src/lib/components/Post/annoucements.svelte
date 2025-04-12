@@ -7,10 +7,18 @@
 	import Text from './Sections/text.svelte';
 	import Tags from './Sections/tags.svelte';
 	import { browser } from '$app/environment';
+	import Popup from '$components/ErrorPopUp/popup.svelte';
 
 	import { onMount, onDestroy } from 'svelte';
 
 	export let url = '';
+	export let offset = 0;
+	export let limit = 10;
+	export let fixed = false;
+	export let params = '';
+	let end = false;
+	let formatted_url = '';
+	let errorMessage = '';
 
 	let data: globalAnnouncementData[] = [];
 
@@ -21,9 +29,21 @@
 	}
 
 	async function GetAnnouncments() {
-		const response = (await get(url)) as globalAnnouncement;
+		formatted_url = url + '?offset=' + offset + '&limit=' + limit+"&"+params;
+		const response = (await get(formatted_url)) as globalAnnouncement;
 		if (response.http_status === 200) {
-			data = response.global_announcements;
+			if (response.global_announcements.length === 0) {
+				console.log('No announcements found');
+				end = true;
+			} else if (response.global_announcements.length < limit) {
+				end = true;
+			}
+
+			if (data.length > 0) {
+				data = [...data, ...response.global_announcements];
+			} else {
+				data = response.global_announcements;
+			}
 		} else {
 			console.error('Error fetching announcements:', response.error_message);
 			return [];
@@ -39,11 +59,22 @@
 		if (response.success === true) {
 			console.log('Post deleted successfully');
 			data = data.filter((post) => post.id !== postId);
-			alert('Annoucement deleted successfully');
+			errorMessage = 'Post deleted successfully';
 			GetAnnouncments();
 		} else {
 			console.error('Error deleting post:', response.error_message);
+			errorMessage = response.error_message[0];
 		}
+	}
+
+	function handleBottomSroll() {
+		console.log('Bottom scroll reached');
+		if (end || fixed) {
+			console.log('No more posts to load');
+			return;
+		}
+		offset += limit;
+		GetAnnouncments();
 	}
 
 	onMount(() => {
@@ -52,6 +83,7 @@
 			document.addEventListener('deletePost', (e: Event) =>
 				handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
 			);
+			document.addEventListener('scrollbottomreach', handleBottomSroll);
 		}
 	});
 
@@ -60,11 +92,14 @@
 			document.removeEventListener('deletePost', (e: Event) =>
 				handleDelete(e as CustomEvent<{ id: number; communityId: number }>)
 			);
+			document.removeEventListener('scrollbottomreach', handleBottomSroll);
 		}
 	});
 </script>
 
-{#each data as announcement (announcement.id)}
+<Popup bind:errorMessage />
+
+{#each data as announcement, index (announcement.id + '-' + index)}
 	<Post
 		author={announcement.user}
 		date={converTimetoUnix(announcement.uploaded)}
