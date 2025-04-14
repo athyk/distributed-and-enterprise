@@ -19,7 +19,7 @@
 	export let offset = 0;
 	export let limit = 10;
 	export let fixed = false;
-	export let params = '';
+	export let params = 1;
 	let formatted_url = '';
 	let end = false;
 

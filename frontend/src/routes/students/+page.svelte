@@ -43,116 +43,101 @@
 
 	// --- Fetch Function (Modified with Logging) ---
 	async function fetchCommunities(query: string = '', tags: Tag[] = []): Promise<void> {
-    isLoading = true;
-    error = null;
-    // Log: Function entry point with parameters
-    console.log(`[fetchCommunities] Called with query: "${query}", tags:`, JSON.stringify(tags));
+		isLoading = true;
+		error = null;
+		// Log: Function entry point with parameters
+		console.log(`[fetchCommunities] Called with query: "${query}", tags:`, JSON.stringify(tags));
 
-    try {
-        const url = new URL(`${API_BASE_URL}/community/search`);
-        const trimmedQuery = query.trim();
+		try {
+			const url = new URL(`${API_BASE_URL}/community/search`);
+			const trimmedQuery = query.trim();
 
-        if (trimmedQuery) {
-            url.searchParams.append('name', trimmedQuery);
-        }
+			if (trimmedQuery) {
+				url.searchParams.append('name', trimmedQuery);
+			}
 
-        if (tags && tags.length > 0) {
-            // Add validation and error handling for tags
-            // Filter out any undefined or invalid tags before mapping
-            const validTags = tags.filter(tag => tag && typeof tag === 'object' && tag.id !== undefined);
-            
-            if (validTags.length > 0) {
-                // Only proceed if we have valid tags
-                const tagIds = validTags.map(tag => {
-                    // Extra safeguard to ensure id is a string
-                    return tag.id !== undefined ? tag.id.toString() : '';
-                }).filter(id => id !== ''); // Remove any empty strings
-                
-                if (tagIds.length > 0) {
-                    // Only append if we have valid tag IDs
-                    url.searchParams.append('tags', tagIds.join(','));
-                    // Log: Tag IDs being appended to URL
-                    console.log('[fetchCommunities] Appended Tag IDs to URL using tags parameter:', tagIds);
-                }
-            } else {
-                console.warn('[fetchCommunities] No valid tags found in selected tags array');
+			if (tags.length > 0) {
+				const tagIds = tags.map(tag => tag.id);
+				// Log: Tag IDs being appended to URL
+				console.log('[fetchCommunities] Extracted Tag IDs for API:', tagIds);
+				url.searchParams.append('tags', tagIds.join(','));
+			}
+
+			// Log: The final URL being requested
+			console.log('[fetchCommunities] Requesting URL:', url.toString());
+			const response = await fetch(url.toString());
+
+			if (!response.ok) {
+				throw new Error(`API Error: ${response.status} ${response.statusText}`);
+			}
+
+			const data = await response.json();
+			// Log: Raw data received from the API
+			console.log('[fetchCommunities] Raw API Response Data:', data);
+
+			let communitiesData: Community[];
+
+			// --- Adjust based on your actual API response structure ---
+            if (Array.isArray(data)) {
+				communitiesData = data;
+			} else if (data.communities && Array.isArray(data.communities)) {
+				communitiesData = data.communities;
+			} else if (data.results && Array.isArray(data.results)) {
+				communitiesData = data.results;
+			} else if (data.data && Array.isArray(data.data)) {
+                communitiesData = data.data;
+            } else if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
+                 communitiesData = [data];
             }
-        }
+            else {
+				throw new Error('Unexpected API response format. Expected an array of communities.');
+			}
+            // --- End structure adjustment ---
 
-        // Log: The final URL being requested
-        console.log('[fetchCommunities] Requesting URL:', url.toString());
-        const response = await fetch(url.toString());
+            // Log: Data identified as communities before processing
+            console.log('[fetchCommunities] Identified Communities Data:', communitiesData);
 
-        if (!response.ok) {
-            throw new Error(`API Error: ${response.status} ${response.statusText}`);
-        }
+			// Process and map communities
+			filteredCommunities = communitiesData.map(community => {
+				// Basic validation for tags structure within each community from API
+				const processedTags = Array.isArray(community.tags)
+					? community.tags
+							.map(tag => {
+								if (typeof tag === 'object' && tag !== null && tag.id !== undefined && tag.name !== undefined) {
+									return { id: tag.id, name: tag.name };
+								}
+								// Log warning if a tag format is unexpected
+								console.warn(`[fetchCommunities] Unexpected tag format in community ${community.id}:`, tag);
+								return null; // Or handle as needed, maybe return a default tag?
+							})
+							.filter(tag => tag !== null) // Remove any nulls from unexpected formats
+					: []; // Default to empty array if community.tags isn't an array
 
-        const data = await response.json();
-        // Log: Raw data received from the API
-        console.log('[fetchCommunities] Raw API Response Data:', data);
+				return {
+					id: community.id || Date.now(),
+					name: community.name || 'Unnamed Community',
+					isPublic: community.isPublic !== undefined ? community.isPublic : true,
+					description: community.description || 'No description available',
+					tags: processedTags as Tag[], // Assign the processed tags
+					degrees: Array.isArray(community.degrees) ? community.degrees : [],
+					totalMembers: community.totalMembers || 0,
+					creationDate: community.creationDate || new Date().toISOString()
+				};
+			});
 
-        let communitiesData: Community[];
+			// Log: Final processed communities assigned to state
+			console.log('[fetchCommunities] Processed filteredCommunities:', JSON.stringify(filteredCommunities));
 
-        // --- Adjust based on your actual API response structure ---
-        if (Array.isArray(data)) {
-            communitiesData = data;
-        } else if (data.communities && Array.isArray(data.communities)) {
-            communitiesData = data.communities;
-        } else if (data.results && Array.isArray(data.results)) {
-            communitiesData = data.results;
-        } else if (data.data && Array.isArray(data.data)) {
-            communitiesData = data.data;
-        } else if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-            communitiesData = [data];
-        }
-        else {
-            throw new Error('Unexpected API response format. Expected an array of communities.');
-        }
-        // --- End structure adjustment ---
+		} catch (err: any) {
+			console.error('[fetchCommunities] Failed to fetch communities:', err);
+			error = err instanceof Error ? err.message : 'Failed to load communities. Please try again later.';
+			filteredCommunities = [];
+		} finally {
+			isLoading = false;
+			console.log('[fetchCommunities] Fetch complete. isLoading:', isLoading);
+		}
+	}
 
-        // Log: Data identified as communities before processing
-        console.log('[fetchCommunities] Identified Communities Data:', communitiesData);
-
-        // Process and map communities
-        filteredCommunities = communitiesData.map(community => {
-            // Basic validation for tags structure within each community from API
-            const processedTags = Array.isArray(community.tags)
-                ? community.tags
-                        .map(tag => {
-                            if (typeof tag === 'object' && tag !== null && tag.id !== undefined && tag.name !== undefined) {
-                                return { id: tag.id, name: tag.name };
-                            }
-                            // Log warning if a tag format is unexpected
-                            console.warn(`[fetchCommunities] Unexpected tag format in community ${community.id}:`, tag);
-                            return null; // Or handle as needed, maybe return a default tag?
-                        })
-                        .filter(tag => tag !== null) // Remove any nulls from unexpected formats
-                : []; // Default to empty array if community.tags isn't an array
-
-            return {
-                id: community.id || Date.now(),
-                name: community.name || 'Unnamed Community',
-                isPublic: community.isPublic !== undefined ? community.isPublic : true,
-                description: community.description || 'No description available',
-                tags: processedTags as Tag[], // Assign the processed tags
-                degrees: Array.isArray(community.degrees) ? community.degrees : [],
-                totalMembers: community.totalMembers || 0,
-                creationDate: community.creationDate || new Date().toISOString()
-            };
-        });
-
-        // Log: Final processed communities assigned to state
-        console.log('[fetchCommunities] Processed filteredCommunities:', JSON.stringify(filteredCommunities));
-
-    } catch (err: any) {
-        console.error('[fetchCommunities] Failed to fetch communities:', err);
-        error = err instanceof Error ? err.message : 'Failed to load communities. Please try again later.';
-        filteredCommunities = [];
-    } finally {
-        isLoading = false;
-        console.log('[fetchCommunities] Fetch complete. isLoading:', isLoading);
-    }
-}
 	// --- Handle tag selection from sidebar (Modified with Logging) ---
 	function handleTagSelection(event: CustomEvent<{ selectedTags: Tag[] }>): void {
 		// Log: Raw event detail received

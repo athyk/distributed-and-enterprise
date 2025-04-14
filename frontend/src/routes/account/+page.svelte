@@ -3,6 +3,8 @@
 	import { writable } from 'svelte/store';
 	import { get } from '$lib/api/get';
 	import { Put } from '$lib/api/Put';
+	import Post from '$components/Post/post.svelte';
+	import Feed from '$components/Post/feed.svelte';
 
 	// Define the TypeScript interface for User.
 	interface User {
@@ -261,5 +263,33 @@
 		{:else}
 			<p class="text-center text-gray-600">Loading user data...</p>
 		{/if}
+
+
+	 "id": 1,
+            "email": "",
+            "email_verified": 1,
+            "first_name": "Quinn",
+            "last_name": "Porter",
+            "gender": "Female",
+            "date_of_birth": "1985-05-13",
+            "picture_url": "",
+            "degree_id": 94,
+            "year_of_study": 3,
+            "grad_date": "2027-03-21",
+            "tags": [
+                55,
+                17,
+                109,
+                24,
+                157
+            ],
+            "rank": "user",
+            "created_at": 1741910400,
+            "updated_at": 1741910400
+
+	
+
 	</div>
+	
+
 </main>
