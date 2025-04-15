@@ -1,9 +1,8 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import CommunityCard from '$lib/components/communityCard/communityCard.svelte';
-	import Sidebar from '$lib/components/Sidebar/sidebar.svelte';
+	import StudentCard from '$lib/components/studentCard/studentCard.svelte';
+	import { get } from '$lib/api/get';
 
 	// --- Type Definitions ---
 	interface Tag {
@@ -11,318 +10,262 @@
 		name: string;
 	}
 
-	interface Community {
+	interface Student {
 		id: number;
-		name: string;
-		isPublic: boolean;
-		description: string;
+		email: string;
+		first_name: string;
+		last_name: string;
+		gender: string;
+		date_of_birth: string;
+		picture_url: string;
+		degree_id: number;
+		year_of_study: number;
+		grad_date: string;
+		tags: number[];
+	}
+
+	interface ProcessedStudent extends Omit<Student, 'tags'> {
 		tags: Tag[];
-		degrees: string[];
-		totalMembers: number;
-		creationDate: string;
+		degreeName: string;
 	}
 
 	// --- Component State ---
 	let searchQuery: string = '';
-	let filteredCommunities: Community[] = [];
+	let students: ProcessedStudent[] = [];
+	let filteredStudents: ProcessedStudent[] = [];
 	let isLoading: boolean = true;
 	let error: string | null = null;
-	let selectedTags: Tag[] = [];
 
-	// --- API Configuration ---
-	const API_BASE_URL = 'http://localhost:8000';
+	// Define a map for degree IDs to names
+	const degreeMap: Record<number, string> = {
+		94: 'Computer Science',
+		95: 'Data Science',
+		96: 'Business Administration'
+	};
+
+	// Define a map for tag IDs to names
+	const tagMap: Record<number, string> = {
+		17: 'Programming',
+		24: 'Web Development',
+		55: 'AI',
+		109: 'Data Science',
+		157: 'Machine Learning'
+	};
 
 	// --- Debounce Timer Reference ---
 	let debounceTimer: number;
 
-	// --- Redirect to Create Community Page ---
-	function redirectToCreateCommunity(): void {
-		console.log('[redirectToCreateCommunity] Redirecting user to create community page');
-		goto('communities/create'); // Adjust this path as needed to match your actual route
-	}
-
-	// --- Fetch Function (Modified with Logging) ---
-	async function fetchCommunities(query: string = '', tags: Tag[] = []): Promise<void> {
+	// --- Fetch Function ---
+	async function fetchStudents(): Promise<void> {
 		isLoading = true;
 		error = null;
-		// Log: Function entry point with parameters
-		console.log(`[fetchCommunities] Called with query: "${query}", tags:`, JSON.stringify(tags));
+		console.log('[fetchStudents] Fetching student data');
 
 		try {
-			const url = new URL(`${API_BASE_URL}/community/search`);
-			const trimmedQuery = query.trim();
+			const response = await get<any>('users/');
+			console.log('[fetchStudents] Raw API Response Data:', response);
 
-			if (trimmedQuery) {
-				url.searchParams.append('name', trimmedQuery);
-			}
-
-			if (tags.length > 0) {
-				const tagIds = tags.map(tag => tag.id);
-				// Log: Tag IDs being appended to URL
-				console.log('[fetchCommunities] Extracted Tag IDs for API:', tagIds);
-				url.searchParams.append('tags', tagIds.join(','));
-			}
-
-			// Log: The final URL being requested
-			console.log('[fetchCommunities] Requesting URL:', url.toString());
-			const response = await fetch(url.toString());
-
-			if (!response.ok) {
-				throw new Error(`API Error: ${response.status} ${response.statusText}`);
-			}
-
-			const data = await response.json();
-			// Log: Raw data received from the API
-			console.log('[fetchCommunities] Raw API Response Data:', data);
-
-			let communitiesData: Community[];
+			let studentsData: Student[] = [];
 
 			// --- Adjust based on your actual API response structure ---
-            if (Array.isArray(data)) {
-				communitiesData = data;
-			} else if (data.communities && Array.isArray(data.communities)) {
-				communitiesData = data.communities;
-			} else if (data.results && Array.isArray(data.results)) {
-				communitiesData = data.results;
-			} else if (data.data && Array.isArray(data.data)) {
-                communitiesData = data.data;
-            } else if (typeof data === 'object' && data !== null && !Array.isArray(data)) {
-                 communitiesData = [data];
-            }
-            else {
-				throw new Error('Unexpected API response format. Expected an array of communities.');
+			if (Array.isArray(response)) {
+				studentsData = response;
+			} else if (response.students && Array.isArray(response.students)) {
+				studentsData = response.students;
+			} else if (response.users && Array.isArray(response.users)) {
+				studentsData = response.users;
+			} else if (response.results && Array.isArray(response.results)) {
+				studentsData = response.results;
+			} else if (response.data && Array.isArray(response.data)) {
+				studentsData = response.data;
+			} else {
+				throw new Error('Unexpected API response format. Expected an array of students.');
 			}
-            // --- End structure adjustment ---
 
-            // Log: Data identified as communities before processing
-            console.log('[fetchCommunities] Identified Communities Data:', communitiesData);
+			console.log('[fetchStudents] Identified Students Data:', studentsData);
 
-			// Process and map communities
-			filteredCommunities = communitiesData.map(community => {
-				// Basic validation for tags structure within each community from API
-				const processedTags = Array.isArray(community.tags)
-					? community.tags
-							.map(tag => {
-								if (typeof tag === 'object' && tag !== null && tag.id !== undefined && tag.name !== undefined) {
-									return { id: tag.id, name: tag.name };
-								}
-								// Log warning if a tag format is unexpected
-								console.warn(`[fetchCommunities] Unexpected tag format in community ${community.id}:`, tag);
-								return null; // Or handle as needed, maybe return a default tag?
-							})
-							.filter(tag => tag !== null) // Remove any nulls from unexpected formats
-					: []; // Default to empty array if community.tags isn't an array
+			// Process and map students
+			students = studentsData.map(student => {
+				// Map tag IDs to tag objects with names
+				const processedTags = Array.isArray(student.tags)
+					? student.tags.map(tagId => ({
+							id: tagId,
+							name: tagMap[tagId] || `Tag ${tagId}`
+					  }))
+					: [];
 
 				return {
-					id: community.id || Date.now(),
-					name: community.name || 'Unnamed Community',
-					isPublic: community.isPublic !== undefined ? community.isPublic : true,
-					description: community.description || 'No description available',
-					tags: processedTags as Tag[], // Assign the processed tags
-					degrees: Array.isArray(community.degrees) ? community.degrees : [],
-					totalMembers: community.totalMembers || 0,
-					creationDate: community.creationDate || new Date().toISOString()
+					...student,
+					degreeName: degreeMap[student.degree_id] || `Degree ${student.degree_id}`,
+					tags: processedTags
 				};
 			});
 
-			// Log: Final processed communities assigned to state
-			console.log('[fetchCommunities] Processed filteredCommunities:', JSON.stringify(filteredCommunities));
+			console.log('[fetchStudents] Processed Students:', students);
 
+			// Apply initial filter (empty search = show all)
+			applySearch('');
 		} catch (err: any) {
-			console.error('[fetchCommunities] Failed to fetch communities:', err);
-			error = err instanceof Error ? err.message : 'Failed to load communities. Please try again later.';
-			filteredCommunities = [];
+			console.error('[fetchStudents] Failed to fetch students:', err);
+			error = err instanceof Error ? err.message : 'Failed to load students. Please try again later.';
+			students = [];
+			filteredStudents = [];
 		} finally {
 			isLoading = false;
-			console.log('[fetchCommunities] Fetch complete. isLoading:', isLoading);
+			console.log('[fetchStudents] Fetch complete. isLoading:', isLoading);
 		}
 	}
 
-	// --- Handle tag selection from sidebar (Modified with Logging) ---
-	function handleTagSelection(event: CustomEvent<{ selectedTags: Tag[] }>): void {
-		// Log: Raw event detail received
-		console.log('[handleTagSelection] Received tag selection event. Detail:', JSON.stringify(event.detail));
-
-		if (event.detail && Array.isArray(event.detail.selectedTags)) {
-            const receivedTags = event.detail.selectedTags;
-             // Log: Tags assigned to state
-            console.log('[handleTagSelection] Updating selectedTags state to:', JSON.stringify(receivedTags));
-            selectedTags = receivedTags;
-            // Log: Triggering fetch after tag selection
-            console.log('[handleTagSelection] Triggering fetchCommunities due to tag selection change.');
-			fetchCommunities(searchQuery, selectedTags);
-        } else {
-            console.warn("[handleTagSelection] Received invalid tag selection event structure:", event.detail);
-            // Optionally reset tags or handle appropriately
-            console.log('[handleTagSelection] Resetting selectedTags and fetching without filters due to invalid event.');
-            selectedTags = [];
-            fetchCommunities(searchQuery, selectedTags);
-        }
+	// --- Apply Search Function ---
+	function applySearch(query: string = ''): void {
+		console.log(`[applySearch] Applying search with query: "${query}"`);
+		
+		filteredStudents = students.filter(student => {
+			// Filter by search query (name match)
+			if (!query) return true;
+			
+			const fullName = `${student.first_name} ${student.last_name}`.toLowerCase();
+			const searchLower = query.toLowerCase();
+			
+			return fullName.includes(searchLower);
+		});
+		
+		console.log('[applySearch] Filtered Students Count:', filteredStudents.length);
 	}
 
-	// --- Debounced Search Function (Modified with Logging) ---
+	// --- Debounced Search Function ---
 	function debouncedSearch(): void {
 		clearTimeout(debounceTimer);
-        // Log: Debounce triggered
-        console.log('[debouncedSearch] Input detected, setting timeout.');
+		console.log('[debouncedSearch] Input detected, setting timeout.');
 		debounceTimer = window.setTimeout(() => {
-            // Log: Debounce timeout finished, triggering fetch
-            console.log(`[debouncedSearch] Timeout finished. Triggering fetchCommunities with query "${searchQuery}" and selected tags:`, JSON.stringify(selectedTags));
-			fetchCommunities(searchQuery, selectedTags);
-		}, 500);
+			console.log(`[debouncedSearch] Timeout finished. Applying search with query "${searchQuery}"`);
+			applySearch(searchQuery);
+		}, 300);
 	}
 
-	// --- Explicit Search Function (Modified with Logging) ---
+	// --- Explicit Search Function ---
 	function handleSearchClick(): void {
 		clearTimeout(debounceTimer);
-        // Log: Search button clicked
-        console.log(`[handleSearchClick] Search button clicked. Triggering fetchCommunities with query "${searchQuery}" and selected tags:`, JSON.stringify(selectedTags));
-		fetchCommunities(searchQuery, selectedTags);
+		console.log(`[handleSearchClick] Search button clicked. Applying search with query "${searchQuery}"`);
+		applySearch(searchQuery);
 	}
 
-    // --- Function to remove a tag and refetch (Modified with Logging) ---
-    function removeTag(tagToRemove: Tag): void {
-        // Log: Attempting to remove a tag
-        console.log('[removeTag] Attempting to remove tag:', JSON.stringify(tagToRemove));
-        console.log('[removeTag] Current selectedTags before removal:', JSON.stringify(selectedTags));
-        selectedTags = selectedTags.filter(t => t.id !== tagToRemove.id);
-        // Log: State after removal
-        console.log('[removeTag] SelectedTags after removal:', JSON.stringify(selectedTags));
-        // Log: Triggering fetch after tag removal
-        console.log('[removeTag] Triggering fetchCommunities after removing tag.');
-        fetchCommunities(searchQuery, selectedTags);
-    }
+	// --- Clear Search Function ---
+	function clearSearch(): void {
+		searchQuery = '';
+		applySearch('');
+	}
 
-    // --- Function to clear all tags and refetch (Modified with Logging) ---
-    function clearAllTags(): void {
-        // Log: Clearing all tags
-        console.log('[clearAllTags] Clearing all selected tags.');
-        console.log('[clearAllTags] Current selectedTags before clearing:', JSON.stringify(selectedTags));
-        selectedTags = [];
-        // Log: State after clearing
-        console.log('[clearAllTags] SelectedTags after clearing:', JSON.stringify(selectedTags));
-         // Log: Triggering fetch after clearing tags
-        console.log('[clearAllTags] Triggering fetchCommunities after clearing all tags.');
-        fetchCommunities(searchQuery, selectedTags);
-    }
-
-	// --- Initial Data Load (Modified with Logging) ---
+	// --- Initial Data Load ---
 	onMount(() => {
-        // Log: Component mounted, triggering initial fetch
-        console.log('[onMount] Component mounted. Triggering initial fetchCommunities.');
-		fetchCommunities();
+		console.log('[onMount] Component mounted. Fetching students data.');
+		fetchStudents();
 	});
 </script>
 
-<!-- Component Layout (No changes needed here for logging) -->
-<div class="flex min-h-screen bg-gray-50">
-	<!-- Sidebar Component -->
-	<Sidebar on:tagselection={handleTagSelection} />
-
-	<!-- Main Content -->
-	<div class="ml-64 flex-1 p-6">
-		<div class="mx-auto max-w-6xl">
-			<!-- Header with Search Bar and Create Community Button -->
-			<div class="mb-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-				<!-- Search Bar Section -->
-				<div class="flex w-full max-w-lg items-center gap-2 rounded-full border border-gray-300 bg-white p-3 shadow-sm">
-					<input
-						type="text"
-						bind:value={searchQuery}
-						placeholder="Search for a community..."
-						class="w-full bg-transparent px-4 text-gray-900 outline-none"
-						on:input={debouncedSearch}
-						on:keydown={(e) => { if (e.key === 'Enter') handleSearchClick(); }}
-					/>
-					<button
-						on:click={handleSearchClick}
-						class="rounded-full bg-blue-500 px-6 py-2 text-white shadow-md transition hover:bg-blue-600 disabled:opacity-50"
-						disabled={isLoading}
-					>
-						{isLoading ? 'Loading...' : 'Search'}
-					</button>
-				</div>
-				
-				<!-- Create Community Button -->
+<main class="container mx-auto px-4 py-4">
+	<h1 class="mb-6 text-3xl font-bold text-gray-900 dark:text-white">Student Directory</h1>
+	
+	<!-- Search Bar Section -->
+	<div class="mb-8 flex justify-center">
+		<div class="flex w-full max-w-2xl items-center gap-2 rounded-full border border-gray-300 bg-white p-3 shadow-sm">
+			<input
+				type="text"
+				bind:value={searchQuery}
+				placeholder="Search by student name..."
+				class="w-full bg-transparent px-4 text-gray-900 outline-none"
+				on:input={debouncedSearch}
+				on:keydown={(e) => { if (e.key === 'Enter') handleSearchClick(); }}
+			/>
+			{#if searchQuery}
 				<button
-					on:click={redirectToCreateCommunity}
-					class="flex items-center justify-center gap-2 rounded-lg bg-green-500 px-6 py-3 text-white font-medium shadow-md transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+					on:click={clearSearch}
+					class="rounded-full p-2 text-gray-500 hover:bg-gray-100"
+					aria-label="Clear search"
 				>
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-						<path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+					<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
 					</svg>
-					Create Community
 				</button>
-			</div>
-
-			<!-- Active Filters Display -->
-			{#if selectedTags.length > 0}
-				<div class="mb-6 flex w-full flex-wrap items-center gap-2">
-					<span class="text-sm font-medium text-gray-700">Active filters:</span>
-					{#each selectedTags as tag (tag.id)}
-						<span class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
-							{tag.name}
-							<button
-								class="ml-1.5 -mr-0.5 flex-shrink-0 p-0.5 rounded-full inline-flex items-center justify-center text-blue-500 hover:bg-blue-200 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-								aria-label="Remove {tag.name} filter"
-								on:click={() => removeTag(tag)}
-							>
-                                <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                                    <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
-                                </svg>
-							</button>
-						</span>
-					{/each}
-					<button
-						class="text-sm text-blue-600 hover:underline ml-2"
-						on:click={clearAllTags}
-					>
-						Clear all
-					</button>
-				</div>
 			{/if}
-
-			<!-- Display Loading, Error, or Communities -->
-			{#if isLoading}
-				<div class="flex justify-center py-8">
-					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-blue-500"></div>
-				</div>
-			{:else if error}
-				<div class="rounded-lg bg-red-50 p-4 text-red-600">
-					<p>Error: {error}</p>
-				</div>
-			{:else}
-				{#if filteredCommunities.length > 0}
-					<div class="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-						{#each filteredCommunities as community (community.id)}
-							<CommunityCard
-								name={community.name}
-								isPublic={community.isPublic}
-								description={community.description}
-                                tags={community.tags.map(t => t.name)}
-								degrees={community.degrees}
-								totalMembers={community.totalMembers}
-								creationDate={community.creationDate}
-							/>
-						{/each}
-					</div>
-				{:else}
-					<div class="flex flex-col h-48 items-center justify-center rounded-lg bg-white p-6 text-center shadow-sm">
-						<p class="text-gray-600 mb-4">
-							No communities found matching your search {selectedTags.length > 0 ? 'and filters' : ''}.
-						</p>
-						<button
-							on:click={redirectToCreateCommunity}
-							class="flex items-center justify-center gap-2 rounded-lg bg-green-500 px-6 py-3 text-white font-medium shadow-md transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-						>
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-								<path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-							</svg>
-							Create Your First Community
-						</button>
-					</div>
-				{/if}
-			{/if}
+			<button
+				on:click={handleSearchClick}
+				class="rounded-full bg-blue-500 px-6 py-2 text-white shadow-md transition hover:bg-blue-600 disabled:opacity-50"
+				disabled={isLoading}
+			>
+				{isLoading ? 'Loading...' : 'Search'}
+			</button>
 		</div>
 	</div>
-</div>
+	
+	<!-- Display Loading, Error, or Students -->
+	{#if isLoading}
+		<div class="flex justify-center py-12">
+			<div class="animate-spin h-10 w-10 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+		</div>
+	{:else if error}
+		<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+			<strong class="font-bold">Error:</strong>
+			<span class="block sm:inline"> {error}</span>
+			<button 
+				class="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+				on:click={fetchStudents}
+			>
+				Retry
+			</button>
+		</div>
+	{:else if filteredStudents.length > 0}
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+			{#each filteredStudents as student (student.id)}
+				<StudentCard
+					firstName={student.first_name}
+					lastName={student.last_name}
+					gender={student.gender}
+					dateOfBirth={student.date_of_birth}
+					pictureUrl={student.picture_url}
+					degreeId={student.degree_id}
+					degreeName={student.degreeName}
+					yearOfStudy={student.year_of_study}
+					gradDate={student.grad_date}
+					tags={student.tags.map(t => t.id)}
+					tagNames={student.tags.map(t => t.name)}
+				/>
+			{/each}
+		</div>
+	{:else}
+		<div class="text-center py-8">
+			<p class="text-lg text-gray-500">No students found matching your search criteria.</p>
+			{#if searchQuery}
+				<button 
+					class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+					on:click={clearSearch}
+				>
+					Clear Search
+				</button>
+			{:else}
+				<button 
+					class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+					on:click={fetchStudents}
+				>
+					Refresh
+				</button>
+			{/if}
+		</div>
+	{/if}
+	
+	<!-- Debug section - Remove in production -->
+	{#if import.meta.env.DEV}
+		<div class="mt-10 p-4 border border-gray-300 rounded bg-gray-50">
+			<h3 class="text-lg font-semibold mb-2">Debug Information:</h3>
+			<p>Loading state: {isLoading ? 'Loading...' : 'Finished'}</p>
+			<p>Error: {error || 'None'}</p>
+			<p>Search query: "{searchQuery}"</p>
+			<p>Total students: {students.length}</p>
+			<p>Filtered students: {filteredStudents.length}</p>
+			<details>
+				<summary class="cursor-pointer text-blue-600">View filtered students data</summary>
+				<pre class="mt-2 p-2 bg-gray-100 overflow-auto max-h-96">{JSON.stringify(filteredStudents, null, 2)}</pre>
+			</details>
+		</div>
+	{/if}
+</main>
