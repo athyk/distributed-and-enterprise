@@ -265,27 +265,7 @@
 		{/if}
 
 
-	 "id": 1,
-            "email": "",
-            "email_verified": 1,
-            "first_name": "Quinn",
-            "last_name": "Porter",
-            "gender": "Female",
-            "date_of_birth": "1985-05-13",
-            "picture_url": "",
-            "degree_id": 94,
-            "year_of_study": 3,
-            "grad_date": "2027-03-21",
-            "tags": [
-                55,
-                17,
-                109,
-                24,
-                157
-            ],
-            "rank": "user",
-            "created_at": 1741910400,
-            "updated_at": 1741910400
+		<Post url="posts/list"  limit={30} params={1} />
 
 	
 
