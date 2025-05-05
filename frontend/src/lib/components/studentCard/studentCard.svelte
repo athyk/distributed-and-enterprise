@@ -1,92 +1,144 @@
-
 <script lang="ts">
+	// Props remain the same
 	export let firstName: string;
 	export let lastName: string;
 	export let gender: string;
-	export let dateOfBirth: string;
+	export let dateOfBirth: string; // Prop is now used for calculation
 	export let pictureUrl: string = '';
 	export let degreeId: number;
-	export let degreeName: string = 'Not specified'; // This would come from mapping the degree_id to a name
+	export let degreeName: string = 'Not specified';
 	export let yearOfStudy: number;
 	export let gradDate: string;
 	export let tags: number[] = [];
-	export let tagNames: string[] = []; // This would come from mapping the tag IDs to names
+	export let tagNames: string[] = [];
+
+	// Helper to calculate age from date string
+	function calculateAge(dobString: string): number | string {
+		if (!dobString) return 'N/A'; // Handle empty or null dobString
+
+		try {
+			const birthDate = new Date(dobString);
+			// Check if the parsed date is valid
+			if (isNaN(birthDate.getTime())) {
+				console.warn(`Invalid date format received for age calculation: ${dobString}`);
+				return 'Invalid Date';
+			}
+
+			const today = new Date();
+			let age = today.getFullYear() - birthDate.getFullYear();
+			const monthDiff = today.getMonth() - birthDate.getMonth();
+
+			// Adjust age if the birthday hasn't occurred yet this year
+			if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+				age--;
+			}
+
+            // Return 0 if calculated age is negative (e.g., future date)
+			return age < 0 ? 0 : age;
+
+		} catch (e) {
+			console.error('Error calculating age:', e);
+			return 'Error'; // Indicate calculation error
+		}
+	}
+
+    // Reactive declaration for age: Automatically updates when dateOfBirth changes
+    $: age = calculateAge(dateOfBirth);
+
+	// Helper to format other dates (like graduation)
+	function formatDate(dateString: string): string {
+		try {
+			return new Date(dateString).toLocaleDateString();
+		} catch (e) {
+			return dateString; // Fallback
+		}
+	}
 </script>
 
-<div class="mx-auto max-w-2xl space-y-4 rounded-xl bg-white p-6 shadow-lg dark:bg-gray-900">
-	<!-- Header with Student Name -->
-	<div class="flex flex-col items-center justify-between border-b pb-4 md:flex-row">
-		<div class="flex items-center">
-			{#if pictureUrl}
-				<img src={pictureUrl} alt="Profile" class="mr-4 h-12 w-12 rounded-full object-cover" />
-			{:else}
-				<div class="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 text-xl font-bold text-gray-600">
-					{firstName.charAt(0)}{lastName.charAt(0)}
-				</div>
-			{/if}
-			<h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-				{firstName} {lastName}
-			</h2>
-		</div>
-		<div class="mt-4 md:mt-0">
-			<!-- Connect Button -->
-			<button
-				class="rounded bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700"
+<!--
+  Main container:
+  - w-full: Takes full width of its parent container.
+  - min-h-80: Ensures a minimum height for consistency (adjust value as needed).
+  - Parent component should handle layout (e.g., CSS Grid) for multiple cards.
+-->
+<div class="flex w-full flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4 min-h-80">
+	<!-- Header: Simplified, no bottom border -->
+	<div class="flex items-center">
+		{#if pictureUrl}
+			<img src={pictureUrl} alt="Profile" class="mr-3 h-10 w-10 flex-shrink-0 rounded-full object-cover" />
+		{:else}
+			<!-- Lighter gray background for placeholder -->
+			<div
+				class="mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-lg font-semibold text-gray-700"
 			>
-				Connect +
-			</button>
+				{firstName.charAt(0)}{lastName.charAt(0)}
+			</div>
+		{/if}
+		<!-- Name is already bold -->
+		<h2 class="truncate text-xl font-bold text-gray-900">
+			{firstName} {lastName}
+		</h2>
+		<!-- Connect button is removed -->
+	</div>
+
+	<!-- Student Info Grid: Labels medium, Data semibold -->
+	<!-- Added Age field, calculated from dateOfBirth -->
+	<div class="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
+		<div>
+			<p class="text-sm font-medium text-gray-500">Gender</p>
+			<p class="font-semibold text-gray-800">{gender}</p>
+		</div>
+		<div>
+			<!-- New Age field -->
+			<p class="text-sm font-medium text-gray-500">Age</p>
+			<p class="font-semibold text-gray-800">{age}</p>
+		</div>
+		<div>
+			<p class="text-sm font-medium text-gray-500">Degree</p>
+			<p class="font-semibold text-gray-800">{degreeName}</p>
+		</div>
+		<div>
+			<p class="text-sm font-medium text-gray-500">Year of Study</p>
+			<p class="font-semibold text-gray-800">{yearOfStudy}</p>
 		</div>
 	</div>
 
-	<!-- Student Info -->
-	<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-		<div>
-			<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Gender</p>
-			<p class="text-gray-700 dark:text-gray-300">{gender}</p>
-		</div>
-		<div>
-			<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Date of Birth</p>
-			<p class="text-gray-700 dark:text-gray-300">{dateOfBirth}</p>
-		</div>
-		<div>
-			<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Degree</p>
-			<p class="text-gray-700 dark:text-gray-300">{degreeName}</p>
-		</div>
-		<div>
-			<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Year of Study</p>
-			<p class="text-gray-700 dark:text-gray-300">{yearOfStudy}</p>
-		</div>
-	</div>
-
-	<!-- Expected Graduation -->
+	<!-- Expected Graduation: Label medium, Data semibold -->
 	<div>
-		<p class="text-sm font-medium text-gray-500 dark:text-gray-400">Expected Graduation</p>
-		<p class="text-gray-700 dark:text-gray-300">{gradDate}</p>
+		<p class="text-sm font-medium text-gray-500">Expected Graduation</p>
+		<p class="font-semibold text-gray-800">{formatDate(gradDate)}</p>
 	</div>
 
-	<!-- Tags/Interests -->
+	<!-- Tags/Interests: Label medium, Tags semibold, simpler style -->
+	<!-- Using flex-grow to push the bottom row down if content is short -->
 	{#if tagNames && tagNames.length > 0}
-		<div>
-			<p class="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">Interests</p>
+		<div class="flex-grow"> <!-- Make this section grow -->
+			<p class="mb-1 text-sm font-medium text-gray-500">Interests</p>
 			<div class="flex flex-wrap gap-2">
 				{#each tagNames as tag}
-					<span
-						class="rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-					>
+					<!-- Lighter background, standard rounding, semibold text -->
+					<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
 						{tag}
 					</span>
 				{/each}
 			</div>
 		</div>
+    {:else}
+        <!-- Add an empty growing div if there are no tags to ensure bottom row stays down -->
+        <div class="flex-grow"></div>
 	{/if}
 
-	<!-- Bottom Row: Study Info -->
-	<div class="flex items-center justify-between border-t pt-4 text-gray-600 dark:text-gray-400">
+
+	<!-- Bottom Row: Simplified, no top border -->
+    <!-- This row will be pushed to the bottom because of flex-grow above -->
+	<div class="mt-auto flex items-center justify-between pt-2 text-sm text-gray-600"> <!-- Added mt-auto and pt-2 for spacing -->
 		<div class="flex items-center space-x-2">
-			<span class="text-lg font-bold text-gray-900 dark:text-white">Year {yearOfStudy}</span>
-			<span class="text-sm">Student</span>
+			<!-- Year remains bold -->
+			<span class="text-base font-bold text-gray-900">Year {yearOfStudy}</span>
+			<span class="text-gray-500">Student</span>
 		</div>
-		<div class="text-sm">
+		<!-- Graduation year semibold -->
+		<div class="font-semibold">
 			Graduates in {new Date(gradDate).getFullYear()}
 		</div>
 	</div>
