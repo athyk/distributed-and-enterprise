@@ -94,17 +94,7 @@ services:
       - minio
       - redis
     env_file: .env
-  svelte-frontend:
-    build:
-      context: ./frontend
-    container_name: svelte-frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-    depends_on:
-      - django-backend
-    working_dir: /app
+
 volumes:
   postgres_data:
   minio_data:

@@ -15,6 +15,7 @@
 	export let offset = 0;
 	export let limit = 10;
 	export let fixed = false;
+	export let params = '';
 	let end = false;
 	let formatted_url = '';
 	let errorMessage = '';
@@ -28,7 +29,7 @@
 	}
 
 	async function GetAnnouncments() {
-		formatted_url = url + '?offset=' + offset + '&limit=' + limit;
+		formatted_url = url + '?offset=' + offset + '&limit=' + limit+"&"+params;
 		const response = (await get(formatted_url)) as globalAnnouncement;
 		if (response.http_status === 200) {
 			if (response.global_announcements.length === 0) {
