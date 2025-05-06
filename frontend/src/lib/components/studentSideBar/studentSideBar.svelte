@@ -301,93 +301,9 @@
 	<div class="mb-6">
 		<h2 class="mb-3 text-xl font-bold">Filters</h2>
 		<div class="space-y-5">
-			<!-- Age Range Slider -->
-			<div class="border border-gray-700 rounded-lg p-3 {ageRangeEnabled ? 'bg-gray-800' : 'bg-gray-900'}">
-				<div class="flex items-center justify-between mb-3">
-					<div class="flex items-center gap-x-2">
-						<input
-							type="checkbox"
-							id="enable-age-range"
-							bind:checked={ageRangeEnabled}
-							on:change={toggleAgeRange}
-							class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
-						/>
-						<label for="enable-age-range" class="text-sm font-medium">Age Range</label>
-					</div>
-					<span class="text-sm font-medium text-blue-400">{ageMin} - {ageMax}</span>
-				</div>
-				
-				<div class="flex gap-4 mb-2">
-					<div class="w-1/2">
-						<label for="age-min" class="block text-xs text-gray-400 mb-1">Min</label>
-						<input
-							type="number"
-							id="age-min"
-							bind:value={ageMin}
-							min="18"
-							max={ageMax - 1}
-							on:change={handleRangeChange}
-							disabled={!ageRangeEnabled}
-							class="w-full rounded bg-gray-700 p-1 text-sm border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-						/>
-					</div>
-					<div class="w-1/2">
-						<label for="age-max" class="block text-xs text-gray-400 mb-1">Max</label>
-						<input
-							type="number"
-							id="age-max"
-							bind:value={ageMax}
-							min={ageMin + 1}
-							max="65"
-							on:change={handleRangeChange}
-							disabled={!ageRangeEnabled}
-							class="w-full rounded bg-gray-700 p-1 text-sm border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-						/>
-					</div>
-				</div>
-				
-				<input 
-					type="range"
-					class="range-primary w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer {ageRangeEnabled ? 'opacity-100' : 'opacity-50'}"
-					min="18"
-					max="65"
-					step="1"
-					bind:value={ageMin}
-					on:input={() => {
-						if (ageMin >= ageMax) ageMax = ageMin + 1;
-						handleRangeChange();
-					}}
-					disabled={!ageRangeEnabled}
-				/>
-			</div>
-
+		
 		
 
-			<!-- Gender -->
-			<div class="border border-gray-700 rounded-lg p-3 {queryParams.gender.enabled ? 'bg-gray-800' : 'bg-gray-900'}">
-				<div class="flex items-center gap-x-2 mb-2">
-					<input
-						type="checkbox"
-						id="enable-gender"
-						bind:checked={queryParams.gender.enabled}
-						on:change={() => toggleQueryParam('gender')}
-						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
-					/>
-					<label for="enable-gender" class="text-sm font-medium">Gender</label>
-				</div>
-				<select
-					id="value-gender"
-					bind:value={queryParams.gender.value}
-					disabled={!queryParams.gender.enabled}
-					on:change={dispatchQueryParamChange}
-					class="w-full rounded bg-gray-700 p-1.5 text-sm border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
-				>
-					<option disabled value="">Select gender</option>
-					{#each genderOptions as opt}
-						<option value={opt.value}>{opt.label}</option>
-					{/each}
-				</select>
-			</div>
 
 			<!-- Public -->
 			<div class="border border-gray-700 rounded-lg p-3 {queryParams.isPublic.enabled ? 'bg-gray-800' : 'bg-gray-900'}">
