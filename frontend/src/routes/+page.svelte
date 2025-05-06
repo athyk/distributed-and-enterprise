@@ -3,11 +3,13 @@
     import Post from '$components/Post/post.svelte';
     import Annoucements from '$components/Post/annoucements.svelte';
     import Event from '$lib/components/Post/event.svelte';
+    import { getUserInfo } from '$lib/api/checkUser';
+    import type { MeResponse,CommunitySearchResponse,communityData } from '$lib/api/apiType';
+    import { get } from '$lib/api/get';
 
 	import { onMount } from 'svelte';
 
     let choice = 0;
-	let name = '';
 	let userUrl = 'https://picsum.photos/id/63/200/200';
 	let picture_url = '';
 
@@ -17,36 +19,48 @@
         { label: 'Announcements', component: Annoucements, feedType: 'announcements', url: 'community/announcements' }
     ];
 
-	const communities = [
-		{ name: 'Community 1', description: 'Description Text Here' , member_count: 10},
-		{ name: 'Community 2', description: 'Another description here.' , member_count: 5},
-		{ name: 'Community 3', description: 'Yet another description.' , member_count: 20},
-	];
 
-	const recent_Posts = [
-		{ name: 'Post 1', created_at: '1742949086', description: 'Description Text Here' },
-		{ name: 'Post 2', created_at: '1742949086', description: 'Another description here.' },
-		{ name: 'Post 3', created_at: '1742949086', description: 'Yet another description.' },
-	]
+    let author: MeResponse;
+    let communities: communityData[] = [];
+    let loggedin = false;
 
-	//localhost:8000/community/search?offset=0&limit=10&is_with=1
-	//localhost:8000/posts/list?user_id=1&offset=0&limit=5
+    async function fetchUser() {
+        try {
+            const response = await getUserInfo();
+            if (response && response.user) {
+                author = response;
+                loggedin = true;
+            } else {
+                throw new Error('Invalid user data');
+            }
+        } catch (error) {
+            console.error('Error fetching user info:', error);
+            loggedin = false;
+        }
+    }
 
+    async function getCommunities() {
+        try {
+            let response:CommunitySearchResponse = await get('community/search?offset=0&limit=3&is_with=1');
+            if (response.success) {
+                communities = response.communities;
+            } else {
+                console.error('Error fetching communities:', response.error_message);
+            }
+        } catch (error) {
+            console.error('Error fetching communities:', error);
+        }
+    }
 
 	onMount(() => {
 		if (localStorage.getItem('loggedin') === 'true') {
-			const userInfo = localStorage.getItem('userInfo');
 			try {
-				let user = JSON.parse(userInfo).user;
-				name = user.first_name+' ' + user.last_name;
-				picture_url = user.picture_url;
-				userUrl = '/user/' + user.id.toString();
+                getCommunities();
+				fetchUser();
+
 			} catch (error) {
 				console.error('Error parsing user info:', error);
-				name = 'Guest';
 			}
-		} else {
-			name = 'Guest';
 		}
 	});
 
@@ -65,7 +79,9 @@
                     />
                 </a>
             {/if}
-            <h1 class="pt-5 text-center text-3xl font-bold">Welcome {name}</h1>
+            <h1 class="pt-5 text-center text-3xl font-bold">
+                Welcome {loggedin && author?.user ? `${author.user.first_name} ${author.user.last_name}` : 'Guest'}
+            </h1>
         </div>
 
         <div class="mt-4 flex justify-center border-b border-gray-300">
@@ -85,6 +101,7 @@
 
     <div class="flex flex-1 overflow-hidden">
         <div class="w-1/4 p-4 hidden md:block">
+            {#if !loggedin}
             <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5">
                 <h1 class="text-lg font-bold text-gray-700">Unlock the full potential of UniHub</h1>
                 <ul class="mt-2 space-y-2 list-disc list-inside text-gray-600">
@@ -99,21 +116,49 @@
 					Already have an account? <a href="/login" class="text-blue-500">Login</a>
 				</p>
             </div>
+            {:else}
+                <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
+                        <div
+                        class="top-0 flex items-center space-x-2 rounded-t-2xl bg-white"
+                    >
+                        {#if author.user.picture_url != ''}
+                            <a href={'url'} target="_blank" rel="noopener noreferrer">
+                                <img src={author.user.picture_url} alt="Profile Icon" class="h-11 w-11 rounded-full" />
+                            </a>
+                        {:else}
+                            <a href={'url'} target="_blank" rel="noopener noreferrer">
+                                <img
+                                    src="https://picsum.photos/id/63/200/200"
+                                    alt="Profile Icon"
+                                    class="h-11 w-11 rounded-full"
+                                />
+                            </a>
+                        {/if}
+                        <span class="font-bold">{author.user.first_name} {author.user.last_name}</span>
+                        <a class="w-1/2 rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600 ml-auto" href="/user/{author.user.id}">
+                            Go To Profile
+                        </a>
+                    </div>
+                </div>
+            {/if}
 
-			<div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
-				<h1 class="text-lg font-bold text-gray-700">My Recent Posts</h1>
-				<div class="mt-4 space-y-4">
-					{#each recent_Posts as post}
-						<div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
-							<h2 class="text-gray-800 font-semibold ">{post.name}</h2>
-							<p class="mt-1 text-sm text-gray-600">{post.description}</p>
-						</div>
-					{/each}
-				</div>
-				<a class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600" href="/communities">
-					View All
-				</a>
-			</div>
+            <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
+                <h1 class="text-lg font-bold text-gray-700">
+                    {loggedin ? "My Communities" : "Communities"}
+                </h1>
+                <div class="mt-4 space-y-4">
+                    {#each communities as community}
+                        <div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
+                            <h2 class="text-gray-800 font-semibold ">{community.name}</h2>
+                            <p class="mt-1 text-sm text-gray-600">{community.member_count} members</p>
+                            <p class="mt-1 text-sm text-gray-600">{community.description}</p>
+                        </div>
+                    {/each}
+                </div>
+                <a class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600" href="/communities">
+                    View More
+                </a>
+            </div>
         </div>
 
 
@@ -141,25 +186,5 @@
             </div>
         </div>
 
-		<div class="w-1/4 p-4 hidden md:block">
-			<div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5">
-				<h1 class="text-lg font-bold text-gray-700">My Top Communities</h1>
-				<div class="mt-4 space-y-4">
-					{#each communities as community}
-						<div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
-							<h2 class="text-gray-800 font-semibold ">{community.name}</h2>
-							<p class="mt-1 text-sm text-gray-600">{community.member_count} members</p>
-							<p class="mt-1 text-sm text-gray-600">{community.description}</p>
-							<a class="mt-2 text-blue-500 hover:underline" href="/community/{community.name}">
-								Go to
-							</a>
-						</div>
-					{/each}
-				</div>
-				<a class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600" href="/communities">
-					Find More
-				</a>
-			</div>
-		</div>
     </div>
 </div>
