@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import CommunityCard from '$lib/components/communityCard/communityCard.svelte';
-	import Sidebar from '$lib/components/Sidebar/sidebar.svelte';
+	import Sidebar from '$lib/components/communitySidebar/communitySidebar.svelte';
 
 	// --- Type Definitions ---
 	interface Tag {
@@ -217,7 +217,7 @@
 <!-- Component Layout (No changes needed here) -->
 <div class="flex min-h-screen bg-gray-50">
 	<!-- Sidebar Component -->
-	<Sidebar on:tagselection={handleTagSelection} bind:selectedTags /> <!-- Pass selectedTags back for potential sync -->
+	<Sidebar on:tagselection={handleTagSelection}  /> <!-- Pass selectedTags back for potential sync -->
 
 	<!-- Main Content -->
 	<div class="ml-64 flex-1 p-6"> <!-- Adjust ml-64 if sidebar width changes -->

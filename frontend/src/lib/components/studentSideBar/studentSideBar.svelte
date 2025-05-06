@@ -297,13 +297,38 @@
 							 selectedYears.length > 0;
 </script>
 
-<aside class="fixed top-0 left-0 h-full w-72 overflow-y-auto bg-gray-900 px-4 py-6 text-white shadow-lg">
+<aside class="bg-gray-900 px-4 py-6 text-white shadow-lg">
 	<div class="mb-6">
 		<h2 class="mb-3 text-xl font-bold">Filters</h2>
 		<div class="space-y-5">
 		
 		
 
+			<!-- Gender -->
+			<div class="border border-gray-700 rounded-lg p-3 {queryParams.gender.enabled ? 'bg-gray-800' : 'bg-gray-900'}">
+				<div class="flex items-center gap-x-2 mb-2">
+					<input
+						type="checkbox"
+						id="enable-gender"
+						bind:checked={queryParams.gender.enabled}
+						on:change={() => toggleQueryParam('gender')}
+						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
+					/>
+					<label for="enable-gender" class="text-sm font-medium">Gender</label>
+				</div>
+				<select
+					id="value-gender"
+					bind:value={queryParams.gender.value}
+					disabled={!queryParams.gender.enabled}
+					on:change={dispatchQueryParamChange}
+					class="w-full rounded bg-gray-700 p-1.5 text-sm border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+				>
+					<option disabled value="">Select gender</option>
+					{#each genderOptions as opt}
+						<option value={opt.value}>{opt.label}</option>
+					{/each}
+				</select>
+			</div>
 
 			<!-- Public -->
 			<div class="border border-gray-700 rounded-lg p-3 {queryParams.isPublic.enabled ? 'bg-gray-800' : 'bg-gray-900'}">
