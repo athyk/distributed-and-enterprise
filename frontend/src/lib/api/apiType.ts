@@ -154,7 +154,24 @@ export type MeResponse = {
 		rank: string;
 		created_at: string;
 		updated_at: string;
-	};
+	},
+	users: {
+		id: number;
+		email: string;
+		email_verified: number;
+		first_name: string;
+		last_name: string;
+		gender: string;
+		date_of_birth: string;
+		picture_url: string;
+		degree_id: number;
+		year_of_study: number;
+		grad_date: string;
+		tags: number[];
+		rank: string;
+		created_at: string;
+		updated_at: string;
+	}[];
 };
 
 export type communityData = {

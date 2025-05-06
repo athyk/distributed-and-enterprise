@@ -13,7 +13,7 @@
 	export let feedClass = 'flex w-full flex-wrap justify-center';
 	export let communityID = 1;
 
-	let refreshKey = 0;
+	export let refreshKey = 0;
 
 	let modalShown = false;
 	let editShown = false;

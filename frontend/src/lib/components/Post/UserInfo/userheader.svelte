@@ -4,10 +4,21 @@
 	import type { MeResponse } from '$lib/api/apiType';
 	import { getDegreeName } from '$lib/api/getDegreeID';
 	import {getTagName} from '$lib/api/getTagID';
+    import UserEditModal from './userEditModal.svelte';
+	import { get } from '$lib/api/get';
 
-    export let user_id = 1;
+    export let user_id: number | null = null;
+    export let self = false;
     let userInfo:MeResponse;
     let degree_name: string | undefined = undefined;
+    let modalShown = false;
+    let dataloaded = false;
+    export let refreshKey = 0;
+
+    function showModal() {
+		modalShown = true;
+	}
+
 
     async function formatDegree(degree_id: number | string) {
 		try {
@@ -22,20 +33,78 @@
 	}
 
 
+
+
 	onMount(async () => {
+        console.warn('user_id:', user_id);
+        if (!self) {
+            getUser();
+            dataloaded = true;
+            return;
+        }
 		const response = (await getUserInfo()) as MeResponse;
 		if (response.success === true) {
 			user_id = response.user.id;
 			userInfo = response;
 			formatDegree(userInfo.user.degree_id);
+            dataloaded = true;
 		} else {
 			console.error('Error fetching user info:', response.error_message);
 		}
 	});
+
+    async function getUser() {
+        console.log('Fetching user data...');
+        try {
+            const response = await get('users/?user_id=' + user_id) as MeResponse;
+            if (response.success === true) {
+                console.log('User data fetched successfully:', response.users[0]);
+                user_id = response.users[0].id;
+                formatDegree(response.users[0].degree_id);
+                userInfo = {
+                    user: response.users[0],
+                    users: response.users,
+                    success: true,
+                    error_message: ''
+                }
+                console.log(userInfo.user.picture_url);
+                console.log(userInfo.user.first_name);
+                console.log(userInfo.user.last_name);
+                console.log(userInfo.user.year_of_study);
+                console.log(userInfo.user.degree_id);
+                console.log(userInfo.user.tags);
+                dataloaded = true;
+            } else {
+                console.error('Error fetching user info:', response.error_message);
+            }
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
+        }
+    }
+
+    async function refreshUserData() {
+        try {
+            const response = await getUserInfo() as MeResponse;
+            if (response.success === true) {
+                user_id = response.user.id;
+                userInfo = response;
+                formatDegree(userInfo.user.degree_id);
+                dataloaded = true;
+            } else {
+                console.error('Error refreshing user info:', response.error_message);
+            }
+        } catch (error) {
+            console.error('Failed to refresh user data:', error);
+        }
+    }
+
+    $: if (refreshKey > 0) {
+        console.log('Refreshing user data...');
+        refreshUserData();
+    }
 </script>
 
-
-{#if userInfo}
+{#if dataloaded && userInfo && userInfo.user}
 <div class="mb-4 flex flex-col sm:flex-row items-center sm:items-start border-b border-gray-300 pb-4 pt-5 gap-3">
     <div class="flex-shrink-0 mb-2 sm:mb-0">
         {#if userInfo.user.picture_url}
@@ -49,16 +118,16 @@
         <p class="text-gray-700">Year {userInfo.user.year_of_study} {degree_name} Student</p>
     </div>
     <div class="mt-2 sm:mt-0 sm:ml-auto">
-        <a href="/account/edit" class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 inline-block">
+        <button on:click={showModal} class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
             Edit Account
-        </a>
+        </button>
     </div>
 </div>
 <div class="mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
     <ul class="space-y-3">
         <li><strong>Member Since:</strong> {new Date(Number(userInfo.user.created_at) * 1000).toLocaleDateString()}</li>
         <li>
-            <strong>Tags:</strong> 
+            <strong>Tags:</strong>
             <div class="flex flex-wrap gap-2 mt-1">
                 {#if userInfo.user.tags?.length}
                     {#each userInfo.user.tags as tag, index}
@@ -76,4 +145,11 @@
         <li><strong>Gender:</strong> {userInfo.user.gender || 'Not specified'}</li>
     </ul>
 </div>
+    <UserEditModal
+        bind:modalShown={modalShown}
+        bind:refreshKey={refreshKey}
+        userInfo={userInfo}
+        on:close={() => (modalShown = false)}
+        on:refresh={() => (refreshKey += 1)}
+    />
 {/if}

@@ -297,7 +297,7 @@ class AccountsServicer(accounts_pb2_grpc.AccountsServicer):
         with get_db() as session:
             user = session.query(User).filter(User.id == req.user.id).first()
             # Picture URL is done as a separate request so other data won't exist.
-            if req.user.picture_url != user.picture_url:
+            if (req.user.picture_url != user.picture_url) and (req.user.picture_url != ''):
                 user.picture_url = req.user.picture_url
                 session.commit()
                 return accounts_pb2.Response(

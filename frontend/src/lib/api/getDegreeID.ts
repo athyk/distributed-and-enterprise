@@ -19,6 +19,6 @@ export async function getDegreeName(id: string) {
         return response.degrees[0].name;
     } else {
         console.error('Error fetching tag Name:', response.error_message);
-        return -1;
+        return "";
     }
 }
