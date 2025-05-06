@@ -256,7 +256,7 @@
 							 selectedYears.length > 0;
 </script>
 
-<aside class="fixed top-16 left-0 bottom-0 w-72 overflow-y-auto bg-gray-900 px-4 py-6 text-white shadow-lg">
+<aside class="md:w-72 lg:w-80 bg-gray-900 text-white shadow-lg flex flex-col  md:top-0 md:h-screen overflow-y-auto px-4 py-6 md:flex-shrink-0">
 	<div class="mb-6">
 		<h2 class="mb-3 text-xl font-bold">Filters</h2>
 		<div class="space-y-5">

@@ -1,29 +1,27 @@
-
 <script lang="ts">
 	import { onMount, createEventDispatcher } from 'svelte';
-	import { get } from '$lib/api/get';
+	// Removed: import { get } from '$lib/api/get'; // No longer fetching internally if props are provided
 
 	const dispatch = createEventDispatcher();
 
-	interface Tag {
-		name: string;
-		originalValue: any;
-	}
+	// --- Props ---
+	// These will be populated by the parent component
+	export let degrees: { id: number; name: string }[] = [];
+	export let tags: { id: number; name: string }[] = []; // Renamed from 'communityTags' for clarity, maps to parent's 'tags'
+	export let isLoading: boolean = false; // Indicates if the parent (student list) is loading
 
-	interface Degree {
-		id: number;
-		name: string;
-		created_at: number;
-		updated_at: number;
-	}
+	// --- Component State ---
 
-	// Age range
+	// Age range (remains internal to sidebar)
 	let ageMin = 18;
 	let ageMax = 65;
 	let ageRangeEnabled = false;
 	
-	// Participants range
-	let participantsMin = 1;
+	// Participants range - This seems specific to a different context (e.g. projects, not students).
+	// I'll keep it for now, but consider if it's needed for student filtering.
+	// If it's for 'year of study' or similar, it should be relabeled.
+	// For now, assuming it's a valid filter, though not used by the parent's student filter logic.
+	let participantsMin = 1; // Example, if this were for project size etc.
 	let participantsMax = 100;
 	let participantsRangeEnabled = false;
 
@@ -41,11 +39,33 @@
 	// State for collapsible sections
 	let isCommunityTagsOpen = true;
 	let isDegreesOpen = true;
+	let isYearsOpen = true; // Added for consistency
+
+	// Selections - now using IDs for consistency with parent filter logic
+	let selectedTagIds: number[] = [];
+	let selectedDegreeIds: number[] = [];
+	let selectedYears: number[] = [];
+
+	// Degree search (internal to sidebar UI)
+	let degreeSearchTerm = '';
+
+	// --- Reactive Computations ---
+
+	// Filtered degrees based on search term (uses the 'degrees' prop)
+	$: filteredDegrees = degreeSearchTerm.trim() && degrees
+		? degrees.filter(d => 
+			d.name.toLowerCase().includes(degreeSearchTerm.toLowerCase())
+		)
+		: degrees;
+
+	// Years of study options
+	const yearOptions = [1, 2, 3, 4, 5]; // Assuming up to 5 years, adjust as needed
+
+	// --- Functions ---
 
 	function getActiveQueryParams() {
 		const active: Record<string, any> = {};
 		
-		// Add gender and isPublic if enabled
 		for (const k in queryParams) {
 			const keyCasted = k as keyof typeof queryParams;
 			const param = queryParams[keyCasted];
@@ -58,24 +78,21 @@
 			}
 		}
 		
-		// Add age range if enabled
 		if (ageRangeEnabled) {
 			active['min_age'] = ageMin;
 			active['max_age'] = ageMax;
 		}
 		
-		// Add participants range if enabled
-		if (participantsRangeEnabled) {
+		if (participantsRangeEnabled) { // If this filter is relevant to students
 			active['min_participants'] = participantsMin;
 			active['max_participants'] = participantsMax;
 		}
 
-		// Add selected tags and degrees
-		if (selectedCommunityTags.length > 0) {
-			active['community_tags'] = selectedCommunityTags;
+		if (selectedTagIds.length > 0) {
+			active['community_tags'] = selectedTagIds; // Parent expects IDs
 		}
-		if (selectedDegrees.length > 0) {
-			active['degrees'] = selectedDegrees.map(d => d.id);
+		if (selectedDegreeIds.length > 0) {
+			active['degrees'] = selectedDegreeIds; // Parent expects IDs
 		}
 		if (selectedYears.length > 0) {
 			active['years'] = selectedYears;
@@ -91,7 +108,6 @@
 	function clearQueryParams() {
 		let changed = false;
 		
-		// Reset form controls
 		for (const k in queryParams) {
 			const keyCasted = k as keyof typeof queryParams;
 			const p = queryParams[keyCasted];
@@ -99,41 +115,16 @@
 				changed = true;
 			}
 			p.enabled = false;
-			if (keyCasted === 'isPublic') {
-				p.value = false;
-			} else if (keyCasted === 'gender') {
-				p.value = '';
-			}
+			if (keyCasted === 'isPublic') p.value = false;
+			else if (keyCasted === 'gender') p.value = '';
 		}
 		
-		// Reset range sliders
-		if (ageRangeEnabled) {
-			ageRangeEnabled = false;
-			ageMin = 18;
-			ageMax = 65;
-			changed = true;
-		}
+		if (ageRangeEnabled) { ageRangeEnabled = false; ageMin = 18; ageMax = 65; changed = true; }
+		if (participantsRangeEnabled) { participantsRangeEnabled = false; participantsMin = 1; participantsMax = 100; changed = true; }
 		
-		if (participantsRangeEnabled) {
-			participantsRangeEnabled = false;
-			participantsMin = 1;
-			participantsMax = 100;
-			changed = true;
-		}
-		
-		// Reset selections
-		if (selectedCommunityTags.length > 0) {
-			selectedCommunityTags = [];
-			changed = true;
-		}
-		if (selectedDegrees.length > 0) {
-			selectedDegrees = [];
-			changed = true;
-		}
-		if (selectedYears.length > 0) {
-			selectedYears = [];
-			changed = true;
-		}
+		if (selectedTagIds.length > 0) { selectedTagIds = []; changed = true; }
+		if (selectedDegreeIds.length > 0) { selectedDegreeIds = []; changed = true; }
+		if (selectedYears.length > 0) { selectedYears = []; changed = true; }
 
 		if (changed) dispatchQueryParamChange();
 	}
@@ -153,157 +144,89 @@
 		dispatchQueryParamChange();
 	}
 
-	function handleRangeChange() {
+	function handleRangeChange() { // Could be used by sliders if any
 		dispatchQueryParamChange();
 	}
 
-	let fetchedCommunityTags: Tag[] = [];
-	let selectedCommunityTags: string[] = [];
-	let isLoadingCommunityTags = true;
-	let communityTagsError: string | null = null;
-
-	async function fetchCommunityTags() {
-		isLoadingCommunityTags = true;
-		communityTagsError = null;
-		try {
-			const responseData = await get<any>('tags/list/');
-			const rawTags = responseData?.tags ?? (Array.isArray(responseData) ? responseData : []);
-
-			fetchedCommunityTags = rawTags
-				.map((tagInput: any): Tag | null => {
-					if (typeof tagInput === 'string' && tagInput.trim() !== '') {
-						return { name: tagInput.trim(), originalValue: tagInput };
-					}
-					if (tagInput && typeof tagInput === 'object' && typeof tagInput.name === 'string' && tagInput.name.trim() !== '') {
-						return { name: tagInput.name.trim(), originalValue: tagInput };
-					}
-					if (tagInput !== null && tagInput !== undefined) {
-            			console.warn('Skipping malformed community tag:', tagInput);
-        			}
-					return null;
-				})
-				.filter((tag): tag is Tag => tag !== null);
-		} catch (err: any) {
-			console.error('Error fetching community tags:', err);
-			communityTagsError = `Failed to load community tags: ${err.message || 'Unknown error'}`;
-			fetchedCommunityTags = [];
-		} finally {
-			isLoadingCommunityTags = false;
-		}
-	}
-
-	function toggleCommunityTag(tag: Tag) {
-		selectedCommunityTags = selectedCommunityTags.includes(tag.name)
-			? selectedCommunityTags.filter((t) => t !== tag.name)
-			: [...selectedCommunityTags, tag.name];
-		dispatch('communityTagSelectionChange', { selectedCommunityTags });
+	// Tag selection (using IDs)
+	function toggleCommunityTag(tagId: number) {
+		selectedTagIds = selectedTagIds.includes(tagId)
+			? selectedTagIds.filter((id) => id !== tagId)
+			: [...selectedTagIds, tagId];
+		// dispatch('communityTagSelectionChange', { selectedTagIds }); // Optional: if parent needs immediate notice of this specific change
 		dispatchQueryParamChange();
 	}
 
 	function clearAllCommunityTags() {
-		if (selectedCommunityTags.length) {
-			selectedCommunityTags = [];
-			dispatch('communityTagSelectionChange', { selectedCommunityTags });
+		if (selectedTagIds.length) {
+			selectedTagIds = [];
 			dispatchQueryParamChange();
 		}
 	}
 
-	// Degrees
-	let fetchedDegrees: Degree[] = [];
-	let selectedDegrees: Degree[] = [];
-	let isLoadingDegrees = true;
-	let degreesError: string | null = null;
-	let degreeSearchTerm = '';
-
-	async function fetchDegrees() {
-		isLoadingDegrees = true;
-		degreesError = null;
-		try {
-			const responseData = await get<any>('degrees/list/');
-			
-			if (responseData?.success && Array.isArray(responseData.degrees)) {
-				fetchedDegrees = responseData.degrees;
-			} else {
-				fetchedDegrees = [];
-				console.warn('Unexpected degree data format:', responseData);
-			}
-		} catch (err: any) {
-			console.error('Error fetching degrees:', err);
-			degreesError = `Failed to load degrees: ${err.message || 'Unknown error'}`;
-			fetchedDegrees = [];
-		} finally {
-			isLoadingDegrees = false;
-		}
-	}
-
-	function toggleDegreeSelection(degree: Degree) {
-		const isDegreeSelected = selectedDegrees.some(d => d.id === degree.id);
-		
-		selectedDegrees = isDegreeSelected
-			? selectedDegrees.filter(d => d.id !== degree.id)
-			: [...selectedDegrees, degree];
-			
-		dispatch('degreeSelectionChange', { selectedDegrees });
+	// Degree selection (using IDs)
+	function toggleDegreeSelection(degreeId: number) {
+		selectedDegreeIds = selectedDegreeIds.includes(degreeId)
+			? selectedDegreeIds.filter(id => id !== degreeId)
+			: [...selectedDegreeIds, degreeId];
 		dispatchQueryParamChange();
 	}
 
 	function clearAllDegrees() {
-		if (selectedDegrees.length) {
-			selectedDegrees = [];
-			dispatch('degreeSelectionChange', { selectedDegrees });
+		if (selectedDegreeIds.length) {
+			selectedDegreeIds = [];
 			dispatchQueryParamChange();
 		}
 	}
-
-	// Filtered degrees based on search term
-	$: filteredDegrees = degreeSearchTerm.trim() 
-		? fetchedDegrees.filter(d => 
-			d.name.toLowerCase().includes(degreeSearchTerm.toLowerCase())
-		)
-		: fetchedDegrees;
-
-	const years = [1, 2, 3, 4];
-	let selectedYears: number[] = [];
-
+	
+	// Year selection
 	function toggleYear(year: number) {
 		selectedYears = selectedYears.includes(year)
 			? selectedYears.filter((y) => y !== year)
 			: [...selectedYears, year];
-		dispatch('yearSelectionChange', { selectedYears });
 		dispatchQueryParamChange();
 	}
 
 	function clearAllYears() {
 		if (selectedYears.length) {
 			selectedYears = [];
-			dispatch('yearSelectionChange', { selectedYears });
 			dispatchQueryParamChange();
 		}
 	}
 
-	onMount(async () => {
-		await Promise.all([fetchCommunityTags(), fetchDegrees()]);
+	// Dispatch initial state once props are potentially ready (though onMount might be too early if props are async)
+	// Parent should ideally call applyFilter once student data and aux data is loaded.
+	// For now, dispatching onMount is fine to set initial empty/default filters.
+	onMount(() => {
 		dispatchQueryParamChange();
-		dispatch('communityTagSelectionChange', { selectedCommunityTags });
-		dispatch('degreeSelectionChange', { selectedDegrees });
-		dispatch('yearSelectionChange', { selectedYears });
 	});
 
+	// Calculate if any filter is active for the "Clear All" button
 	$: anyQueryParamEnabled = Object.values(queryParams).some(p => p.enabled) || 
 							 ageRangeEnabled || 
 							 participantsRangeEnabled || 
-							 selectedCommunityTags.length > 0 || 
-							 selectedDegrees.length > 0 || 
+							 selectedTagIds.length > 0 || 
+							 selectedDegreeIds.length > 0 || 
 							 selectedYears.length > 0;
+
+	// Helper to disable controls when parent is loading
+	$: controlsDisabled = isLoading; 
+
 </script>
 
-<aside class="bg-gray-900 px-4 py-6 text-white shadow-lg">
+<!-- 
+  Tailwind classes added/modified for alignment and behavior:
+  - md:w-72 lg:w-80: Defines width on medium and large screens.
+  - flex flex-col: Makes the aside a flex container for its children, useful for layout.
+  - md:sticky md:top-0 md:h-screen: Makes the sidebar sticky and full-height on desktop.
+  - overflow-y-auto: Allows sidebar content to scroll if it overflows.
+  - md:flex-shrink-0: Prevents sidebar from shrinking in a flex row on desktop.
+-->
+<aside class="md:w-72 lg:w-80 bg-gray-900 text-white shadow-lg flex flex-col  md:top-0 md:h-screen overflow-y-auto px-4 py-6 md:flex-shrink-0">
 	<div class="mb-6">
 		<h2 class="mb-3 text-xl font-bold">Filters</h2>
-		<div class="space-y-5">
+		<div class="space-y-4"> <!-- Adjusted spacing slightly -->
 		
-		
-
 			<!-- Gender -->
 			<div class="border border-gray-700 rounded-lg p-3 {queryParams.gender.enabled ? 'bg-gray-800' : 'bg-gray-900'}">
 				<div class="flex items-center gap-x-2 mb-2">
@@ -312,16 +235,17 @@
 						id="enable-gender"
 						bind:checked={queryParams.gender.enabled}
 						on:change={() => toggleQueryParam('gender')}
-						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
+						disabled={controlsDisabled}
+						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
 					/>
-					<label for="enable-gender" class="text-sm font-medium">Gender</label>
+					<label for="enable-gender" class="text-sm font-medium {controlsDisabled ? 'opacity-60' : ''}">Gender</label>
 				</div>
 				<select
 					id="value-gender"
 					bind:value={queryParams.gender.value}
-					disabled={!queryParams.gender.enabled}
+					disabled={!queryParams.gender.enabled || controlsDisabled}
 					on:change={dispatchQueryParamChange}
-					class="w-full rounded bg-gray-700 p-1.5 text-sm border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
+					class="w-full rounded bg-gray-700 p-1.5 text-sm border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
 				>
 					<option disabled value="">Select gender</option>
 					{#each genderOptions as opt}
@@ -330,7 +254,7 @@
 				</select>
 			</div>
 
-			<!-- Public -->
+			<!-- Public Status -->
 			<div class="border border-gray-700 rounded-lg p-3 {queryParams.isPublic.enabled ? 'bg-gray-800' : 'bg-gray-900'}">
 				<div class="flex items-center gap-x-2">
 					<input
@@ -338,34 +262,64 @@
 						id="enable-isPublic"
 						bind:checked={queryParams.isPublic.enabled}
 						on:change={() => toggleQueryParam('isPublic')}
-						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500"
+						disabled={controlsDisabled}
+						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
 					/>
-					<label for="enable-isPublic" class="text-sm font-medium">Public Status</label>
+					<label for="enable-isPublic" class="text-sm font-medium {controlsDisabled ? 'opacity-60' : ''}">Public Status</label>
 					<div class="flex-grow"></div>
 					<input
 						type="checkbox"
 						id="value-isPublic"
 						bind:checked={queryParams.isPublic.value}
-						disabled={!queryParams.isPublic.enabled}
+						disabled={!queryParams.isPublic.enabled || controlsDisabled}
 						on:change={dispatchQueryParamChange}
-						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500 disabled:opacity-50"
+						class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
 					/>
-					<label for="value-isPublic" class="text-sm select-none {queryParams.isPublic.enabled ? '' : 'opacity-50'}">Public</label>
+					<label for="value-isPublic" class="text-sm select-none {(queryParams.isPublic.enabled && !controlsDisabled) ? '' : 'opacity-60'}">Is Public</label>
 				</div>
 			</div>
+
+            <!-- Age Range -->
+            <div class="border border-gray-700 rounded-lg p-3 {ageRangeEnabled ? 'bg-gray-800' : 'bg-gray-900'}">
+                <div class="flex items-center gap-x-2 mb-2">
+                    <input
+                        type="checkbox"
+                        id="enable-age-range"
+                        bind:checked={ageRangeEnabled}
+                        on:change={toggleAgeRange}
+                        disabled={controlsDisabled}
+                        class="form-checkbox h-4 w-4 rounded text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
+                    />
+                    <label for="enable-age-range" class="text-sm font-medium {controlsDisabled ? 'opacity-60' : ''}">Age Range</label>
+                </div>
+                <div class="flex items-center gap-x-2 text-sm">
+                    <input type="number" bind:value={ageMin} min="0" max="150" disabled={!ageRangeEnabled || controlsDisabled} on:input={handleRangeChange} class="w-1/2 rounded bg-gray-700 p-1.5 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed" />
+                    <span>to</span>
+                    <input type="number" bind:value={ageMax} min="0" max="150" disabled={!ageRangeEnabled || controlsDisabled} on:input={handleRangeChange} class="w-1/2 rounded bg-gray-700 p-1.5 border border-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed" />
+                </div>
+                 {#if ageRangeEnabled && ageMin > ageMax}
+                    <p class="mt-1 text-xs text-red-400">Min age cannot exceed max age.</p>
+                {/if}
+            </div>
+
 		</div>
 		{#if anyQueryParamEnabled}
-			<button on:click={clearQueryParams} class="mt-4 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors">
-				Clear All Filters & Selections
+			<button 
+				on:click={clearQueryParams} 
+				disabled={controlsDisabled}
+				class="mt-4 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+			>
+				Clear All Filters
 			</button>
 		{/if}
 	</div>
 
-	<!-- Community Tags -->
+	<!-- Community Tags (uses 'tags' prop) -->
 	<div class="mb-6">
 		<button
 			on:click={() => isCommunityTagsOpen = !isCommunityTagsOpen}
-			class="flex w-full items-center justify-between mb-3 text-xl font-bold hover:text-blue-400 transition-colors"
+			disabled={controlsDisabled}
+			class="flex w-full items-center justify-between mb-3 text-xl font-bold hover:text-blue-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
 			aria-expanded={isCommunityTagsOpen}
 			aria-controls="community-tags-content"
 		>
@@ -374,20 +328,17 @@
 		</button>
 		{#if isCommunityTagsOpen}
 			<div id="community-tags-content">
-				{#if isLoadingCommunityTags}
-					<div class="flex justify-center py-4"><div class="h-6 w-6 animate-spin rounded-full border-t-2 border-b-2 border-blue-500"></div></div>
-				{:else if communityTagsError}
-					<p class="rounded-md bg-red-800 p-3 text-sm">{communityTagsError}</p>
-				{:else if !fetchedCommunityTags || !fetchedCommunityTags.length}
-					<p class="text-sm text-gray-400">No community tags available.</p>
+				{#if !tags || tags.length === 0}
+					<p class="text-sm text-gray-400 {controlsDisabled ? 'opacity-60' : ''}">No community tags available.</p>
 				{:else}
 					<ul class="space-y-1 max-h-60 overflow-y-auto pr-1">
-						{#each fetchedCommunityTags as tag (tag.name)}
-							{@const isSelected = selectedCommunityTags.includes(tag.name)}
+						{#each tags as tag (tag.id)}
+							{@const isSelected = selectedTagIds.includes(tag.id)}
 							<li>
 								<button
-									on:click={() => toggleCommunityTag(tag)}
-									class="flex w-full items-center justify-between rounded p-2 text-left text-sm transition-colors {isSelected ? 'bg-blue-700 hover:bg-blue-600' : 'bg-gray-800 hover:bg-gray-700'}"
+									on:click={() => toggleCommunityTag(tag.id)}
+									disabled={controlsDisabled}
+									class="flex w-full items-center justify-between rounded p-2 text-left text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed {isSelected ? 'bg-blue-700 hover:bg-blue-600' : 'bg-gray-800 hover:bg-gray-700'}"
 								>
 									<span>{tag.name}</span>
 									{#if isSelected}<span class="text-blue-300">✓</span>{/if}
@@ -395,9 +346,12 @@
 							</li>
 						{/each}
 					</ul>
-					{#if selectedCommunityTags.length}
-						<button on:click={clearAllCommunityTags} class="mt-3 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors">
-							Clear Tags ({selectedCommunityTags.length})
+					{#if selectedTagIds.length > 0}
+						<button 
+							on:click={clearAllCommunityTags} 
+							disabled={controlsDisabled}
+							class="mt-3 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+							Clear Tags ({selectedTagIds.length})
 						</button>
 					{/if}
 				{/if}
@@ -405,11 +359,12 @@
 		{/if}
 	</div>
 
-	<!-- Degrees (Always visible) -->
+	<!-- Degrees (uses 'degrees' prop) -->
     <div class="mb-6">
         <button
             on:click={() => isDegreesOpen = !isDegreesOpen}
-            class="flex w-full items-center justify-between mb-3 text-xl font-bold hover:text-green-400 transition-colors"
+            disabled={controlsDisabled}
+            class="flex w-full items-center justify-between mb-3 text-xl font-bold hover:text-green-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             aria-expanded={isDegreesOpen}
             aria-controls="degrees-content"
         >
@@ -418,31 +373,27 @@
         </button>
         {#if isDegreesOpen}
             <div id="degrees-content">
-                {#if isLoadingDegrees}
-                    <div class="flex justify-center py-4"><div class="h-6 w-6 animate-spin rounded-full border-t-2 border-b-2 border-green-500"></div></div>
-                {:else if degreesError}
-                    <p class="rounded-md bg-red-800 p-3 text-sm">{degreesError}</p>
-                {:else if !fetchedDegrees || !fetchedDegrees.length}
-                    <p class="text-sm text-gray-400">No degrees available.</p>
+                {#if !degrees || degrees.length === 0}
+                    <p class="text-sm text-gray-400 {controlsDisabled ? 'opacity-60' : ''}">No degrees available.</p>
                 {:else}
-                    <!-- Search box for degrees -->
                     <div class="mb-2">
                         <input
                             type="text"
                             placeholder="Search degrees..."
                             bind:value={degreeSearchTerm}
-                            class="w-full rounded bg-gray-800 p-1.5 text-sm border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                            disabled={controlsDisabled}
+                            class="w-full rounded bg-gray-800 p-1.5 text-sm border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                     </div>
                     
-                    <!-- List of degrees -->
                     <ul class="space-y-1 max-h-60 overflow-y-auto pr-1">
                         {#each filteredDegrees as degree (degree.id)}
-                            {@const isSelected = selectedDegrees.some(d => d.id === degree.id)}
+                            {@const isSelected = selectedDegreeIds.includes(degree.id)}
                             <li>
                                 <button
-                                    on:click={() => toggleDegreeSelection(degree)}
-                                    class="flex w-full items-center justify-between rounded p-2 text-left text-sm transition-colors {isSelected ? 'bg-green-700 hover:bg-green-600' : 'bg-gray-800 hover:bg-gray-700'}"
+                                    on:click={() => toggleDegreeSelection(degree.id)}
+                                    disabled={controlsDisabled}
+                                    class="flex w-full items-center justify-between rounded p-2 text-left text-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed {isSelected ? 'bg-green-700 hover:bg-green-600' : 'bg-gray-800 hover:bg-gray-700'}"
                                 >
                                     <span class="line-clamp-2">{degree.name}</span>
                                     {#if isSelected}<span class="text-green-300 ml-1 flex-shrink-0">✓</span>{/if}
@@ -451,13 +402,16 @@
                         {/each}
                         
                         {#if filteredDegrees.length === 0 && degreeSearchTerm.trim() !== ''}
-                            <li class="text-sm text-gray-400 p-2">No degrees match your search.</li>
+                            <li class="text-sm text-gray-400 p-2 {controlsDisabled ? 'opacity-60' : ''}">No degrees match your search.</li>
                         {/if}
                     </ul>
                     
-                    {#if selectedDegrees.length}
-                        <button on:click={clearAllDegrees} class="mt-3 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors">
-                            Clear Degrees ({selectedDegrees.length})
+                    {#if selectedDegreeIds.length > 0}
+                        <button 
+							on:click={clearAllDegrees} 
+							disabled={controlsDisabled}
+							class="mt-3 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+                            Clear Degrees ({selectedDegreeIds.length})
                         </button>
                     {/if}
                 {/if}
@@ -466,27 +420,48 @@
     </div>
 
 	<!-- Year of Study -->
-	<div class="border border-gray-700 rounded-lg p-3">
-		<h2 class="mb-3 text-lg font-bold">Year of Study</h2>
-		<ul class="space-y-1">
-			{#each years as year (year)}
-				{@const isSelected = selectedYears.includes(year)}
-				<li class="flex items-center gap-x-2">
-					<input
-						type="checkbox"
-						id={`year-${year}`}
-						checked={isSelected}
-						on:change={() => toggleYear(year)}
-						class="form-checkbox h-4 w-4 rounded text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500"
-					/>
-					<label for={`year-${year}`} class="text-sm select-none">Year {year}</label>
-				</li>
-			{/each}
-		</ul>
-		{#if selectedYears.length}
-			<button on:click={clearAllYears} class="mt-3 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors">
-				Clear Years ({selectedYears.length})
-			</button>
+	<div class="mb-6"> <!-- Consistent mb-6 with other sections -->
+		<button
+            on:click={() => isYearsOpen = !isYearsOpen}
+            disabled={controlsDisabled}
+            class="flex w-full items-center justify-between mb-3 text-xl font-bold hover:text-purple-400 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            aria-expanded={isYearsOpen}
+            aria-controls="years-content"
+        >
+            Year of Study
+            <span class="transform transition-transform duration-200 {isYearsOpen ? 'rotate-180' : ''}">▼</span>
+        </button>
+		{#if isYearsOpen}
+			<div id="years-content" class="border border-gray-700 rounded-lg p-3 bg-gray-900"> <!-- Added styling similar to other filters -->
+				<ul class="space-y-1">
+					{#each yearOptions as year (year)}
+						{@const isSelected = selectedYears.includes(year)}
+						<li class="flex items-center gap-x-2">
+							<input
+								type="checkbox"
+								id={`year-${year}`}
+								checked={isSelected}
+								on:change={() => toggleYear(year)}
+								disabled={controlsDisabled}
+								class="form-checkbox h-4 w-4 rounded text-purple-600 bg-gray-700 border-gray-600 focus:ring-purple-500 disabled:opacity-60 disabled:cursor-not-allowed"
+							/>
+							<label for={`year-${year}`} class="text-sm select-none {controlsDisabled ? 'opacity-60' : ''}">Year {year}</label>
+						</li>
+					{/each}
+				</ul>
+				{#if selectedYears.length > 0}
+					<button 
+						on:click={clearAllYears} 
+						disabled={controlsDisabled}
+						class="mt-3 w-full rounded bg-red-600 py-2 text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed">
+						Clear Years ({selectedYears.length})
+					</button>
+				{/if}
+			</div>
 		{/if}
 	</div>
+
+    <!-- Note: Participants range filter section is omitted as its relevance to students isn't clear from context.
+         If needed, it can be added similarly to the Age Range filter. -->
+
 </aside>
