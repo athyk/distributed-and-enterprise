@@ -135,7 +135,7 @@
                             </a>
                         {/if}
                         <span class="font-bold">{author.user.first_name} {author.user.last_name}</span>
-                        <a class="w-1/2 rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600 ml-auto" href="/user/{author.user.id}">
+                        <a class="w-1/2 rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600 ml-auto" href="/account">
                             Go To Profile
                         </a>
                     </div>
