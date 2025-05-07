@@ -25,11 +25,11 @@
 		let query = '';
 
 		if (tags.length > 0) {
-			query += tags.map(tag => `tag=${tag[1]}`).join('&') + '&';
+			query += tags.map(tag => `tags=${tag[1]}`).join('&') ;
 		}
 
 		if (degree.length > 0) {
-			query += degree.map(deg => `degree=${deg[1]}`).join('&') + '&';
+			query += degree.map(deg => `degrees=${deg[1]}`).join('&') ;
 		}
 
 		if (searchQuery) {
