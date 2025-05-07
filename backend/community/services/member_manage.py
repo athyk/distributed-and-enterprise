@@ -63,5 +63,12 @@ class Community_Member_Management_Service(community_member_management_pb2_grpc.M
         print(request)
 
         success, http_code, message, data = get_all_community_users(request.community_id, request.user_id)
-        
-        return community_member_management_pb2.AllUsers(success=success, http_status=http_code, error_message=message, users=data)
+
+        print(f'Function Ran: {success}')
+
+        all_users = []
+
+        for user in data:
+            all_users.append(community_member_management_pb2.Entry(user_id=user[0], status=user[1]))
+
+        return community_member_management_pb2.AllUsers(success=success, http_status=http_code, error_message=message, users=all_users)
