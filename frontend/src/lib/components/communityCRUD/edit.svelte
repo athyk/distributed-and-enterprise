@@ -10,6 +10,7 @@
     import { getDegreeID } from '$lib/api/getDegreeID';
     import { get } from '$lib/api/get';
     import { Put } from '$lib/api/Put';
+    import { checkPermisions } from '$lib/api/checkUser';
 
 	let formData = {
 		name: '',
@@ -21,9 +22,14 @@
 
 	let error = '';
     export let communityID: number;
-	export let modalShown = true;
+	export let modalShown = false;
+    let hasPermission = false;
 
 	async function editCommunity() {
+        if (!hasPermission) {
+            console.error('User does not have permission to edit this community.');
+            return;
+        }
 		error = '';
 		console.log('Creating community with data:', formData);
 		const formattedData = {
@@ -72,6 +78,15 @@
 
     async function getCommunity() {
         console.log('Fetching community data...');
+        if (await checkPermisions(communityID)) {
+            console.log('User has permissions to edit the community.');
+            hasPermission = true;
+        } else {
+            console.error('User does not have permissions to edit the community.');
+            hasPermission = false;
+            hideModal();
+            return;
+        }
         try {
             const response = await get('community/' + communityID) as communityData;
             formData.name = response.name;
@@ -86,6 +101,7 @@
     }
 
     onMount(() => {
+        hasPermission = false;
         console.log('Community ID:', communityID);
         formData.tags = [];
         formData.degrees = [];

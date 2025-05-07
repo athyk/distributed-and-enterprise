@@ -15,7 +15,7 @@
 	};
 
 	let error = '';
-	export let modalShown = true;
+	export let modalShown = false;
 
 	async function createCommunity() {
 		error = '';

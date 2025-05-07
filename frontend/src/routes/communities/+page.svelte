@@ -71,7 +71,7 @@
 
 <!-- Component Layout (No changes needed here) -->
 <Popup bind:errorMessage={error} />
-<CreateCommunityCard bind:modalShown={modalShown} />
+<!-- <CreateCommunityCard bind:modalShown={modalShown} /> -->
 <EditCommunityCard bind:modalShown={modalShown} communityID={1} />
 <div class="flex min-h-screen bg-gray-50">
 	<!-- Sidebar Component -->
