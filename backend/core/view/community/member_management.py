@@ -152,3 +152,52 @@ def community_ban(request: WSGIRequest, community_id: int):
         'http_status': response.http_status,
         'error_message': list(response.error_message)
     })
+
+
+@csrf_exempt
+def get_all_community_users(request: WSGIRequest, community_id: int):
+    """
+    URL: localhost:8000/community/<int: community_id>/get_all/
+
+    Sends a request to the community server with the relevant data to get all members
+    """
+
+    if request.method != 'GET':
+        return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
+
+    if not request.body:
+        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
+
+
+
+    client = CommunityMemberClient()
+
+    try:
+        data = json.loads(request.body)
+
+        req = community_member_management_pb2.UserRequest(
+            community_id=community_id,
+            action_user_id=0
+        )
+
+    except json.JSONDecodeError:  # Occurs if the JSON is invalid
+        return JsonResponse({'success': False, 'error_message': 'Invalid JSON'}, status=http.HTTPStatus.BAD_REQUEST)
+    except Exception:  # Occurs if the JSON is valid but the data is not
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 1'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+
+    try:
+        response: community_member_management_pb2.AllUsers = client.get_all_community_users(req, request.COOKIES.get('sid'))
+    except Exception:
+        traceback.print_exc()
+        return JsonResponse({'success': False, 'error_message': 'An Unknown Error Occurred 2'}, status=http.HTTPStatus.INTERNAL_SERVER_ERROR)
+    
+    nested_list = [[user.user_id, user.status] for user in response.users]
+
+    print(nested_list)
+
+    return JsonResponse({
+        'success': response.success,
+        'http_status': response.http_status,
+        'error_message': list(response.error_message),
+        'all_users': nested_list
+    })

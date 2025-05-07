@@ -185,3 +185,33 @@ class CommunityMemberClient:
             http_status=500,
             error_message=['User Session Is Empty']
         )
+    
+    def get_all_community_users(self, req: community_member_management_pb2.UserRequest, session_id) -> community_member_management_pb2.AllUsers:
+        """
+        Updates a selected community in the Community service.
+        """
+        session_keys = self._redis_client.keys(f"sid:{session_id}:*")
+        if not session_keys:
+            return community_member_management_pb2.AllUsers(
+                success=False,
+                http_status=401,
+                error_message=['Action Requires User To Be Logged In'],
+                users=[]
+            )
+
+        user_data = self._redis_client.get(session_keys[0])
+
+        if user_data:
+            user_data = json.loads(user_data)  # Convert JSON string to Python dictionary
+            user_id = user_data.get("id")
+
+            req.user_id = int(user_id)
+
+            return self._grpc_call_with_retry(self._stub.GetAllCommunityUser, req)
+        
+        return community_member_management_pb2.AllUsers(
+            success=False,
+            http_status=500,
+            error_message=['User Session Is Empty'],
+            users=[]
+        )

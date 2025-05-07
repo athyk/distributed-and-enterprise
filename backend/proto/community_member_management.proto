@@ -20,6 +20,22 @@ message UserRequest {
     int32 action_user_id = 3;
 }
 
+message Entry {
+    int32 user_id = 1;
+    string status = 2;
+}
+
+message AllUsers {
+    // community_id is where the action is taking place
+    int32 community_id = 1;
+    // user_id is the user performing the action
+    int32 user_id = 2;
+    // action_user_id is the specified user to perform the action on
+    int32 action_user_id = 3;
+    //
+    repeated Entry users = 4;
+}
+
 service MemberManagement {
     // PromoteUser is used for promotion of a specific user
     rpc PromoteUser(UserRequest) returns (MemberActionResponse) {}
@@ -27,4 +43,6 @@ service MemberManagement {
     rpc DemoteUser(UserRequest) returns (MemberActionResponse) {}
     // BanUser is used by admins to either ban or unban users
     rpc BanUser(UserRequest) returns (MemberActionResponse) {}
+    // BanUser is used by admins to either ban or unban users
+    rpc GetAllCommunityUser(UserRequest) returns (AllUsers) {}
 }

@@ -49,6 +49,11 @@ class MemberManagementStub(object):
                 request_serializer=community__member__management__pb2.UserRequest.SerializeToString,
                 response_deserializer=community__member__management__pb2.MemberActionResponse.FromString,
                 _registered_method=True)
+        self.GetAllCommunityUser = channel.unary_unary(
+                '/MemberManagement/GetAllCommunityUser',
+                request_serializer=community__member__management__pb2.UserRequest.SerializeToString,
+                response_deserializer=community__member__management__pb2.AllUsers.FromString,
+                _registered_method=True)
 
 
 class MemberManagementServicer(object):
@@ -75,6 +80,13 @@ class MemberManagementServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetAllCommunityUser(self, request, context):
+        """BanUser is used by admins to either ban or unban users
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_MemberManagementServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -92,6 +104,11 @@ def add_MemberManagementServicer_to_server(servicer, server):
                     servicer.BanUser,
                     request_deserializer=community__member__management__pb2.UserRequest.FromString,
                     response_serializer=community__member__management__pb2.MemberActionResponse.SerializeToString,
+            ),
+            'GetAllCommunityUser': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAllCommunityUser,
+                    request_deserializer=community__member__management__pb2.UserRequest.FromString,
+                    response_serializer=community__member__management__pb2.AllUsers.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -175,6 +192,33 @@ class MemberManagement(object):
             '/MemberManagement/BanUser',
             community__member__management__pb2.UserRequest.SerializeToString,
             community__member__management__pb2.MemberActionResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetAllCommunityUser(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/MemberManagement/GetAllCommunityUser',
+            community__member__management__pb2.UserRequest.SerializeToString,
+            community__member__management__pb2.AllUsers.FromString,
             options,
             channel_credentials,
             insecure,
