@@ -122,11 +122,11 @@
                         class="top-0 flex items-center space-x-2 rounded-t-2xl bg-white"
                     >
                         {#if author.user.picture_url != ''}
-                            <a href={'url'} target="_blank" rel="noopener noreferrer">
+                            <a href='/account' target="_blank" rel="noopener noreferrer">
                                 <img src={author.user.picture_url} alt="Profile Icon" class="h-11 w-11 rounded-full" />
                             </a>
                         {:else}
-                            <a href={'url'} target="_blank" rel="noopener noreferrer">
+                            <a href='/account' target="_blank" rel="noopener noreferrer">
                                 <img
                                     src="https://picsum.photos/id/63/200/200"
                                     alt="Profile Icon"
