@@ -20,6 +20,12 @@
     let modalShown = false;
     let hasPermission = false;
     let inCommunity = false;
+    let author: MeResponse;
+    let community: communityData;
+    let communityFetched = false;
+    let loggedin = false;
+    let errorMessage = '';
+    let private_community = false;
 
 
 	const tabs = [
@@ -28,11 +34,7 @@
     ];
 
 
-    let author: MeResponse;
-    let community: communityData;
-    let communityFetched = false;
-    let loggedin = false;
-    let errorMessage = '';
+
 
     async function fetchUser() {
         try {
@@ -55,6 +57,7 @@
             console.log('Community response:', response);
             if (response.success) {
                 community = response;
+                private_community = !response.public_community;
                 communityFetched = true;
             }
         } catch (error) {
@@ -68,7 +71,11 @@
             const response:response = await post('community/'+communityId+'/members', {});
             if (response.success) {
                 console.log('Joined community successfully');
-                inCommunity = true;
+                if (private_community) {
+                    errorMessage = 'Request sent to join the community.';
+                } else {
+                    inCommunity = true;
+                }
             } else {
                 console.error('Error joining community:', response.error_message);
                 errorMessage = response.error_message[0];
@@ -214,7 +221,7 @@
             <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
                 {#if communityFetched}
                     <h1 class="text-lg font-bold text-gray-700">
-                        {community.name}
+                        {community.name} {#if private_community} (Private) {/if}
                     </h1>
                     <div class="mt-4 space-y-4">
                         <div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
@@ -228,7 +235,7 @@
                     </button>
                 {:else}
                     <button class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-green-600" on:click={() => joinCommunity()}>
-                        Join
+                        {private_community ? 'Request' : 'Join'}
                     </button>
                 {/if}
                 {#if hasPermission}
@@ -255,6 +262,18 @@
 
         <div class="w-full md:w-1/2 px-4 overflow-y-auto scrollbar-none flex justify-center mt-2">
             <div class="w-full max-w-2xl">
+                {#if private_community && !inCommunity}
+                    <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
+                        <h1 class="text-lg font-bold text-gray-700">Private Community</h1>
+                        <p class="mt-4 text-sm text-gray-600">This community is private. You need to join to see the posts.</p>
+                    </div>
+                {/if}
+                {#if !private_community}
+                    <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
+                        <h1 class="text-lg font-bold text-gray-700">Public Community</h1>
+                        <p class="mt-4 text-sm text-gray-600">This community is public. You can see the posts without joining.</p>
+                    </div>
+                {/if}
                 {#if choice === 0}
                     <div class="w-full">
                         <Feed feedType="events" showActions={true}>
