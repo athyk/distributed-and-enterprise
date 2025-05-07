@@ -155,7 +155,7 @@ class AccountsClient:
 
         session_id = secrets.token_urlsafe(32)
 
-        timeout = 3600  # 1 hour, timeout is in seconds, maybe config?
+        timeout = 36000  # 10 hour, timeout is in seconds, maybe config?
 
         # Set the JSON user object in the cache, with the session ID as the key
         # This allows for quick access to the user object from the session ID
