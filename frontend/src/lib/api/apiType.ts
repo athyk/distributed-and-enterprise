@@ -2,7 +2,6 @@ export type response = {
 	success: boolean;
 	error_message: string[];
 	data: Record<string, unknown>;
-	id: number;
 };
 
 export type RegiserResponse = {
@@ -197,3 +196,29 @@ export type OSMPlace = {
 	name: string;
 	display_name: string;
 };
+
+
+export type studentData = {
+	id: number;
+	email: string;
+	email_verified: number;
+	first_name: string;
+	last_name: string;
+	gender: string;
+	date_of_birth: string;
+	picture_url: string;
+	degree_id: number;
+	year_of_study: number;
+	grad_date: string;
+	tags: number[];
+	rank: string;
+	created_at: string;
+	updated_at: string;
+};
+
+export type StudentSearchResponse = {
+	success: boolean;
+	error_message: string[];
+	communities: studentData[];
+
+}
