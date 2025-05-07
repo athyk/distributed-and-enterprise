@@ -148,11 +148,11 @@
                 </h1>
                 <div class="mt-4 space-y-4">
                     {#each communities as community}
-                        <div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
+                        <a class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow block" href="/communities/{community.id}">
                             <h2 class="text-gray-800 font-semibold ">{community.name}</h2>
                             <p class="mt-1 text-sm text-gray-600">{community.member_count} members</p>
                             <p class="mt-1 text-sm text-gray-600">{community.description}</p>
-                        </div>
+                        </a>
                     {/each}
                 </div>
                 <a class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600" href="/communities">
