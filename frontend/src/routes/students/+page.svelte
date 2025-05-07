@@ -71,7 +71,7 @@
 		const apiUrl = queryString ? `users/?${queryString}` : 'users/';
 		const response = (await get(apiUrl)) as StudentSearchResponse;
 		console.log('Response:', response);
-		filteredStudents = response.students || [];
+		filteredStudents = response.users || [];
 	} catch (err) {
 		error = 'Failed to fetch students. Please try again later.';
 		console.error('Error fetching students:', err);

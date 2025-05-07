@@ -220,6 +220,6 @@ export type studentData = {
 export type StudentSearchResponse = {
 	success: boolean;
 	error_message: string[];
-	communities: studentData[];
+	users: studentData[];
 
 }
