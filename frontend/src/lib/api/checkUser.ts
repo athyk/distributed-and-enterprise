@@ -44,3 +44,13 @@ export async function checkPermisions(communityId: number): Promise<boolean> {
 		return false;
 	}
 }
+
+
+export async function isWithCommunity(communityId: number): Promise<boolean> {
+	const response = (await get(`community/${communityId}/members`)) as response;
+	if (response.success) {
+		return true;
+	} else {
+		return false;
+	}
+}

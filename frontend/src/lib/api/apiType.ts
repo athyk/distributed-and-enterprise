@@ -33,6 +33,7 @@ export type globalAnnouncement = {
 	http_status: number;
 	error_message: string[];
 	global_announcements: globalAnnouncementData[];
+	annoucements: globalAnnouncementData[];
 };
 
 export type globalAnnouncementData = {
