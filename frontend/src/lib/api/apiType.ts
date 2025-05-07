@@ -208,7 +208,7 @@ export type studentData = {
 	gender: string;
 	date_of_birth: string;
 	picture_url: string;
-	degree_id: number;
+	degree: number;
 	year_of_study: number;
 	grad_date: string;
 	tags: number[];
