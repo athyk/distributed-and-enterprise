@@ -6,7 +6,7 @@
     import { getDegreeName } from '$lib/api/getDegreeID';
     import { getTagName } from '$lib/api/getTagID';
     import { Put } from '$lib/api/Put';
-    import {post} from '$lib/api/Post';
+    import {post} from '$lib/api/post.ts';
     import Popup from '$components/ErrorPopUp/popup.svelte';
 	import type { ImageUploadResponse } from '$lib/api/apiType';
 

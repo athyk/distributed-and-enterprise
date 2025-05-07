@@ -7,7 +7,7 @@ RUN rm -rf node_modules && rm -rf build
 COPY package.json pnpm-lock.yaml ./
 
 RUN npm install -g pnpm
-RUN pnpm i --frozen-lockfile
+RUN pnpm i --no-frozen-lockfile
 
 COPY . .
 
