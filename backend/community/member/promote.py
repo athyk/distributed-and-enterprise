@@ -22,6 +22,9 @@ def promote_user(community_id: int, user_id: int, action_user_id: int) -> tuple[
         error_messages = [item for item in all_errors if item.strip()]
 
         return False, error_messages
+    
+    if action_user_id == user_id:
+        return False, ['Unable To Promote Self']
 
     with get_db() as session:
         user_role_result = session.query(CommunityUser.role).filter(
