@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'; // For SvelteKit navigation
 
+	    import {getTagName} from '$lib/api/getTagID';
+
 	// --- Component Props ---
 	export let userId: string; // This will be the '6' in '/user/6'
 	export let pictureUrl: string | null = null;

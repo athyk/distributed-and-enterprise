@@ -97,41 +97,6 @@
 			{/if}
 		</div>
 
-		<!-- Gender Filter (NEW) -->
-		<div class="mb-6">
-			<div class="flex items-center justify-between">
-				<button 
-					class="flex items-center text-lg font-semibold"
-					on:click={toggleGender}
-				>
-					<span class="text-white">Gender</span>
-				</button>
-			</div>
-			{#if isGenderOpen}
-				<div class="mt-2">
-					<div class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
-						<div class="flex items-center gap-3 mb-2">
-							<label class="inline-flex items-center">
-								<input type="radio" class="form-radio text-blue-500" name="gender" value="MALE" bind:group={gender[0]} />
-								<span class="ml-2">Male</span>
-							</label>
-						</div>
-						<div class="flex items-center gap-3 mb-2">
-							<label class="inline-flex items-center">
-								<input type="radio" class="form-radio text-blue-500" name="gender" value="FEMALE" bind:group={gender[0]} />
-								<span class="ml-2">Female</span>
-							</label>
-						</div>
-						<div class="flex items-center gap-3">
-							<label class="inline-flex items-center">
-								<input type="radio" class="form-radio text-blue-500" name="gender" value="OTHER" bind:group={gender[0]} />
-								<span class="ml-2">Other</span>
-							</label>
-						</div>
-					</div>
-				</div>
-			{/if}
-		</div>
 
 		<!-- Age Range Filter (NEW) -->
 		<div class="mb-6">
