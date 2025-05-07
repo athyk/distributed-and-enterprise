@@ -31,8 +31,10 @@
 		if (localStorage.getItem('loggedin') === 'true') {
 			urls = {
 				Communities: '/communities',
+						Students: '/students',
 				Account: '/account',
-				Logout: ''
+				Logout: '',
+		
 			};
 			LoggedIn = true;
 		} else {

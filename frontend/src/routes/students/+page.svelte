@@ -11,7 +11,7 @@
 	let gender: [string, number][] = []; // Match the sidebar's data structure
 	let ageFrom: string = "";
 	let ageTo: string = "";
-	export let year: Number;
+	export let year: string;
 
 	function removeTag(tag: [string, number]) {
 		tags = tags.filter(t => t[1] !== tag[1]);
@@ -167,13 +167,13 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 					<div class="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 						{#each filteredStudents as student (student.id)}
 							<StudentCard
-								id={student.id}
-								name={student.name}
-								description={student.description}
+								userId={student.id}
+								name={student.first_name + student.last_name}
+						
                                 tags={student.tags}
-								degrees={student.degrees}
+								degrees={student.degree_id}
 								gender={student.gender}
-								age={student.age}
+								age={student.date_of_birth}
 							/>
 						{/each}
 					</div>

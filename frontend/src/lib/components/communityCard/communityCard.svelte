@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+
 	export let name: string;
     export let id : number;
 	export let isPublic: boolean;
@@ -7,16 +9,23 @@
 	export let degrees: string[];
 	export let totalMembers: number;
 
-	// Helper to format dates (like creationDate)
-	function formatDate(dateString: string): string {
-		if (!dateString) return 'N/A';
-		try {
-			return new Date(dateString).toLocaleDateString();
-		} catch (e) {
-			console.warn(`Invalid date format received: ${dateString}`);
-			return dateString; // Fallback
+
+
+    // --- Navigation Logic ---
+	const targetUrl = `/communities/${id}`; // Construct the target URL
+
+    function handleCardClick() {
+		goto(targetUrl); // Navigate using SvelteKit's goto
+	}
+
+	// Accessibility: Allow keyboard navigation (Enter/Space)
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault(); // Prevent space from scrolling page
+			handleCardClick();
 		}
 	}
+
 </script>
 
 <!--
@@ -25,8 +34,11 @@
   - min-h-80: Ensures a minimum height.
   - flex flex-col: To enable flex-grow for content and mt-auto for footer.
 -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="flex w-full flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4 min-h-80"
+    on:click={handleCardClick}
+	on:keydown={handleKeyDown}
 >
 	<!-- Header: Simplified -->
 	<div class="flex items-center justify-between">

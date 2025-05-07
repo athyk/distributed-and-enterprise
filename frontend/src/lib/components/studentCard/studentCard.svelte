@@ -1,95 +1,108 @@
 <script lang="ts">
-	// Props remain the same
-	export let firstName: string;
-	export let lastName: string;
-	export let gender: string;
-	export let dateOfBirth: string; // Prop is now used for calculation
-	export let pictureUrl: string = '';
-	export let degreeId: number;
-	export let degreeName: string = 'Not specified';
-	export let yearOfStudy: number;
-	export let gradDate: string;
-	export let tags: number[] = [];
+	import { goto } from '$app/navigation'; // For SvelteKit navigation
+
+	// --- Component Props ---
+	export let userId: string; // This will be the '6' in '/user/6'
+	export let pictureUrl: string | null = null;
+	export let firstName: string = 'Default';
+	export let lastName: string = 'User';
+	export let gender: string = 'N/A';
+	export let dateOfBirth: string | null = null; // e.g., "1995-08-15"
+	export let degreeName: string = 'Not Specified';
+	export let yearOfStudy: number | string = 'N/A';
+	export let gradDate: string; // e.g., "2025-05-20T00:00:00Z"
 	export let tagNames: string[] = [];
 
-	// Helper to calculate age from date string
-	function calculateAge(dobString: string): number | string {
-		if (!dobString) return 'N/A'; // Handle empty or null dobString
-
+	// --- Helper Functions ---
+	const formatDate = (dateString: string): string => {
+		if (!dateString) return 'N/A';
 		try {
-			const birthDate = new Date(dobString);
-			// Check if the parsed date is valid
-			if (isNaN(birthDate.getTime())) {
-				console.warn(`Invalid date format received for age calculation: ${dobString}`);
-				return 'Invalid Date';
-			}
-
-			const today = new Date();
-			let age = today.getFullYear() - birthDate.getFullYear();
-			const monthDiff = today.getMonth() - birthDate.getMonth();
-
-			// Adjust age if the birthday hasn't occurred yet this year
-			if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-				age--;
-			}
-
-            // Return 0 if calculated age is negative (e.g., future date)
-			return age < 0 ? 0 : age;
-
+			return new Date(dateString).toLocaleDateString(undefined, {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric'
+			});
 		} catch (e) {
-			console.error('Error calculating age:', e);
-			return 'Error'; // Indicate calculation error
+			return 'Invalid Date';
 		}
+	};
+
+	$: age = (() => {
+		if (!dateOfBirth) return 'N/A';
+		try {
+			const birthDate = new Date(dateOfBirth);
+			const today = new Date();
+			let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+			const m = today.getMonth() - birthDate.getMonth();
+			if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+				calculatedAge--;
+			}
+			return calculatedAge >= 0 ? calculatedAge : 'N/A';
+		} catch (e) {
+			return 'N/A';
+		}
+	})();
+
+	// --- Navigation Logic ---
+	const targetUrl = `/user/${userId}`; // Construct the target URL
+
+	function handleCardClick() {
+		goto(targetUrl); // Navigate using SvelteKit's goto
 	}
 
-    // Reactive declaration for age: Automatically updates when dateOfBirth changes
-    $: age = calculateAge(dateOfBirth);
-
-	// Helper to format other dates (like graduation)
-	function formatDate(dateString: string): string {
-		try {
-			return new Date(dateString).toLocaleDateString();
-		} catch (e) {
-			return dateString; // Fallback
+	// Accessibility: Allow keyboard navigation (Enter/Space)
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault(); // Prevent space from scrolling page
+			handleCardClick();
 		}
 	}
 </script>
 
 <!--
-  Main container:
-  - w-full: Takes full width of its parent container.
-  - min-h-80: Ensures a minimum height for consistency (adjust value as needed).
-  - Parent component should handle layout (e.g., CSS Grid) for multiple cards.
+  Outermost div is now clickable and acts like a button.
+  - `on:click`: Triggers navigation.
+  - `role="button"`: Accessibility hint.
+  - `tabindex="0"`: Makes it keyboard focusable.
+  - `on:keydown`: Handles Enter/Space key presses.
+  - `cursor-pointer`, `hover:shadow-md`, `focus:ring-2`: UX enhancements.
 -->
-<div class="flex w-full flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4 min-h-80">
-	<!-- Header: Simplified, no bottom border -->
+<div
+	class="flex w-full cursor-pointer flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4 min-h-80 transition-shadow duration-150 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+	on:click={handleCardClick}
+	on:keydown={handleKeyDown}
+	role="button"
+	tabindex="0"
+	aria-label={`View details for ${firstName} ${lastName}`}
+>
+	<!-- Header -->
 	<div class="flex items-center">
 		{#if pictureUrl}
-			<img src={pictureUrl} alt="Profile" class="mr-3 h-10 w-10 flex-shrink-0 rounded-full object-cover" />
+			<img
+				src={pictureUrl}
+				alt="Profile of {firstName} {lastName}"
+				class="mr-3 h-10 w-10 flex-shrink-0 rounded-full object-cover"
+			/>
 		{:else}
-			<!-- Lighter gray background for placeholder -->
 			<div
 				class="mr-3 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gray-100 text-lg font-semibold text-gray-700"
+				aria-hidden="true"
 			>
-				{firstName.charAt(0)}{lastName.charAt(0)}
+				{firstName?.charAt(0) || ''}{lastName?.charAt(0) || ''}
 			</div>
 		{/if}
-		<!-- Name is already bold -->
 		<h2 class="truncate text-xl font-bold text-gray-900">
 			{firstName} {lastName}
 		</h2>
-		<!-- Connect button is removed -->
 	</div>
 
-	<!-- Student Info Grid: Labels medium, Data semibold -->
-	<!-- Added Age field, calculated from dateOfBirth -->
+	<!-- Student Info Grid -->
 	<div class="grid grid-cols-1 gap-x-4 gap-y-2 md:grid-cols-2">
 		<div>
 			<p class="text-sm font-medium text-gray-500">Gender</p>
 			<p class="font-semibold text-gray-800">{gender}</p>
 		</div>
 		<div>
-			<!-- New Age field -->
 			<p class="text-sm font-medium text-gray-500">Age</p>
 			<p class="font-semibold text-gray-800">{age}</p>
 		</div>
@@ -103,43 +116,41 @@
 		</div>
 	</div>
 
-	<!-- Expected Graduation: Label medium, Data semibold -->
+	<!-- Expected Graduation -->
 	<div>
 		<p class="text-sm font-medium text-gray-500">Expected Graduation</p>
 		<p class="font-semibold text-gray-800">{formatDate(gradDate)}</p>
 	</div>
 
-	<!-- Tags/Interests: Label medium, Tags semibold, simpler style -->
-	<!-- Using flex-grow to push the bottom row down if content is short -->
+	<!-- Tags/Interests -->
 	{#if tagNames && tagNames.length > 0}
-		<div class="flex-grow"> <!-- Make this section grow -->
+		<div class="flex-grow">
 			<p class="mb-1 text-sm font-medium text-gray-500">Interests</p>
 			<div class="flex flex-wrap gap-2">
 				{#each tagNames as tag}
-					<!-- Lighter background, standard rounding, semibold text -->
 					<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
 						{tag}
 					</span>
 				{/each}
 			</div>
 		</div>
-    {:else}
-        <!-- Add an empty growing div if there are no tags to ensure bottom row stays down -->
-        <div class="flex-grow"></div>
+	{:else}
+        <!-- Ensures bottom row stays down even if no tags -->
+		<div class="flex-grow" />
 	{/if}
 
-
-	<!-- Bottom Row: Simplified, no top border -->
-    <!-- This row will be pushed to the bottom because of flex-grow above -->
-	<div class="mt-auto flex items-center justify-between pt-2 text-sm text-gray-600"> <!-- Added mt-auto and pt-2 for spacing -->
+	<!-- Bottom Row -->
+	<div class="mt-auto flex items-center justify-between pt-2 text-sm text-gray-600">
 		<div class="flex items-center space-x-2">
-			<!-- Year remains bold -->
 			<span class="text-base font-bold text-gray-900">Year {yearOfStudy}</span>
 			<span class="text-gray-500">Student</span>
 		</div>
-		<!-- Graduation year semibold -->
 		<div class="font-semibold">
-			Graduates in {new Date(gradDate).getFullYear()}
+			{#if gradDate}
+				Graduates in {new Date(gradDate).getFullYear()}
+			{:else}
+				Graduation Year N/A
+			{/if}
 		</div>
 	</div>
 </div>
