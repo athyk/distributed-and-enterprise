@@ -3,7 +3,7 @@
     import Annoucements from '$components/Post/annoucements.svelte';
     import Event from '$lib/components/Post/event.svelte';
     import { getUserInfo } from '$lib/api/checkUser';
-    import type { MeResponse,communityData, response } from '$lib/api/apiType';
+    import type { MeResponse,communityData, response,StudentSearchResponse } from '$lib/api/apiType';
     import { get } from '$lib/api/get';
 	import { onMount } from 'svelte';
     import { page } from '$app/stores';
@@ -26,14 +26,133 @@
     let loggedin = false;
     let errorMessage = '';
     let private_community = false;
+    let requested_users_view = 0;
+    let users_fetched = false;
 
+    let me: {
+        id: number,
+        name: string,
+    }= {
+        id: 0,
+        name: 'Guest',
+    };
+    
+
+    let users: {
+        id: number,
+        name: string,
+    }[] = [];
+
+    let moderator_users: {
+        id: number,
+        name: string,
+    }[] = [];
+
+    let admin_users: {
+        id: number,
+        name: string,
+    }[] = [];
+
+    let requested_users: {
+        id: number,
+        name: string,
+    }[] = [];
+
+    let banned_users: {
+        id: number,
+        name: string,
+    }[] = [];
 
 	const tabs = [
         { label: 'Events'},
         { label: 'Announcements' },
     ];
 
+    async function getName(id: number) {
+        try {
+            const response:StudentSearchResponse = await get('users/?user_id='+id);
+            if (response.success) {
+                return response.users[0].first_name + ' ' + response.users[0].last_name;
+            } else {
+                console.error('Error fetching user name:', response.error_message);
+                return 'Unknown User';
+            }
+        } catch (error) {
+            console.error('Error fetching user name:', error);
+            return 'Unknown User';
+        }
+    }
 
+    async function getUsers() {
+        users_fetched = false;
+        users = [];
+        admin_users = [];
+        moderator_users = [];
+        requested_users = [];
+        try {
+            const response = await get('community/'+communityId+'/get_all');
+            if (response.success) {
+                console.log('Users:', response.all_users);
+
+
+                const userPromises = response.all_users
+                    .filter(user => user[1] === 'user')
+                    .map(async user => ({
+                        id: user[0],
+                        name: await getName(user[0]),
+                    }));
+
+                const adminPromises = response.all_users
+                    .filter(user => user[1] === 'admin')
+                    .map(async user => ({
+                        id: user[0],
+                        name: await getName(user[0]),
+                    }));
+
+                const moderatorPromises = response.all_users
+                    .filter(user => user[1] === 'moderator')
+                    .map(async user => ({
+                        id: user[0],
+                        name: await getName(user[0]),
+                    }));
+
+                const bannedPromises = response.all_users
+                    .filter(user => user[1] === 'banned')
+                    .map(async user => ({
+                        id: user[0],
+                        name: await getName(user[0]),
+                }));
+
+                users = await Promise.all(userPromises);
+                admin_users = await Promise.all(adminPromises);
+                moderator_users = await Promise.all(moderatorPromises);
+                banned_users = await Promise.all(bannedPromises);
+
+                if (private_community) {
+                    try {
+                        const requestedPromises = response.requested_users.map(async user => ({
+                            id: user[0],
+                            name: await getName(user[0]),
+                            role: user[1]
+                        }));
+                        requested_users = await Promise.all(requestedPromises);
+                    } catch (error) {
+                        console.error('Error fetching requested users:', error);
+                    }
+                }
+
+                users_fetched = true;
+                console.log('Users:', users);
+                console.log('Admin Users:', admin_users);
+                console.log('Moderator Users:', moderator_users);
+                console.log('Requested Users:', requested_users);
+            } else {
+                console.error('Error fetching users:', response.error_message);
+            }
+        } catch (error) {
+            console.error('Error fetching users:', error);
+        }
+    }
 
 
     async function fetchUser() {
@@ -102,11 +221,74 @@
         }
     }
 
+    async function premoteUser(userId: number) {
+        try {
+            const response:response = await post('community/'+communityId+'/promote', {action_user_id: userId});
+            if (response.success) {
+                console.log('User promoted successfully');
+                getUsers();
+            } else {
+                console.error('Error promoting user:', response.error_message);
+                errorMessage = response.error_message[0];
+            }
+        } catch (error) {
+            console.error('Error promoting user:', error);
+            errorMessage = 'Error promoting user';
+        }
+    }
 
+    async function demoteUser(userId: number) {
+        try {
+            const response:response = await post('community/'+communityId+'/demote', {action_user_id: userId});
+            if (response.success) {
+                console.log('User demoted successfully');
+                getUsers();
+            } else {
+                console.error('Error demoting user:', response.error_message);
+                errorMessage = response.error_message[0];
+            }
+        } catch (error) {
+            console.error('Error demoting user:', error);
+            errorMessage = 'Error demoting user';
+        }
+    }
+
+    async function banUser(userId: number) {
+        try {
+            const response:response = await post('community/'+communityId+'/ban', {action_user_id: userId});
+            if (response.success) {
+                console.log('User banned successfully');
+                getUsers();
+            } else {
+                console.error('Error banning user:', response.error_message);
+                errorMessage = response.error_message[0];
+            }
+        } catch (error) {
+            console.error('Error banning user:', error);
+            errorMessage = 'Error banning user';
+        }
+    }
+
+    async function addUser(userId: number) {
+        try {
+            const response:response = await post('community/'+communityId+'/invite', {action_user_id: userId});
+            if (response.success) {
+                console.log('User added successfully');
+                getUsers();
+            } else {
+                console.error('Error adding user:', response.error_message);
+                errorMessage = response.error_message[0];
+            }
+        } catch (error) {
+            console.error('Error adding user:', error);
+            errorMessage = 'Error adding user';
+        }
+    }
 
 	onMount(async () => {
 		if (localStorage.getItem('loggedin') === 'true') {
             communityFetched = false;
+            users_fetched = false;
             errorMessage = '';
 			try {
                 communityId = $page.params.id;
@@ -128,6 +310,7 @@
 
                 getCommunity();
 				fetchUser();
+                getUsers();
 
 			} catch (error) {
 				console.error('Error parsing user info:', error);
@@ -217,7 +400,7 @@
                     </div>
                 </div>
             {/if}
-
+            
             <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
                 {#if communityFetched}
                     <h1 class="text-lg font-bold text-gray-700">
@@ -250,11 +433,149 @@
                     <h1 class="text-lg font-bold text-gray-700">
                         Members
                     </h1>
-                    <div class="mt-4 space-y-4">
-                        <div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
-                            <p class="mt-1 text-sm text-gray-600">Jake</p>
+                    {#if hasPermission}
+                        <div class="flex justify-between m-4">
+                            {#if private_community}
+                                {#if hasPermission}
+                                    <button
+                                        class="w-1/2 rounded {requested_users_view === 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center mr-1"
+                                        on:click={() => requested_users_view = 0}
+                                    >
+                                        Members
+                                    </button>
+                                    <button 
+                                        class="w-1/2 rounded {requested_users_view === 1 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center ml-1"
+                                        on:click={() => requested_users_view = 1}   
+                                    >
+                                        Requested
+                                    </button>
+                                {/if}
+                            {/if}
+                            {#if hasPermission}
+                            <button 
+                                    class="w-1/2 rounded {requested_users_view === 2 ? 'bg-red-500 hover:bg-red-600' : 'bg-red-300 hover:bg-red-400'} px-2 py-1 text-white text-center ml-1"
+                                    on:click={() => requested_users_view = 2}
+                                >
+                                    Banned Users
+                            </button>
+                        {/if}
                         </div>
-                    </div>
+                    {/if}
+                    {#if users_fetched}
+                        <div class="mt-4 space-y-4">
+                            <div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
+                                <div class="flex flex-col space-y-2 max-h-60 overflow-y-auto pr-5">
+                                    {#if requested_users_view === 1}
+                                        {#each requested_users as user}
+                                            <div class="flex items-center justify-between">
+                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                {#if hasPermission}
+                                                    <div class="flex space-x-1">
+                                                        <button class="px-2 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                                                        on:click={() => addUser(user.id)}
+                                                        >Accept</button>
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {/each}
+                                        {#if requested_users.length == 0}
+                                            <p class="text-sm text-gray-600">No requests</p>
+                                        {/if}
+                                    {:else if requested_users_view === 0}
+                                        <h1 class="text-lg font-bold text-gray-700">Admins</h1>
+                                        {#each admin_users as user}
+                                            <div class="flex items-center justify-between">
+                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                {#if hasPermission}
+                                                    <div class="flex space-x-1">
+                                                        <button
+                                                            class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                                                            on:click={() => premoteUser(user.id)}
+                                                        >
+                                                            Promote
+                                                        </button>
+                                                        <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                                                            on:click={() => demoteUser(user.id)}
+                                                        >Demote</button>
+                                                        <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                            on:click={() => banUser(user.id)}
+                                                        >Ban</button>
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {/each}
+                                        <h1 class="text-lg font-bold text-gray-700">Moderators</h1>
+                                        {#each moderator_users as user}
+                                            <div class="flex items-center justify-between">
+                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                {#if hasPermission}
+                                                <div class="flex space-x-1">
+                                                    <button
+                                                        class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                                                        on:click={() => premoteUser(user.id)}
+                                                    >
+                                                        Promote
+                                                    </button>
+                                                    <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                                                        on:click={() => demoteUser(user.id)}
+                                                    >Demote</button>
+                                                    <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                        on:click={() => banUser(user.id)}
+                                                    >Ban</button>
+                                                </div>
+                                                {/if}
+                                            </div>
+                                        {/each}
+                                        <h1 class="text-lg font-bold text-gray-700">Users</h1>
+                                        {#each users as user}
+                                            <div class="flex items-center justify-between">
+                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                {#if hasPermission}
+                                                    <div class="flex space-x-1">
+                                                        <div class="flex space-x-1">
+                                                            <button
+                                                                class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                                                                on:click={() => premoteUser(user.id)}
+                                                            >
+                                                                Promote
+                                                            </button>
+                                                            <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                                                                on:click={() => demoteUser(user.id)}
+                                                            >Demote</button>
+                                                            <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                                on:click={() => banUser(user.id)}
+                                                            >Ban</button>
+                                                        </div>
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {/each}
+                                    {:else if requested_users_view === 2}
+                                        {#each banned_users as user}
+                                            {#if hasPermission}
+                                                <div class="flex items-center justify-between">
+                                                    <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                    <div class="flex space-x-1">
+                                                        <div class="flex space-x-1">
+                                                            <button
+                                                                class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                                on:click={() => banUser(user.id)}
+                                                            >
+                                                                Unban
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {/if}
+                                        {/each}
+                                        {#if banned_users.length == 0}
+                                            <p class="text-sm text-gray-600">No banned users</p>
+                                        {/if}
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
                 {/if}
             </div>
         </div>
@@ -266,12 +587,6 @@
                     <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
                         <h1 class="text-lg font-bold text-gray-700">Private Community</h1>
                         <p class="mt-4 text-sm text-gray-600">This community is private. You need to join to see the posts.</p>
-                    </div>
-                {/if}
-                {#if !private_community}
-                    <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
-                        <h1 class="text-lg font-bold text-gray-700">Public Community</h1>
-                        <p class="mt-4 text-sm text-gray-600">This community is public. You can see the posts without joining.</p>
                     </div>
                 {/if}
                 {#if choice === 0}
