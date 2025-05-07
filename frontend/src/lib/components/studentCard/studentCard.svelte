@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'; // For SvelteKit navigation
 
+	import {getTagName} from '$lib/api/getTagID';
+
 	// --- Component Props ---
 	export let userId: string; // This will be the '6' in '/user/6'
 	export let pictureUrl: string | null = null;
@@ -129,7 +131,7 @@
 			<div class="flex flex-wrap gap-2">
 				{#each tagNames as tag}
 					<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
-						{tag}
+						{getTagName(tag)}
 					</span>
 				{/each}
 			</div>

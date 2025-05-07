@@ -5,6 +5,9 @@
 	import { get } from '$lib/api/get';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 	import type { StudentSearchResponse, studentData } from '$lib/api/apiType';
+	import Tags from '$components/Post/Sections/tags.svelte';
+	import { getDegreeName } from '$lib/api/getDegreeID';
+	import { getTagName } from '$lib/api/getTagID';
 
 	let tags: [string, number][] = [];
 	let degree: [string, number][] = [];
@@ -25,11 +28,11 @@
 		let query = '';
 
 		if (tags.length > 0) {
-			query += tags.map(tag => `tags=${tag[1]}`).join('&') ;
+			query += tags.map(tag => `tag_id=${tag[1]}`).join('&') ;
 		}
 
 		if (degree.length > 0) {
-			query += degree.map(deg => `degree=${deg[1]}`).join('&') ;
+			query += degree.map(deg => `degree_id=${deg[1]}`).join('&') ;
 		}
 
 		// Add gender filter if selected
@@ -92,7 +95,7 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 <Popup bind:errorMessage={error} />
 <div class="flex min-h-screen bg-gray-50">
 	<!-- Sidebar Component with all necessary bindings -->
-    <!-- <Sidebar bind:tags={tags} bind:degree={degree} bind:gender={gender} bind:ageFrom={ageFrom} bind:ageTo={ageTo} /> -->
+     <Sidebar bind:tags={tags} bind:degree={degree} bind:gender={gender} bind:ageFrom={ageFrom} bind:ageTo={ageTo} /> 
 	<!-- Main Content -->
 	<div class="ml-64 flex-1 p-6"> <!-- Adjust ml-64 if sidebar width changes -->
 		<div class="mx-auto max-w-6xl">
@@ -131,7 +134,7 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 								on:click={() => removeTag(tag)}
 							>
                                 <svg class="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8">
-                                    <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6m0-6L1 7" />
+                                    <path stroke-linecap="round" stroke-width="1.5" d="M1 1l6 6 m0-6L1 7" />
                                 </svg>
 							</button>
 						</span>
@@ -178,12 +181,12 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 								userId={student.id}
 								firstName={student.first_name}
 								lastName={student.last_name}
-								tagNames={student.tags ? student.tags.map(tag => tag.name) : []}
-								degreeName={student.degree_name || 'Not Specified'}
+								tagNames={student.tags}
+								degreeName={String(student.degree)}
 								gender={student.gender || 'N/A'}
 								dateOfBirth={student.date_of_birth}
 								yearOfStudy={student.year_of_study || 'N/A'}
-								gradDate={student.graduation_date || ''}
+								gradDate={student.grad_date || ''}
 							/>
 						{/each}
 					</div>
