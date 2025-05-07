@@ -30,7 +30,6 @@
 		}
 		if (localStorage.getItem('loggedin') === 'true') {
 			urls = {
-				Posts: '/posts',
 				Communities: '/communities',
 				Account: '/account',
 				Logout: ''

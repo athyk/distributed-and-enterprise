@@ -6,6 +6,7 @@
 	import {getTagName} from '$lib/api/getTagID';
     import UserEditModal from './userEditModal.svelte';
 	import { get } from '$lib/api/get';
+    import { isUserID } from '$lib/api/checkUser';
 
     export let user_id: number | null = null;
     export let self = false;
@@ -35,8 +36,11 @@
 
 
 
-	onMount(async () => {
+    onMount(async () => {
         console.warn('user_id:', user_id);
+        if (user_id !== null && await isUserID(user_id)) {
+            self = true;
+        }
         if (!self) {
             getUser();
             dataloaded = true;
@@ -111,11 +115,13 @@
         <h1 class="text-xl sm:text-2xl font-bold">{userInfo.user.first_name} {userInfo.user.last_name}</h1>
         <p class="text-gray-700">Year {userInfo.user.year_of_study} {degree_name} Student</p>
     </div>
-    <div class="mt-2 sm:mt-0 sm:ml-auto">
-        <button on:click={showModal} class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
-            Edit Account
-        </button>
-    </div>
+    {#if self}
+        <div class="mt-2 sm:mt-0 sm:ml-auto">
+            <button on:click={showModal} class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+                Edit Account
+            </button>
+        </div>
+    {/if}
 </div>
 <div class="mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
     <ul class="space-y-3">
