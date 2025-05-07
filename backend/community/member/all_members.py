@@ -21,11 +21,16 @@ def get_all_community_users(community_id: int, user_id: int) -> tuple[bool, int,
 
         return False, 400, error_messages
     
+    print('1')
+    
     with get_db() as session:
         community_result = session.query(Community.public).filter(Community.id == community_id).first()
 
         if community_result is None:
             return False, 404, ['Community Does Not Exist'], []
+        
+        print('2')
+        print('Test')
         
         user_result = session.query(CommunityUser.role).filter(
             CommunityUser.community_id == community_id,
@@ -36,18 +41,36 @@ def get_all_community_users(community_id: int, user_id: int) -> tuple[bool, int,
             if not community_result[0]: # Community in question is private
                 return False, 403, ['User Not Part Of Community'], []
             
+            print('3')
+
+            print(community_id)
+            print(type(community_id))
+            
             user_result = session.query(CommunityUser).filter(
                 CommunityUser.community_id == community_id
             ).all()
 
-            formatted_result = [[user.id, user.name] for user in user_result]
+            print('3.5')
+            print(user_result)
+
+            formatted_result = [[user.user_id, user.role] for user in user_result]
+
+            print(formatted_result)
+
+            print('3.9')
 
             return True, 200, [], formatted_result
+        
+        print('4')
         
         user_result = session.query(CommunityUser).filter(
             CommunityUser.community_id == community_id
         ).all()
 
-        formatted_result = [[user.id, user.name] for user in user_result]
+        formatted_result = [[user.user_id, user.role] for user in user_result]
+
+        print(formatted_result)
+
+        print('5')
 
         return True, 200, [], formatted_result
