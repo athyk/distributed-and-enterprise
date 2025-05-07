@@ -2,6 +2,7 @@ export type response = {
 	success: boolean;
 	error_message: string[];
 	data: Record<string, unknown>;
+	id: number;
 };
 
 export type RegiserResponse = {

@@ -1,7 +1,6 @@
 <script lang="ts">
     import CreateEditBase from '../CreateEdit/base.svelte';
     import SearchBox from '$components/SearchBox/searchBox.svelte';
-    import ImageInput from '../Sections/Inputs/imageInput.svelte';
     import type { MeResponse,response } from '$lib/api/apiType';
     import { onMount } from 'svelte';
     import { getDegreeName } from '$lib/api/getDegreeID';

@@ -4,10 +4,13 @@
 	import { get } from '$lib/api/get';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 	import type { CommunitySearchResponse,communityData } from '$lib/api/apiType';
+	import CreateCommunityCard from "$components/communityCRUD/create.svelte";
+
 
 
 	let tags: [string, number][] = [];
 	let degree: [string, number][] = [];
+	let modalShown = false;
 
 
 	function removeTag(tag: [string, number]) {
@@ -67,6 +70,7 @@
 
 <!-- Component Layout (No changes needed here) -->
 <Popup bind:errorMessage={error} />
+<CreateCommunityCard bind:modalShown={modalShown} />
 <div class="flex min-h-screen bg-gray-50">
 	<!-- Sidebar Component -->
 	<Sidebar  bind:tags={tags} bind:degree={degree} />
@@ -97,7 +101,8 @@
 				<!-- Create Community Button -->
 				<button
 					class="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white shadow-md transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-				>
+					on:click={() => (modalShown = true)}
+					>
 					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
 						<path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
 					</svg>
