@@ -1,11 +1,11 @@
 <script lang="ts">
 	export let name: string;
+    export let id : number;
 	export let isPublic: boolean;
 	export let description: string;
 	export let tags: string[];
 	export let degrees: string[];
 	export let totalMembers: number;
-	export let creationDate: string;
 
 	// Helper to format dates (like creationDate)
 	function formatDate(dateString: string): string {
@@ -95,10 +95,6 @@
 			<!-- Total members bold like "Year X" in reference -->
 			<span class="text-base font-bold text-gray-900">{totalMembers}</span>
 			<span class="text-gray-500">Members</span>
-		</div>
-		<div class="font-semibold text-gray-800">
-			<!-- Using formatDate and semibold like gradDate in reference -->
-			Created: {formatDate(creationDate)}
 		</div>
 	</div>
 </div>
