@@ -5,7 +5,7 @@ from backend.community.database.models import CommunityUser, Community
 from math import inf as INFINITY
 
 
-def get_all_community_users(community_id: int, user_id: int, action_user_id: int) -> tuple[bool, int, list, list]:
+def get_all_community_users(community_id: int, user_id: int) -> tuple[bool, int, list, list]:
     """
     This function verifies incoming data and gets all users in a community.
     If any errors arise then relevant error messages are returned.
@@ -25,7 +25,7 @@ def get_all_community_users(community_id: int, user_id: int, action_user_id: int
         community_result = session.query(Community.public).filter(Community.id == community_id).first()
 
         if community_result is None:
-            return False, 404, ['Community Does Not Exist']
+            return False, 404, ['Community Does Not Exist'], []
         
         user_result = session.query(CommunityUser.role).filter(
             CommunityUser.community_id == community_id,

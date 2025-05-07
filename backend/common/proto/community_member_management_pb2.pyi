@@ -34,13 +34,13 @@ class Entry(_message.Message):
     def __init__(self, user_id: _Optional[int] = ..., status: _Optional[str] = ...) -> None: ...
 
 class AllUsers(_message.Message):
-    __slots__ = ("community_id", "user_id", "action_user_id", "users")
-    COMMUNITY_ID_FIELD_NUMBER: _ClassVar[int]
-    USER_ID_FIELD_NUMBER: _ClassVar[int]
-    ACTION_USER_ID_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("success", "http_status", "error_message", "users")
+    SUCCESS_FIELD_NUMBER: _ClassVar[int]
+    HTTP_STATUS_FIELD_NUMBER: _ClassVar[int]
+    ERROR_MESSAGE_FIELD_NUMBER: _ClassVar[int]
     USERS_FIELD_NUMBER: _ClassVar[int]
-    community_id: int
-    user_id: int
-    action_user_id: int
+    success: bool
+    http_status: int
+    error_message: _containers.RepeatedScalarFieldContainer[str]
     users: _containers.RepeatedCompositeFieldContainer[Entry]
-    def __init__(self, community_id: _Optional[int] = ..., user_id: _Optional[int] = ..., action_user_id: _Optional[int] = ..., users: _Optional[_Iterable[_Union[Entry, _Mapping]]] = ...) -> None: ...
+    def __init__(self, success: bool = ..., http_status: _Optional[int] = ..., error_message: _Optional[_Iterable[str]] = ..., users: _Optional[_Iterable[_Union[Entry, _Mapping]]] = ...) -> None: ...

@@ -62,6 +62,6 @@ class Community_Member_Management_Service(community_member_management_pb2_grpc.M
         print("GetAllCommunityUser Request Made:")
         print(request)
 
-        success, http_code, message = ban_user(request.community_id, request.user_id, request.action_user_id)
+        success, http_code, message, data = get_all_community_users(request.community_id, request.user_id)
         
-        return community_member_management_pb2.MemberActionResponse(success=success, http_status=http_code, error_message=message)
+        return community_member_management_pb2.AllUsers(success=success, http_status=http_code, error_message=message, users=data)

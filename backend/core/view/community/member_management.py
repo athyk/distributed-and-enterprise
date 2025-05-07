@@ -165,16 +165,9 @@ def get_all_community_users(request: WSGIRequest, community_id: int):
     if request.method != 'GET':
         return JsonResponse({'error': 'HTTP Method Invalid'}, status=http.HTTPStatus.METHOD_NOT_ALLOWED)
 
-    if not request.body:
-        return JsonResponse({'error': 'No Data Provided'}, status=http.HTTPStatus.BAD_REQUEST)
-
-
-
     client = CommunityMemberClient()
 
     try:
-        data = json.loads(request.body)
-
         req = community_member_management_pb2.UserRequest(
             community_id=community_id,
             action_user_id=0
