@@ -5,7 +5,6 @@
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 	import type { CommunitySearchResponse,communityData } from '$lib/api/apiType';
 	import CreateCommunityCard from "$components/communityCRUD/create.svelte";
-	import EditCommunityCard from "$components/communityCRUD/edit.svelte";
 
 
 
@@ -71,8 +70,7 @@
 
 <!-- Component Layout (No changes needed here) -->
 <Popup bind:errorMessage={error} />
-<!-- <CreateCommunityCard bind:modalShown={modalShown} /> -->
-<EditCommunityCard bind:modalShown={modalShown} communityID={1} />
+<CreateCommunityCard bind:modalShown={modalShown} />
 <div class="flex min-h-screen bg-gray-50">
 	<!-- Sidebar Component -->
 	<Sidebar  bind:tags={tags} bind:degree={degree} />
