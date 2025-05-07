@@ -179,7 +179,7 @@ export type communityData = {
 	id: number;
 	name: string;
 	description: string;
-	public: boolean;
+	public_community: boolean;
 	tags: string[];
 	degrees: string[];
 	member_count: number;

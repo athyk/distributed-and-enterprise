@@ -3,8 +3,13 @@
 	import CreateEditBase from '$components/Post/CreateEdit/base.svelte';
 	import CreateDescription from '$components/Post/Sections/Inputs/createDescription.svelte';
 	import SearchBox from '$components/SearchBox/searchBox.svelte';
-	import type { response } from '$lib/api/apiType';
+	import type { response,communityData } from '$lib/api/apiType';
 	import Popup from '$components/ErrorPopUp/popup.svelte';
+    import { onMount } from 'svelte';
+    import { getTagID } from '$lib/api/getTagID';
+    import { getDegreeID } from '$lib/api/getDegreeID';
+    import { get } from '$lib/api/get';
+    import { Put } from '$lib/api/Put';
 
 	let formData = {
 		name: '',
@@ -15,9 +20,10 @@
 	};
 
 	let error = '';
+    export let communityID: number;
 	export let modalShown = true;
 
-	async function createCommunity() {
+	async function editCommunity() {
 		error = '';
 		console.log('Creating community with data:', formData);
 		const formattedData = {
@@ -27,22 +33,68 @@
 		};
 		console.log('Formatted data:', formattedData);
 		try {
-			let response = (await post('community/', formattedData)) as response;
+			let response = (await Put('community/'+communityID, formattedData)) as response;
 			console.log(response.id);
+            modalShown = false;
 		} catch (error) {
 			console.error('Error creating community:', error);
 			error = 'Error creating community. Please try again.';
 		}
 	}
 
-	function Submit() {
-		createCommunity();
+	function Submit2() {
+		editCommunity();
 	}
 
 	function hideModal() {
 		modalShown = false;
 		console.log('Hiding modal');
 	}
+
+    async function getTags(response:communityData) {
+        if (response.tags && response.tags.length > 0) {
+            response.tags.forEach(async (tagName) => {
+                const TagID = await getTagID(tagName.toString());
+                formData.tags.push([tagName, TagID]);
+            });
+        }
+    }
+
+    async function getDegree(response:communityData) {
+        if (response.degrees && response.degrees.length > 0) {
+            response.degrees.forEach(async (degreeName) => {
+                const TagID = await getDegreeID(degreeName.toString());
+                formData.degrees.push([degreeName, TagID]);
+            });
+        }
+    }
+
+
+    async function getCommunity() {
+        console.log('Fetching community data...');
+        try {
+            const response = await get('community/' + communityID) as communityData;
+            formData.name = response.name;
+            formData.description = response.description;
+            formData.public = response.public_community;
+            getTags(response);
+            getDegree(response);
+
+        } catch (error) {
+            console.error('Error fetching community data:', error);
+        }
+    }
+
+    onMount(() => {
+        console.log('Community ID:', communityID);
+        formData.tags = [];
+        formData.degrees = [];
+        if (communityID) {
+            getCommunity();
+        } else {
+            console.error('Community ID is not provided or invalid.');
+        }
+    });
 
 </script>
 
@@ -56,10 +108,10 @@
 	<Popup bind:errorMessage={error} />
 	<!-- Container -->
 	<CreateEditBase
-	ModalTitle={"Create Community"}
-	onSubmit={Submit}
+	ModalTitle={"Edit Community"}
+	onSubmit={Submit2}
 	onClose={hideModal}
-	ButtonText={"Create"}
+	ButtonText={"Edit"}
 	>
 		<svelte:fragment slot="content">
 			<div class="flex flex-col w-full">

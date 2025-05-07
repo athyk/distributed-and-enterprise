@@ -67,12 +67,6 @@
                     success: true,
                     error_message: ''
                 }
-                console.log(userInfo.user.picture_url);
-                console.log(userInfo.user.first_name);
-                console.log(userInfo.user.last_name);
-                console.log(userInfo.user.year_of_study);
-                console.log(userInfo.user.degree_id);
-                console.log(userInfo.user.tags);
                 dataloaded = true;
             } else {
                 console.error('Error fetching user info:', response.error_message);
