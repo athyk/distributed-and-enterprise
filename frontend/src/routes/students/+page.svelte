@@ -25,11 +25,11 @@
 		let query = '';
 
 		if (tags.length > 0) {
-			query += tags.map(tag => `tag=${tag[1]}`).join('&') + '&';
+			query += tags.map(tag => `tags=${tag[1]}`).join('&') ;
 		}
 
 		if (degree.length > 0) {
-			query += degree.map(deg => `degree=${deg[1]}`).join('&') + '&';
+			query += degree.map(deg => `degree=${deg[1]}`).join('&') ;
 		}
 
 		// Add gender filter if selected
@@ -47,7 +47,7 @@
 		}
 
 		if (searchQuery) {
-			query += `name=${searchQuery}`;
+			query += `first_name=${searchQuery}`;
 		}
 
 		// Remove trailing '&' if it exists
@@ -92,7 +92,7 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 <Popup bind:errorMessage={error} />
 <div class="flex min-h-screen bg-gray-50">
 	<!-- Sidebar Component with all necessary bindings -->
-	<Sidebar bind:tags={tags} bind:degree={degree} bind:gender={gender} bind:ageFrom={ageFrom} bind:ageTo={ageTo} />
+    <!-- <Sidebar bind:tags={tags} bind:degree={degree} bind:gender={gender} bind:ageFrom={ageFrom} bind:ageTo={ageTo} /> -->
 	<!-- Main Content -->
 	<div class="ml-64 flex-1 p-6"> <!-- Adjust ml-64 if sidebar width changes -->
 		<div class="mx-auto max-w-6xl">
@@ -168,12 +168,14 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 						{#each filteredStudents as student (student.id)}
 							<StudentCard
 								userId={student.id}
-								name={student.first_name + student.last_name}
-						
-                                tags={student.tags}
-								degrees={student.degree_id}
-								gender={student.gender}
-								age={student.date_of_birth}
+								firstName={student.first_name}
+								lastName={student.last_name}
+								tagNames={student.tags ? student.tags.map(tag => tag.name) : []}
+								degreeName={student.degree_name || 'Not Specified'}
+								gender={student.gender || 'N/A'}
+								dateOfBirth={student.date_of_birth}
+								yearOfStudy={student.year_of_study || 'N/A'}
+								gradDate={student.graduation_date || ''}
 							/>
 						{/each}
 					</div>

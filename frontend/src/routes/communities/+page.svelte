@@ -36,6 +36,7 @@
 			query += `name=${searchQuery}`;
 		}
 
+		console.log(query)
 		return query;
 	}
 
@@ -46,7 +47,7 @@
 		const queryString = buildQueryString();
 
 		try {
-			const response = (await get('community/search?limit=50&'+queryString)) as CommunitySearchResponse;
+			const response = (await get('community/search?'+queryString)) as CommunitySearchResponse;
 			console.log('Response:', response);
 			filteredCommunities = response.communities || [];
 		} catch (err) {
