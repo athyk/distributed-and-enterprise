@@ -140,10 +140,18 @@
 
 			<!-- Display Loading, Error, or Communities -->
 			{#if filteredCommunities.length === 0} <!-- Show loading spinner only on initial load or when list is empty -->
-				<div class="flex justify-center py-12">
-					<div class="h-10 w-10 animate-spin rounded-full border-4 border-gray-300 border-t-blue-500"></div>
-					<span class="sr-only">Loading communities...</span>
-				</div>
+			<div class="flex flex-col items-center justify-center py-12 text-center">
+				<!-- Magnifying glass icon (Heroicons) - still appropriate for search -->
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-gray-400 dark:text-gray-500 mb-3">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+				</svg>
+				<p class="text-md font-medium text-gray-700 dark:text-gray-300">
+					Ready to find a committee?
+				</p>
+				<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+					Enter a committee name or apply filters to see results.
+				</p>
+			</div>
 			{:else if error}
 				<div class="rounded-lg border border-red-200 bg-red-50 p-4 text-center text-red-700 shadow-sm">
 					<h3 class="font-medium">Oops! Something went wrong.</h3>
