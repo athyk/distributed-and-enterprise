@@ -7,6 +7,7 @@
 	import Tags from '$components/Post/Sections/tags.svelte';
 	import { getDegreeName } from '$lib/api/getDegreeID';
 	import { getTagName } from '$lib/api/getTagID';
+	import { onMount } from 'svelte';
 
 	let tags: [string, number][] = [];
 	let degree: [string, number][] = [];
@@ -63,24 +64,24 @@
 
 
 	async function fetchStudents() {
-	console.log('Fetching students with query:', searchQuery);
-	error = '';
+		console.log('Fetching students with query:', searchQuery);
+		error = '';
 
-	const queryString = buildQueryString();
-	console.log('Query string:', queryString);
+		const queryString = buildQueryString();
+		console.log('Query string:', queryString);
 
-	try {
-		// Add a question mark to properly format the URL with query parameters
-		const apiUrl = queryString ? `users/?${queryString}` : 'users/';
-		const response = (await get(apiUrl)) as StudentSearchResponse;
-		console.log('Response:', response);
-		filteredStudents = response.users || [];
-	} catch (err) {
-		error = 'Failed to fetch students. Please try again later.';
-		console.error('Error fetching students:', err);
-		return;
+		try {
+			// Add a question mark to properly format the URL with query parameters
+			const apiUrl = queryString ? `users/?${queryString}` : 'users/';
+			const response = (await get(apiUrl)) as StudentSearchResponse;
+			console.log('Response:', response);
+			filteredStudents = response.users || [];
+		} catch (err) {
+			error = 'Failed to fetch students. Please try again later.';
+			console.error('Error fetching students:', err);
+			return;
+		}
 	}
-}
 
 $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 || ageFrom || ageTo) {
 	fetchStudents();
@@ -89,6 +90,10 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 	let searchQuery: string = '';
 	let filteredStudents: studentData[] = [];
 	let error: string = '';
+
+	onMount(() => {
+		fetchStudents();
+	});
 </script>
 
 <!-- Component Layout -->
