@@ -112,9 +112,11 @@
 		<div>
 			<p class="text-sm font-medium text-gray-500">Degree</p>
 			{#await getDegreeName(degreeName.toString()) then degreeConverted}
-				<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">{degreeConverted}</span>
+				<p class="font-semibold text-gray-800 bg-gray-50 py-1 leading-snug">
+					{degreeConverted}
+				</p>
 			{:catch error}
-				<span class="bg-red-200 rounded-md px-2 py-1 text-sm">Error</span>
+				<span class="bg-red-200 rounded-md px-2 py-1 text-sm">Error loading degree</span>
 			{/await}
 		</div>
 		<div>
@@ -147,9 +149,6 @@
 				{/each}
 			</div>
 		</div>
-	{:else}
-        <!-- Ensures bottom row stays down even if no tags -->
-		<div class="flex-grow" />
 	{/if}
 
 	<!-- Bottom Row -->

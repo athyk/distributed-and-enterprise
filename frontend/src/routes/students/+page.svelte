@@ -182,7 +182,7 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 								firstName={student.first_name}
 								lastName={student.last_name}
 								tagNames={student.tags}
-								degreeName={String(student.degree)}
+								degreeName={String(student.degree_id)}
 								gender={student.gender || 'N/A'}
 								dateOfBirth={student.date_of_birth}
 								yearOfStudy={student.year_of_study || 'N/A'}
