@@ -11,6 +11,7 @@ services:
         POSTGRES_USER: ${DATABASE_USERNAME}
         POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
         POSTGRES_PORT: ${DATABASE_PORT}
+    restart: always
     env_file: .env
   minio:
     image: minio/minio:latest
@@ -25,11 +26,13 @@ services:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
       - MINIO_DEFAULT_BUCKETS=${MINIO_DEFAULT_BUCKETS}
+    restart: always
     env_file: .env
   redis:
     image: redis:latest
     ports:
       - ${REDIS_PORT}:${REDIS_PORT}
+    restart: always
     env_file: .env
     logging:
       driver: none
@@ -48,6 +51,7 @@ services:
       - community-service
       - tag-service
       - degree-service
+    restart: always
     env_file: .env
   tag-service:
     build:
@@ -59,6 +63,7 @@ services:
     depends_on:
       - db
       - redis
+    restart: always
     env_file: .env
   degree-service:
     build:
@@ -70,6 +75,7 @@ services:
     depends_on:
       - db
       - redis
+    restart: always
     env_file: .env
   community-service:
     build:
@@ -81,6 +87,7 @@ services:
     depends_on:
       - db
       - redis
+    restart: always
     env_file: .env
   account-service:
     build:
@@ -93,6 +100,7 @@ services:
       - db
       - minio
       - redis
+    restart: always
     env_file: .env
   svelte-frontend:
     build:
@@ -105,6 +113,7 @@ services:
     depends_on:
       - django-backend
     working_dir: /app
+    restart: always
 volumes:
   postgres_data:
   minio_data:

@@ -2,7 +2,10 @@ from backend.common.utils import verify_integer, verify_string, verify_list
 from backend.community.database.database import get_db
 from backend.community.database.models import Community, CommunityUser, CommunityTag, CommunityDegree
 from backend.community.utils import get_tag_name, get_degree_name
+
 from sqlalchemy import func, exists
+from sqlalchemy.orm import aliased
+from sqlalchemy.dialects import postgresql
 
 from math import inf as INFINITY
 
@@ -46,12 +49,10 @@ def search_for_community(offset: int, limit: int, user_id: int, is_with: int, na
             query = query.join(CommunityUser).group_by(Community.id).having(func.count(CommunityUser.community_id) > minimum_members)
 
         if len(tags) > 0:
-            for tag_id in tags:
-                query = query.join(CommunityTag).filter(CommunityTag.tag_id == tag_id)
+            query = query.join(CommunityTag).filter(CommunityTag.tag_id.in_(tags))
 
         if len(degrees) > 0:
-            for degree_id in degrees:
-                query = query.join(CommunityDegree).filter(CommunityDegree.degree_id == degree_id)
+            query = query.join(CommunityDegree).filter(CommunityDegree.degree_id.in_(degrees))
 
         if user_id > 0:
             if is_with == 1:
@@ -59,7 +60,11 @@ def search_for_community(offset: int, limit: int, user_id: int, is_with: int, na
             elif is_with == 2:
                 query = query.filter(~exists().where((CommunityUser.community_id == Community.id) & (CommunityUser.user_id == user_id)))
 
+
+        print(query.statement.compile(dialect=postgresql.dialect(), compile_kwargs={"literal_binds": True}))
+
         results = query.order_by(Community.id.asc()).offset(offset).limit(limit).all()
+
 
         communities = []
 
