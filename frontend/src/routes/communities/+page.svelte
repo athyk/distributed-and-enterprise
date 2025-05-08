@@ -38,6 +38,18 @@
 			query += degree.map(deg => `degrees=${deg[1]}`).join('&') ;
 		}
 
+		if (ageTo) {
+			query += `&minimum_members=${ageTo}`;
+		}
+
+		if (is_with) {
+			query += `&is_with=${is_with}`;
+		}
+
+		if (public_community) {
+			query += `&public=${public_community}`;
+		}
+
 		if (searchQuery) {
 			query += `&name=${searchQuery}`;
 		}
@@ -87,7 +99,7 @@
 	<!-- Sidebar Component -->
 	<Sidebar  bind:tags={tags} bind:degree={degree} bind:ageTo={ageTo} bind:is_with={is_with} bind:public_community={public_community} />
 	<!-- Main Content -->
-	<div class="ml-64 flex-1 p-6"> <!-- Adjust ml-64 if sidebar width changes -->
+	<div class="ml-64 flex-1 p-6 pt-20">
 		<div class="mx-auto max-w-6xl">
 			<!-- Header with Search Bar and Create Community Button -->
 			<div class="mb-8 flex flex-col items-center justify-between gap-4 sm:flex-row">

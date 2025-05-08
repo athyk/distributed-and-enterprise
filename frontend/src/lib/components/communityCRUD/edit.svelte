@@ -117,7 +117,7 @@
 
 {#if modalShown}
 	<div
-	class="bg-gray bg-opacity-75 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+	class="bg-gray bg-opacity-75 fixed inset-0 z-60 flex items-center justify-center p-4 backdrop-blur-sm"
 	>
 
 

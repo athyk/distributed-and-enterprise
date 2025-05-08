@@ -63,10 +63,9 @@
 
 </script>
 
-<aside class="fixed top-20 left-0 bottom-0 w-72 overflow-y-auto bg-gray-900 px-4 py-6 text-black shadow-lg">
+<aside class="fixed left-0 top-16 bottom-0 w-64 overflow-y-auto bg-gray-900 px-4 py-6 text-black shadow-lg z-11 mt-5">
 	<div class="mb-6">
 		<h2 class="mb-3 text-xl font-bold text-white">Filters</h2>
-		
 		<!-- Community Tags with Search -->
 		<div class="mb-6">
 			<div class="flex items-center justify-between">
@@ -125,14 +124,14 @@
 					class="flex items-center text-lg font-semibold"
 					on:click={toggleMemberOpen}
 				>
-					<span class="text-white">Min Memebers</span>
+					<span class="text-white">Min Members</span>
 				</button>
 			</div>
 			{#if isMemberOpen}
 				<div class="mt-2">
 					<div class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
 						<div class="flex items-center gap-3 mb-2">
-							<label class="w-1/2">
+							<label class="w-full">
 								<input 
 									type="number" 
 									min="1" 

@@ -323,8 +323,9 @@
 </script>
 
 
-<EditCommunityCard bind:modalShown={modalShown} communityID={parseInt(communityId)} />
-
+{#if communityFetched}
+    <EditCommunityCard bind:modalShown={modalShown} communityID={parseInt(communityId)} />
+{/if}
 
 
 {#if loggedin}
@@ -435,14 +436,15 @@
                     </h1>
                     {#if hasPermission}
                         <div class="flex justify-between m-4">
+                            <button
+                            class="w-1/2 rounded {requested_users_view === 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center mr-1"
+                            on:click={() => requested_users_view = 0}
+                        >
+                            Members
+                        </button>
                             {#if private_community}
                                 {#if hasPermission}
-                                    <button
-                                        class="w-1/2 rounded {requested_users_view === 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center mr-1"
-                                        on:click={() => requested_users_view = 0}
-                                    >
-                                        Members
-                                    </button>
+
                                     <button 
                                         class="w-1/2 rounded {requested_users_view === 1 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center ml-1"
                                         on:click={() => requested_users_view = 1}   
@@ -589,18 +591,20 @@
                         <p class="mt-4 text-sm text-gray-600">This community is private. You need to join to see the posts.</p>
                     </div>
                 {/if}
-                {#if choice === 0}
-                    <div class="w-full">
-                        <Feed feedType="events" showActions={true}>
-                            <Event url={"community/"+communityId+"/events"} slot="Posts" limit={30} />
-                        </Feed>
-                    </div>
-                {:else if choice === 1}
-                    <div class="w-full">
-                        <Feed feedType="announcements">
-                            <Annoucements url={"community/"+communityId+"/announcements"} slot="Posts" limit={30} />
-                        </Feed>
-                    </div>
+                {#if communityFetched}
+                    {#if choice === 0}
+                        <div class="w-full">
+                            <Feed feedType="events" showActions={true} communityID={parseInt(communityId)}>
+                                <Event url={"community/"+communityId+"/events"} slot="Posts" limit={30} />
+                            </Feed>
+                        </div>
+                    {:else if choice === 1}
+                        <div class="w-full">
+                            <Feed feedType="announcements" showActions={true} communityID={parseInt(communityId)}>
+                                <Annoucements url={"community/"+communityId+"/announcements"} slot="Posts" limit={30} />
+                            </Feed>
+                        </div>
+                    {/if}
                 {/if}
             </div>
         </div>
