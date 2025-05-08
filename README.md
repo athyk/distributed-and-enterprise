@@ -24,36 +24,38 @@ PYTHONPATH=$(pwd)/backend/common/proto  && coverage run -m unittest discover bac
 
 ## Where things are
 
-Our code is located in this GitHub Repo.
-Link: "https://github.com/athyk/distributed-and-enterprise"
+Our code is located in this GitHub Repo. Link: https://github.com/athyk/distributed-and-enterprise
 
-We have 9 containers in total for this project
-1 Frontend container
-8 Backend containers
+There are 9 containers in total for this project
+- 1 Frontend container
+- 8 Backend containers
 
 The only container that will be exposed to the internet will be the django-backend container.
 All other containers are internal systems.
 
 All Django views are located in this directory.
-```./backend/core/view```
+[`./backend/core/view`](backend/core/view)
 
-All backend container directories are structured as follows.
-```./backend/container_name```
+All backend container directories arelocated within `./backend/<container_name>`, where a container name of `accounts` leads to the account service.
 
-The common file ```./backend/common``` is the folder that all containers use.
-It contains all the files and functions that are used throughout multiple containers.
+The common directory [`./backend/common`](backend/common) contains 
+all the files and functions that are used to support the use of multiple containers/services.
 
-We use redis for our sessions in the application.
-This is handled on the server side which is better than JWT due to the fact that it
-reduces complexity and a user only has a session id given to them when they log in.
-This keeps all the sensitive data server side inaccessible by others
+Redis is used for session management in the application.
+This was chosen over JWT as there isn't a use case for stateless tokens reducing complexity. 
+For a secure use of JWTs, refresh and access tokens would need to be created and managed, drastically increasing complexity.
+
+Sessions improve security as they can be revoked server-side through a logout from everywhere function, 
+they are also up to date as user information is fetched whenever requested.
 
 ## How the routes are structured
 
-From the frontend container to the core container (django-backend) we use the typical http request to fetch data
-The core container then uses gRPC to request the data from the specified container that needs to be contacted.
-This is done for two reasons: -
-- gRPC servers only need one file where Django needs multiple to initialise (making it better to manage)
-- communicating to a gRPC server, the languages between the sender and receiver can be different
-- - this means that a python file can send a request to a go/rust/C++ server with no issues. gRPC handles all the heavy work
-- - this makes it easy to adapt a container whilst using the most suitable language for its intended operations
+From the frontend container to the core container (django-backend) a HTTP based REST request is used to fetch data.
+The core container then uses gRPC to request the data from the container(s) that need to be contacted.
+
+This is done for two reasons:
+- The setup for a gRPC server and communications are defined within a ProtoBuf file (.proto) and for a structured approach
+- Communicating to a gRPC server, the languages between the sender and receiver can be different but remain type safe
+  - A request in Python can send a request to a go/rust/C++ server while keeping the original type used.
+  - It is easy to refactor an individual container whilst using the most suitable language for its intended operations
+  - It is performant, faster than REST, [25-30% faster](docs/microservices)
