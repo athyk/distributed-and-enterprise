@@ -19,17 +19,24 @@ class Community_Searching_Service(community_searching_pb2_grpc.CommunitySearchin
         print("CommunitySearch Request Made:")
         print(request)
 
-        success, http_code, message, filter = search_for_community(
-            request.offset,
-            request.limit,
-            request.user_id,
-            request.is_with,
-            request.name,
-            request.public,
-            request.minimum_members,
-            list(request.tags),
-            list(request.degrees)
-        )
+        try:
+
+            success, http_code, message, filter = search_for_community(
+                request.offset,
+                request.limit,
+                request.user_id,
+                request.is_with,
+                request.name,
+                request.public,
+                request.minimum_members,
+                list(request.tags),
+                list(request.degrees)
+            )
+        
+        except Exception as e:
+            print(e)
+
+        print(filter)
 
         status = community_searching_pb2.RequestResponse(
             success=success,

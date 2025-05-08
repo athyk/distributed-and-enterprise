@@ -22,18 +22,20 @@
 	}
 
 	function buildQueryString() {
-		let query = '';
+		let query = 'offset=0&limit=20&';
 
 		if (tags.length > 0) {
+			query += '&'
 			query += tags.map(tag => `tags=${tag[1]}`).join('&') ;
 		}
 
 		if (degree.length > 0) {
+			query += '&'
 			query += degree.map(deg => `degrees=${deg[1]}`).join('&') ;
 		}
 
 		if (searchQuery) {
-			query += `name=${searchQuery}`;
+			query += `&name=${searchQuery}`;
 		}
 
 		console.log(query)

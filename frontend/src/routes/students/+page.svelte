@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import StudentCard from '$lib/components/studentCard/studentCard.svelte';
 	import Sidebar from '$lib/components/studentSideBar/studentSideBar.svelte';
@@ -32,25 +31,26 @@
 		}
 
 		if (degree.length > 0) {
+			query += '&'
 			query += degree.map(deg => `degree_id=${deg[1]}`).join('&') ;
 		}
 
 		// Add gender filter if selected
 		if (gender.length > 0 && gender[0]) {
-			query += `gender=${gender[0]}&`;
+			query += `&gender=${gender[0]}`;
 		}
 
 		// Add age range filters if provided
 		if (ageFrom) {
-			query += `age_from=${ageFrom}&`;
+			query += `&age_from=${ageFrom}&`;
 		}
 
 		if (ageTo) {
-			query += `age_to=${ageTo}&`;
+			query += `&age_to=${ageTo}&`;
 		}
 
 		if (searchQuery) {
-			query += `first_name=${searchQuery}`;
+			query += `&first_name=${searchQuery}`;
 		}
 
 		// Remove trailing '&' if it exists
