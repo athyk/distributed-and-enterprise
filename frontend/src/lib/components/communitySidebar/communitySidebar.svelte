@@ -63,7 +63,7 @@
 
 </script>
 
-<aside class="fixed top-16 left-0 bottom-0 w-72 overflow-y-auto bg-gray-900 px-4 py-6 text-black shadow-lg">
+<aside class="fixed top-20 left-0 bottom-0 w-72 overflow-y-auto bg-gray-900 px-4 py-6 text-black shadow-lg">
 	<div class="mb-6">
 		<h2 class="mb-3 text-xl font-bold text-white">Filters</h2>
 		
