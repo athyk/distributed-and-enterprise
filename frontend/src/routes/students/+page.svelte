@@ -100,26 +100,23 @@ $: if (tags.length > 0 || searchQuery || degree.length > 0 || gender.length > 0 
 	<div class="ml-64 flex-1 p-6"> <!-- Adjust ml-64 if sidebar width changes -->
 		<div class="mx-auto max-w-6xl">
 			<!-- Header with Search Bar -->
-			<div class="mb-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-				<!-- Search Bar Section -->
-				<div class="flex w-full max-w-lg items-center gap-2 rounded-full border border-gray-300 bg-white p-2 px-3 shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-1">
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-						<path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-					</svg>
-					<input
-						type="text"
-						bind:value={searchQuery}
-						placeholder="Search for a student..."
-						class="w-full flex-1 bg-transparent px-2 text-gray-900 outline-none"
-					/>
-					<button
-						class="rounded-full bg-blue-500 px-5 py-1.5 text-sm font-medium text-white shadow-sm transition hover:bg-blue-600 disabled:opacity-50"
-						on:click={() => fetchStudents()}
-					>
-						Search
-					</button>
-				</div>
-			</div>
+	<!-- Header with Search Bar -->
+<div class="mb-8 flex flex-col items-center gap-4"> <!-- Removed justify-between and sm:flex-row -->
+    <!-- Search Bar Section -->
+    <div class="flex w-full max-w-lg items-center gap-2 rounded-full border border-gray-300 bg-white p-2 px-3 shadow-sm focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+        </svg>
+        <input
+            type="text"
+            bind:value={searchQuery}
+            placeholder="Search for a student..."
+            class="w-full flex-1 bg-transparent px-2 text-gray-900 outline-none"
+        />
+      
+   
+    </div>
+</div>
 
 			<!-- Active Filters Display -->
 			{#if tags.length > 0}
