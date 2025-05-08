@@ -171,7 +171,7 @@
 			{#each dropdownItems as item}
 				<button
 					type="button"
-					class="block w-full px-4 py-2 text-left hover:bg-gray-200 text-sm whitespace-normal break-words"
+					class="block w-full px-4 py-2 text-left text-sm break-words whitespace-normal hover:bg-gray-200"
 					class:bg-blue-100={multi_select && selected.some((sel) => sel[1] === item.id)}
 					on:click={(e) => handleButtonClick(item, e)}
 				>
@@ -181,7 +181,7 @@
 			{#each locationDropdownItems.slice(0, 5) as item}
 				<button
 					type="button"
-					class="block w-full px-4 py-2 text-left hover:bg-gray-200 text-sm whitespace-normal break-words"
+					class="block w-full px-4 py-2 text-left text-sm break-words whitespace-normal hover:bg-gray-200"
 					on:click={(e) => {
 						handleLocationClick(item, e);
 					}}

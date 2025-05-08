@@ -155,7 +155,7 @@ export type MeResponse = {
 		rank: string;
 		created_at: string;
 		updated_at: string;
-	},
+	};
 	users: {
 		id: number;
 		email: string;
@@ -198,7 +198,6 @@ export type OSMPlace = {
 	display_name: string;
 };
 
-
 export type studentData = {
 	id: number;
 	email: string;
@@ -221,5 +220,4 @@ export type StudentSearchResponse = {
 	success: boolean;
 	error_message: string[];
 	users: studentData[];
-
-}
+};

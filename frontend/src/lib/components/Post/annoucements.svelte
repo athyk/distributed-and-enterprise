@@ -29,7 +29,7 @@
 	}
 
 	async function GetAnnouncments() {
-		formatted_url = url + '?offset=' + offset + '&limit=' + limit+"&"+params;
+		formatted_url = url + '?offset=' + offset + '&limit=' + limit + '&' + params;
 		const response = (await get(formatted_url)) as globalAnnouncement;
 		if (!response.global_announcements) {
 			response.global_announcements = response.announcements;

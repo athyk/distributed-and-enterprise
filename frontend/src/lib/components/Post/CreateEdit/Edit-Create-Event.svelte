@@ -116,9 +116,7 @@
 			getEvent();
 		}
 	}
-
 </script>
-
 
 <Popup bind:errorMessage={error_message} />
 <CreateEditBase

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'; // For SvelteKit navigation
 
-	import {getTagName} from '$lib/api/getTagID';
+	import { getTagName } from '$lib/api/getTagID';
 	import { getDegreeName } from '$lib/api/getDegreeID';
 
 	// --- Component Props ---
@@ -25,7 +25,7 @@
 				month: 'long',
 				day: 'numeric'
 			});
-		} catch (e) {
+		} catch {
 			return 'Invalid Date';
 		}
 	};
@@ -41,7 +41,7 @@
 				calculatedAge--;
 			}
 			return calculatedAge >= 0 ? calculatedAge : 'N/A';
-		} catch (e) {
+		} catch {
 			return 'N/A';
 		}
 	})();
@@ -71,7 +71,7 @@
   - `cursor-pointer`, `hover:shadow-md`, `focus:ring-2`: UX enhancements.
 -->
 <div
-	class="flex w-full cursor-pointer flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4 min-h-80 transition-shadow duration-150 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+	class="focus:ring-opacity-50 flex min-h-80 w-full cursor-pointer flex-col space-y-4 rounded-lg border border-gray-200 bg-white p-4 transition-shadow duration-150 hover:shadow-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
 	on:click={handleCardClick}
 	on:keydown={handleKeyDown}
 	role="button"
@@ -95,7 +95,8 @@
 			</div>
 		{/if}
 		<h2 class="truncate text-xl font-bold text-gray-900">
-			{firstName} {lastName}
+			{firstName}
+			{lastName}
 		</h2>
 	</div>
 
@@ -112,11 +113,11 @@
 		<div>
 			<p class="text-sm font-medium text-gray-500">Degree</p>
 			{#await getDegreeName(degreeName.toString()) then degreeConverted}
-				<p class="font-semibold text-gray-800 bg-gray-50 py-1 leading-snug">
+				<p class="bg-gray-50 py-1 leading-snug font-semibold text-gray-800">
 					{degreeConverted}
 				</p>
-			{:catch error}
-				<span class="bg-red-200 rounded-md px-2 py-1 text-sm">Error loading degree</span>
+			{:catch}
+				<span class="rounded-md bg-red-200 px-2 py-1 text-sm">Error loading degree</span>
 			{/await}
 		</div>
 		<div>
@@ -138,13 +139,13 @@
 			<div class="flex flex-wrap gap-2">
 				{#each tagNames as tag}
 					{#await getTagName(tag.toString()) then tagName}
-					<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
-						{tagName}
-					</span>
-					{:catch error}
-					<span class="rounded-md bg-red-200 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
-						Error
-					</span>
+						<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
+							{tagName}
+						</span>
+					{:catch}
+						<span class="rounded-md bg-red-200 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
+							Error
+						</span>
 					{/await}
 				{/each}
 			</div>

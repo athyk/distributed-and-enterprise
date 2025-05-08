@@ -55,7 +55,6 @@ export async function isAdmin(communityId: number): Promise<boolean> {
 	}
 }
 
-
 export async function isWithCommunity(communityId: number): Promise<boolean> {
 	const response = (await get(`community/${communityId}/members`)) as response;
 	if (response.success) {
@@ -64,7 +63,6 @@ export async function isWithCommunity(communityId: number): Promise<boolean> {
 		return false;
 	}
 }
-
 
 export async function isRequested(communityId: number): Promise<boolean> {
 	const response = (await get(`community/${communityId}/members`)) as response;

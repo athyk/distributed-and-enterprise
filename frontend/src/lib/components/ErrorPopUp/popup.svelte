@@ -19,7 +19,9 @@
 </script>
 
 {#if errorMessage}
-	<div class="fixed inset-0 flex items-start justify-center pt-4 sm:items-start sm:justify-end sm:pr-4 z-[9999]">
+	<div
+		class="fixed inset-0 z-[9999] flex items-start justify-center pt-4 sm:items-start sm:justify-end sm:pr-4"
+	>
 		<div class="mb-4 w-full max-w-md rounded bg-red-500 p-4 text-white shadow-xl">
 			<p>{errorMessage}</p>
 			<button

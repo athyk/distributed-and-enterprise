@@ -1,4 +1,4 @@
-import type { PaginationDataResponse,PaginationData } from '$lib/api/apiType';
+import type { PaginationDataResponse } from '$lib/api/apiType';
 import { get } from '$lib/api/get';
 
 export async function getTagID(name: string) {

@@ -1,6 +1,4 @@
-
 <script lang="ts">
-
 	import SearchBox from '$components/SearchBox/searchBox.svelte';
 
 	// Define data structures
@@ -9,29 +7,29 @@
 	export let ageTo = '';
 	export let is_with = 0; // Only When Logged In [0 - All Communities | 1 - User With Community | 2 - User Not With Community]
 	export let public_community = 0; //0 - All Communities | 1 - Public Community | 2 - Private Community
-	
+
 	// Options for dropdowns
 	const membershipOptions = [
 		{ value: 0, label: 'All Communities' },
-		{ value: 1, label: 'Communities I\'m In' },
-		{ value: 2, label: 'Communities I\'m Not In' }
+		{ value: 1, label: "Communities I'm In" },
+		{ value: 2, label: "Communities I'm Not In" }
 	];
-	
+
 	const visibilityOptions = [
 		{ value: 0, label: 'All Communities' },
 		{ value: 1, label: 'Public Communities' },
 		{ value: 2, label: 'Private Communities' }
 	];
-	
+
 	// Toggle states for new dropdowns
 	let isMembershipOpen = true;
 	let isVisibilityOpen = true;
-	
+
 	// Toggle functions for new dropdowns
 	function toggleMembership() {
 		isMembershipOpen = !isMembershipOpen;
 	}
-	
+
 	function toggleVisibility() {
 		isVisibilityOpen = !isVisibilityOpen;
 	}
@@ -41,7 +39,6 @@
 	let isDegreeOpen = true;
 	let isMemberOpen = true;
 
-
 	// Toggle sections
 	function toggleCommunityTags() {
 		isCommunityTagsOpen = !isCommunityTagsOpen;
@@ -50,29 +47,27 @@
 	function toggleDegree() {
 		isDegreeOpen = !isDegreeOpen;
 	}
-	
+
 	function toggleMemberOpen() {
 		isMemberOpen = !isMemberOpen;
 	}
-	
+
 	function handleAgeToChange() {
 		// Validate the input range if needed
 		if (parseInt(ageTo) < 1) ageTo = '1';
 		if (parseInt(ageTo) > 999) ageTo = '999';
 	}
-
 </script>
 
-<aside class="fixed left-0 top-16 bottom-0 w-64 overflow-y-auto bg-gray-900 px-4 py-6 text-black shadow-lg z-11 mt-5">
+<aside
+	class="fixed top-16 bottom-0 left-0 z-11 mt-5 w-64 overflow-y-auto bg-gray-900 px-4 py-6 text-black shadow-lg"
+>
 	<div class="mb-6">
 		<h2 class="mb-3 text-xl font-bold text-white">Filters</h2>
 		<!-- Community Tags with Search -->
 		<div class="mb-6">
 			<div class="flex items-center justify-between">
-				<button 
-					class="flex items-center text-lg font-semibold"
-					on:click={toggleCommunityTags}
-				>
+				<button class="flex items-center text-lg font-semibold" on:click={toggleCommunityTags}>
 					<span class="text-white">Community Tags</span>
 				</button>
 			</div>
@@ -96,10 +91,7 @@
 		<!-- Degree Filter -->
 		<div class="mb-6">
 			<div class="flex items-center justify-between">
-				<button 
-					class="flex items-center text-lg font-semibold"
-					on:click={toggleDegree}
-				>
+				<button class="flex items-center text-lg font-semibold" on:click={toggleDegree}>
 					<span class="text-white">Degree</span>
 				</button>
 			</div>
@@ -120,24 +112,21 @@
 
 		<div class="mb-6">
 			<div class="flex items-center justify-between">
-				<button 
-					class="flex items-center text-lg font-semibold"
-					on:click={toggleMemberOpen}
-				>
+				<button class="flex items-center text-lg font-semibold" on:click={toggleMemberOpen}>
 					<span class="text-white">Min Members</span>
 				</button>
 			</div>
 			{#if isMemberOpen}
 				<div class="mt-2">
-					<div class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
-						<div class="flex items-center gap-3 mb-2">
+					<div class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2 text-white">
+						<div class="mb-2 flex items-center gap-3">
 							<label class="w-full">
-								<input 
-									type="number" 
-									min="1" 
-									max="999" 
-									class="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white focus:outline-none focus:border-blue-500" 
-									bind:value={ageTo} 
+								<input
+									type="number"
+									min="1"
+									max="999"
+									class="w-full rounded border border-gray-600 bg-gray-700 px-2 py-1 text-white focus:border-blue-500 focus:outline-none"
+									bind:value={ageTo}
 									on:change={handleAgeToChange}
 								/>
 							</label>
@@ -150,23 +139,20 @@
 		<!-- Membership Filter -->
 		<div class="mb-6">
 			<div class="flex items-center justify-between">
-				<button 
-					class="flex items-center text-lg font-semibold"
-					on:click={toggleMembership}
-				>
+				<button class="flex items-center text-lg font-semibold" on:click={toggleMembership}>
 					<span class="text-white">Membership Status</span>
 				</button>
 			</div>
 			{#if isMembershipOpen}
 				<div class="mt-2">
-					<div class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+					<div class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2 text-white">
 						{#each membershipOptions as option}
 							<div class="flex items-center gap-2 py-1">
-								<input 
-									type="radio" 
-									id="membership-{option.value}" 
-									name="membership" 
-									value={option.value} 
+								<input
+									type="radio"
+									id="membership-{option.value}"
+									name="membership"
+									value={option.value}
 									bind:group={is_with}
 									class="accent-blue-500"
 								/>
@@ -181,23 +167,20 @@
 		<!-- Visibility Filter -->
 		<div class="mb-6">
 			<div class="flex items-center justify-between">
-				<button 
-					class="flex items-center text-lg font-semibold"
-					on:click={toggleVisibility}
-				>
+				<button class="flex items-center text-lg font-semibold" on:click={toggleVisibility}>
 					<span class="text-white">Community Visibility</span>
 				</button>
 			</div>
 			{#if isVisibilityOpen}
 				<div class="mt-2">
-					<div class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+					<div class="w-full rounded-lg border border-gray-700 bg-gray-800 p-2 text-white">
 						{#each visibilityOptions as option}
 							<div class="flex items-center gap-2 py-1">
-								<input 
-									type="radio" 
-									id="visibility-{option.value}" 
-									name="visibility" 
-									value={option.value} 
+								<input
+									type="radio"
+									id="visibility-{option.value}"
+									name="visibility"
+									value={option.value}
 									bind:group={public_community}
 									class="accent-blue-500"
 								/>
