@@ -12,6 +12,9 @@
 	let tags: [string, number][] = [];
 	let degree: [string, number][] = [];
 	let modalShown = false;
+	let ageTo: string = "";
+	let is_with = 0;
+	let public_community = 0;
 
 
 	function removeTag(tag: [string, number]) {
@@ -45,6 +48,7 @@
 
 	async function fetchCommunities() {
 		console.log('Fetching communities with query:', searchQuery);
+		console.log(ageTo,is_with,public_community)
 		error = '';
 
 		const queryString = buildQueryString();
@@ -60,7 +64,7 @@
 		}
 	}
 
-	$: if (tags.length > 0 || searchQuery || degree.length > 0) {
+	$: if (tags.length > 0 || searchQuery || degree.length > 0 || ageTo || is_with || public_community) {
 		fetchCommunities();
 	}
 
@@ -81,7 +85,7 @@
 <CreateCommunityCard bind:modalShown={modalShown} />
 <div class="flex min-h-screen bg-gray-50">
 	<!-- Sidebar Component -->
-	<Sidebar  bind:tags={tags} bind:degree={degree} />
+	<Sidebar  bind:tags={tags} bind:degree={degree} bind:ageTo={ageTo} bind:is_with={is_with} bind:public_community={public_community} />
 	<!-- Main Content -->
 	<div class="ml-64 flex-1 p-6"> <!-- Adjust ml-64 if sidebar width changes -->
 		<div class="mx-auto max-w-6xl">
