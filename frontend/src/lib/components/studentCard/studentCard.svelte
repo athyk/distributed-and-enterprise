@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'; // For SvelteKit navigation
 
-	    import {getTagName} from '$lib/api/getTagID';
+	import {getTagName} from '$lib/api/getTagID';
+	import { getDegreeName } from '$lib/api/getDegreeID';
 
 	// --- Component Props ---
 	export let userId: string; // This will be the '6' in '/user/6'
@@ -110,7 +111,11 @@
 		</div>
 		<div>
 			<p class="text-sm font-medium text-gray-500">Degree</p>
-			<p class="font-semibold text-gray-800">{degreeName}</p>
+			{#await getDegreeName(degreeName.toString()) then degreeConverted}
+				<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">{degreeConverted}</span>
+			{:catch error}
+				<span class="bg-red-200 rounded-md px-2 py-1 text-sm">Error</span>
+			{/await}
 		</div>
 		<div>
 			<p class="text-sm font-medium text-gray-500">Year of Study</p>
@@ -127,12 +132,18 @@
 	<!-- Tags/Interests -->
 	{#if tagNames && tagNames.length > 0}
 		<div class="flex-grow">
-			<p class="mb-1 text-sm font-medium text-gray-500">Interests</p>
+			<p class="mb-1 text-sm font-medium text-gray-500">Tags</p>
 			<div class="flex flex-wrap gap-2">
 				{#each tagNames as tag}
+					{#await getTagName(tag.toString()) then tagName}
 					<span class="rounded-md bg-gray-100 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
-						{tag}
+						{tagName}
 					</span>
+					{:catch error}
+					<span class="rounded-md bg-red-200 px-2.5 py-0.5 text-sm font-semibold text-gray-800">
+						Error
+					</span>
+					{/await}
 				{/each}
 			</div>
 		</div>
