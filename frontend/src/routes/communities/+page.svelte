@@ -5,6 +5,7 @@
 	import Popup from '$components/ErrorPopUp/popup.svelte';
 	import type { CommunitySearchResponse,communityData } from '$lib/api/apiType';
 	import CreateCommunityCard from "$components/communityCRUD/create.svelte";
+	import { onMount } from 'svelte';
 
 
 
@@ -71,6 +72,10 @@
 	let searchQuery: string = '';
 	let filteredCommunities: communityData[] = [];
 	let error: string = '';
+
+	onMount(() => {
+		fetchCommunities();
+	});
 
 
 </script>
@@ -170,7 +175,7 @@
 				</div>
 			{:else}
 				{#if filteredCommunities.length > 0}
-					<div class="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					<div class="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 						{#each filteredCommunities as community (community.id)}
 							<CommunityCard
 								id={community.id}
