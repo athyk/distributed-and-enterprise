@@ -38,7 +38,7 @@
 				data
 			)) as response;
 		} else {
-			response = (await post('posts/', data)) as response;
+			response = (await post('community/' + communityID + '/announcements', data)) as response;
 		}
 
 		if (response.success === true) {

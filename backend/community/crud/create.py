@@ -17,7 +17,7 @@ def create_community(name: str, description: str, public: bool, tags: list, degr
     description_verify, description_error = verify_string(description, 4, 511, 'Description')
     public_verify, public_error = verify_boolean(public, 'Public')
     tags_verify, tags_error = verify_list(tags, 0, 5, 'Tags')
-    degrees_verify, degrees_error = verify_list(degrees, 0, 5, 'Degrees')
+    degrees_verify, degrees_error = verify_list(degrees, 0, 12, 'Degrees')
     user_verify, user_error = verify_integer(user_id, 1, INFINITY, 'User ID')
 
     if False in [name_verify, description_verify, public_verify, tags_verify, degrees_verify, user_verify]:

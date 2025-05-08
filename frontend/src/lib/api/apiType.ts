@@ -32,6 +32,7 @@ export type globalAnnouncement = {
 	http_status: number;
 	error_message: string[];
 	global_announcements: globalAnnouncementData[];
+	annoucements: globalAnnouncementData[];
 };
 
 export type globalAnnouncementData = {
@@ -155,13 +156,30 @@ export type MeResponse = {
 		created_at: string;
 		updated_at: string;
 	};
+	users: {
+		id: number;
+		email: string;
+		email_verified: number;
+		first_name: string;
+		last_name: string;
+		gender: string;
+		date_of_birth: string;
+		picture_url: string;
+		degree_id: number;
+		year_of_study: number;
+		grad_date: string;
+		tags: number[];
+		rank: string;
+		created_at: string;
+		updated_at: string;
+	}[];
 };
 
 export type communityData = {
 	id: number;
 	name: string;
 	description: string;
-	public: boolean;
+	public_community: boolean;
 	tags: string[];
 	degrees: string[];
 	member_count: number;
@@ -178,4 +196,28 @@ export type OSMPlace = {
 	type: string;
 	name: string;
 	display_name: string;
+};
+
+export type studentData = {
+	id: number;
+	email: string;
+	email_verified: number;
+	first_name: string;
+	last_name: string;
+	gender: string;
+	date_of_birth: string;
+	picture_url: string;
+	degree: number;
+	year_of_study: number;
+	grad_date: string;
+	tags: number[];
+	rank: string;
+	created_at: string;
+	updated_at: string;
+};
+
+export type StudentSearchResponse = {
+	success: boolean;
+	error_message: string[];
+	users: studentData[];
 };

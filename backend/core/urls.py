@@ -17,7 +17,7 @@ from backend.core.view.community.community_events import community_event_action_
 from backend.core.view.community.community_crud import community_crud_paths, community_creation
 from backend.core.view.community.community_joins import community_join_actions, invite_to_community
 from backend.core.view.community.searching import fetch_communities
-from backend.core.view.community.member_management import community_promotion, community_ban, community_demotion
+from backend.core.view.community.member_management import community_promotion, community_ban, community_demotion, get_all_community_users
 
 
 from backend.core.view.auth.login import login_user
@@ -48,6 +48,7 @@ urlpatterns = [
     path('community/<int:community_id>/ban', community_ban),
     path('community/<int:community_id>/promote', community_promotion),
     path('community/<int:community_id>/demote', community_demotion),
+    path('community/<int:community_id>/get_all', get_all_community_users),
     path('community/events', community_global_event_view),
     path('community/<int:community_id>/events', community_event_paths),
     path('community/<int:community_id>/events/<int:event_id>', community_event_action_paths),

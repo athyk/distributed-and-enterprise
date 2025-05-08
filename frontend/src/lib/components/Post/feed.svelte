@@ -11,9 +11,9 @@
 	export let feedType: PostType = 'posts';
 	export let showActions = true;
 	export let feedClass = 'flex w-full flex-wrap justify-center';
-	export let communityID = 1;
+	export let communityID = 5;
 
-	let refreshKey = 0;
+	export let refreshKey = 0;
 
 	let modalShown = false;
 	let editShown = false;
@@ -27,14 +27,16 @@
 
 	function hideModal() {
 		modalShown = false;
+		editShown = false;
 		refreshKey += 1;
 	}
 
-	function showEditModal(id: number, commID: number = 1) {
+	function showEditModal(id: number, commID: number = communityID) {
 		editShown = true;
 		editID = id;
 		modalShown = true;
 		communityID = commID;
+		console.log('Edit modal shown for post ID:', id, 'in community ID:', commID);
 		console.log('Edit modal shown for post ID:', id);
 	}
 

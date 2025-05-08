@@ -95,8 +95,7 @@ def view_community_events(user_id: int, community_id: int, offset: int, limit: i
         ).filter(
             Event.community_id == community_id
         ).order_by(
-            Event.datetime.desc(),
-            Event.id.asc()
+            Event.id.desc()
         ).limit(limit).offset(offset).all()
 
         event_result = [list(_tuple) for _tuple in event_result]
@@ -158,8 +157,7 @@ def view_global_events(offset: int, limit: int) -> tuple[bool, int, list, list]:
             Event.community_id == Community.id,
             Community.public
         ).order_by(
-            Event.datetime.desc(),
-            Event.id.asc()
+            Event.id.desc()
         ).limit(limit).offset(offset).all()
 
         event_result = [list(_tuple) for _tuple in event_result]

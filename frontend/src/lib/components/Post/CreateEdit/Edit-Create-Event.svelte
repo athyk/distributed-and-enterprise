@@ -5,6 +5,7 @@
 	import CreateTitle from '../Sections/Inputs/createTitle.svelte';
 	import CreateDescription from '../Sections/Inputs/createDescription.svelte';
 	import SearchBox from '$components/SearchBox/searchBox.svelte';
+	import Popup from '$components/ErrorPopUp/popup.svelte';
 
 	import type { response } from '$lib/api/apiType';
 
@@ -29,6 +30,7 @@
 	let datetime_value = '';
 	let duration_value = 1;
 	let tags: [string, number][] = [];
+	let error_message = '';
 
 	async function submitEvent() {
 		const formattedDatetime = new Date(datetime_value).toISOString().split('T')[0];
@@ -57,6 +59,7 @@
 			onSuccess();
 			onClose();
 		} else {
+			error_message = response.error_message[0];
 			console.error('Error creating event:', response.error_message);
 		}
 	}
@@ -84,14 +87,38 @@
 	}
 
 	onMount(() => {
+		title = '';
+		text = '';
+		location = [['', '', '']];
+		datetime_value = '';
+		duration_value = 1;
+		tags = [];
+		error_message = '';
 		modalTitle = edit ? 'Edit Event' : 'Create an Event';
 		submitText = edit ? 'Edit Event' : 'Create Event';
 		if (edit) {
 			getEvent();
 		}
 	});
+
+	$: if (showModal) {
+		console.log('Modal shown', showModal, edit);
+		title = '';
+		text = '';
+		location = [['', '', '']];
+		datetime_value = '';
+		duration_value = 1;
+		tags = [];
+		error_message = '';
+		modalTitle = edit ? 'Edit Event' : 'Create an Event';
+		submitText = edit ? 'Edit Event' : 'Create Event';
+		if (edit) {
+			getEvent();
+		}
+	}
 </script>
 
+<Popup bind:errorMessage={error_message} />
 <CreateEditBase
 	ModalTitle={modalTitle}
 	{showModal}

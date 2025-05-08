@@ -44,3 +44,31 @@ export async function checkPermisions(communityId: number): Promise<boolean> {
 		return false;
 	}
 }
+
+export async function isAdmin(communityId: number): Promise<boolean> {
+	const response = (await get(`community/${communityId}/members`)) as response;
+	const msg = response.error_message[0].toUpperCase();
+	if (msg === 'USER ROLE: ADMIN') {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+export async function isWithCommunity(communityId: number): Promise<boolean> {
+	const response = (await get(`community/${communityId}/members`)) as response;
+	if (response.success) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+export async function isRequested(communityId: number): Promise<boolean> {
+	const response = (await get(`community/${communityId}/members`)) as response;
+	if (response.error_message[0].toUpperCase() === 'USER ROLE: REQUESTED') {
+		return true;
+	} else {
+		return false;
+	}
+}

@@ -20,6 +20,22 @@ message UserRequest {
     int32 action_user_id = 3;
 }
 
+message Entry {
+    int32 user_id = 1;
+    string status = 2;
+}
+
+message AllUsers {
+    // success is a flag to indicate if the message was successfully sent.
+    bool success = 1;
+    // http status is the integer response of the request results whilst following the http code format
+    int32 http_status = 2;
+    // error is the error message if there was an error sending the message, it is empty if the message was successfully sent.
+    repeated string error_message = 3;
+    //
+    repeated Entry users = 4;
+}
+
 service MemberManagement {
     // PromoteUser is used for promotion of a specific user
     rpc PromoteUser(UserRequest) returns (MemberActionResponse) {}
@@ -27,4 +43,6 @@ service MemberManagement {
     rpc DemoteUser(UserRequest) returns (MemberActionResponse) {}
     // BanUser is used by admins to either ban or unban users
     rpc BanUser(UserRequest) returns (MemberActionResponse) {}
+    // BanUser is used by admins to either ban or unban users
+    rpc GetAllCommunityUser(UserRequest) returns (AllUsers) {}
 }
