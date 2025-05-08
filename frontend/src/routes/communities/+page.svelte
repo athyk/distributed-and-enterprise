@@ -6,6 +6,7 @@
 	import type { CommunitySearchResponse,communityData } from '$lib/api/apiType';
 	import CreateCommunityCard from "$components/communityCRUD/create.svelte";
 	import { onMount } from 'svelte';
+	import { isLoggedIn } from '$lib/api/checkUser';
 
 
 
@@ -15,6 +16,7 @@
 	let ageTo: string = "";
 	let is_with = 0;
 	let public_community = 0;
+	let isLoggedInUser = false;
 
 
 	function removeTag(tag: [string, number]) {
@@ -59,6 +61,8 @@
 	}
 
 	async function fetchCommunities() {
+		isLoggedInUser = await isLoggedIn();
+		console.log('User logged in:', isLoggedInUser);
 		console.log('Fetching communities with query:', searchQuery);
 		console.log(ageTo,is_with,public_community)
 		error = '';
@@ -85,7 +89,7 @@
 	let filteredCommunities: communityData[] = [];
 	let error: string = '';
 
-	onMount(() => {
+	onMount(async () => {
 		fetchCommunities();
 	});
 
@@ -122,15 +126,17 @@
 </div>
 
 				<!-- Create Community Button -->
-				<button
-					class="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white shadow-md transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-					on:click={() => (modalShown = true)}
-					>
-					<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-						<path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-					</svg>
-					Create Community
-				</button>
+				 {#if isLoggedInUser}
+					<button
+						class="flex shrink-0 items-center justify-center gap-2 rounded-lg bg-green-500 px-5 py-2.5 text-sm font-medium text-white shadow-md transition hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+						on:click={() => (modalShown = true)}
+						>
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+						</svg>
+						Create Community
+					</button>
+				{/if}
 			</div>
 
 			<!-- Active Filters Display -->

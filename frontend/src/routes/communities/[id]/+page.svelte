@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
     import { page } from '$app/stores';
     import EditCommunityCard from "$components/communityCRUD/edit.svelte";
-    import {checkPermisions,isWithCommunity} from '$lib/api/checkUser';
+    import {checkPermisions,isWithCommunity,isRequested,isAdmin} from '$lib/api/checkUser';
     import { post } from '$lib/api/post';
     import { deleteCall } from '$lib/api/delete';
     import Popup from '$components/ErrorPopUp/popup.svelte';
@@ -17,6 +17,7 @@
 	let userUrl = 'https://picsum.photos/id/63/200/200';
 	let picture_url = '';
     let communityId: string;
+    let int_communityId: number;
     let modalShown = false;
     let hasPermission = false;
     let inCommunity = false;
@@ -28,15 +29,11 @@
     let private_community = false;
     let requested_users_view = 0;
     let users_fetched = false;
+    let refreshCommunity = 0;
+    let hasRequested = false;
+    let isAadmin = false;
+    let usersID = -1;
 
-    let me: {
-        id: number,
-        name: string,
-    }= {
-        id: 0,
-        name: 'Guest',
-    };
-    
 
     let users: {
         id: number,
@@ -115,7 +112,7 @@
                         id: user[0],
                         name: await getName(user[0]),
                     }));
-
+            
                 const bannedPromises = response.all_users
                     .filter(user => user[1] === 'banned')
                     .map(async user => ({
@@ -130,17 +127,21 @@
 
                 if (private_community) {
                     try {
-                        const requestedPromises = response.requested_users.map(async user => ({
-                            id: user[0],
-                            name: await getName(user[0]),
-                            role: user[1]
-                        }));
+                        console.log('Fetching requested users...');
+                        
+                        const requestedPromises = response.all_users
+                            .filter(user => user[1] === 'requested')
+                            .map(async user => ({
+                                id: user[0],
+                                name: await getName(user[0]),
+                                role: user[1]
+                            }));
                         requested_users = await Promise.all(requestedPromises);
                     } catch (error) {
                         console.error('Error fetching requested users:', error);
                     }
                 }
-
+                console.log("Booooooooooooooooooooo");
                 users_fetched = true;
                 console.log('Users:', users);
                 console.log('Admin Users:', admin_users);
@@ -192,6 +193,7 @@
                 console.log('Joined community successfully');
                 if (private_community) {
                     errorMessage = 'Request sent to join the community.';
+                    hasRequested = true;
                 } else {
                     inCommunity = true;
                 }
@@ -211,6 +213,10 @@
             if (response.success) {
                 console.log('left community successfully');
                 inCommunity = false;
+                if (private_community) {
+                    hasRequested = false;
+                    communityFetched = false;
+                }
             } else {
                 console.error('Error leaving community:', response.error_message);
                 errorMessage = response.error_message[0];
@@ -271,7 +277,7 @@
 
     async function addUser(userId: number) {
         try {
-            const response:response = await post('community/'+communityId+'/invite', {action_user_id: userId});
+            const response:response = await post('community/'+communityId+'/invite', {invite_user_id: userId});
             if (response.success) {
                 console.log('User added successfully');
                 getUsers();
@@ -289,20 +295,38 @@
 		if (localStorage.getItem('loggedin') === 'true') {
             communityFetched = false;
             users_fetched = false;
+            hasRequested = false;
             errorMessage = '';
 			try {
                 communityId = $page.params.id;
+                int_communityId = parseInt(communityId);
                 if (await checkPermisions(parseInt(communityId))) {
                     console.log('User has permissions to edit the community.');
                     hasPermission = true;
+                    if (await isAdmin(parseInt(communityId))) {
+                        console.log('User is an admin of the community.');
+                        isAadmin = true;
+                    } else {
+                        console.log('User is not an admin of the community.');
+                        isAadmin = false;
+                    }
                 } else {
                     console.log('User does not have permissions to edit the community.');
                     hasPermission = false;
                 }
 
+                const response = await getUserInfo();
+                usersID = response.user.id;
+
                 if (await isWithCommunity(parseInt(communityId))) {
                     console.log('User is in the community.');
-                    inCommunity = true;
+                    if (await isRequested(parseInt(communityId))) {
+                        console.log('User has requested to join the community.');
+                        hasRequested = true;
+                    } else {
+                        console.log('User is already a member of the community.');
+                        inCommunity = true;
+                    }
                 } else {
                     console.log('User is not in the community.');
                     inCommunity = false;
@@ -320,11 +344,17 @@
         }
 	});
 
+    $: if (refreshCommunity > 0) {
+        getCommunity();
+        getUsers();
+        refreshCommunity = 0;
+    }
+
 </script>
 
 
 {#if communityFetched}
-    <EditCommunityCard bind:modalShown={modalShown} communityID={parseInt(communityId)} />
+    <EditCommunityCard bind:modalShown={modalShown} communityID={parseInt(communityId)} bind:refreshCommunity={refreshCommunity} />
 {/if}
 
 
@@ -418,9 +448,15 @@
                         Leave
                     </button>
                 {:else}
-                    <button class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-green-600" on:click={() => joinCommunity()}>
-                        {private_community ? 'Request' : 'Join'}
-                    </button>
+                    {#if private_community && hasRequested}
+                        <button class="mt-4 w-full rounded bg-gray-400 px-4 py-2 text-white text-center block cursor-not-allowed">
+                            Requested
+                        </button>
+                    {:else}
+                        <button class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-green-600" on:click={() => joinCommunity()}>
+                            {private_community ? 'Request' : 'Join'}
+                        </button>
+                    {/if}
                 {/if}
                 {#if hasPermission}
                     <button class="mt-4 w-full rounded bg-blue-500 px-4 py-2 text-white text-center block hover:bg-blue-600" on:click={() => (modalShown = true)}>
@@ -429,158 +465,159 @@
                 {/if}
             </div>
 
-            <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
-                {#if communityFetched}
-                    <h1 class="text-lg font-bold text-gray-700">
-                        Members
-                    </h1>
-                    {#if hasPermission}
-                        <div class="flex justify-between m-4">
-                            <button
-                            class="w-1/2 rounded {requested_users_view === 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center mr-1"
-                            on:click={() => requested_users_view = 0}
-                        >
+            {#if inCommunity || !private_community}
+                <div class="rounded-lg border-2 border-gray-300 bg-white p-4 shadow-md sticky top-5 mt-5">
+                    {#if communityFetched}
+                        <h1 class="text-lg font-bold text-gray-700">
                             Members
-                        </button>
-                            {#if private_community}
-                                {#if hasPermission}
-
-                                    <button 
-                                        class="w-1/2 rounded {requested_users_view === 1 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center ml-1"
-                                        on:click={() => requested_users_view = 1}   
-                                    >
-                                        Requested
-                                    </button>
-                                {/if}
-                            {/if}
-                            {#if hasPermission}
-                            <button 
-                                    class="w-1/2 rounded {requested_users_view === 2 ? 'bg-red-500 hover:bg-red-600' : 'bg-red-300 hover:bg-red-400'} px-2 py-1 text-white text-center ml-1"
-                                    on:click={() => requested_users_view = 2}
-                                >
-                                    Banned Users
+                        </h1>
+                        {#if hasPermission}
+                            <div class="flex justify-between m-4">
+                                <button
+                                class="w-1/2 rounded {requested_users_view === 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center mr-1"
+                                on:click={() => requested_users_view = 0}
+                            >
+                                Members
                             </button>
+                                {#if private_community}
+                                    {#if hasPermission}
+
+                                        <button 
+                                            class="w-1/2 rounded {requested_users_view === 1 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 hover:bg-gray-400'} px-2 py-1 text-white text-center ml-1"
+                                            on:click={() => requested_users_view = 1}   
+                                        >
+                                            Requested
+                                        </button>
+                                    {/if}
+                                {/if}
+                                {#if isAadmin}
+                                <button 
+                                        class="w-1/2 rounded {requested_users_view === 2 ? 'bg-red-500 hover:bg-red-600' : 'bg-red-300 hover:bg-red-400'} px-2 py-1 text-white text-center ml-1"
+                                        on:click={() => requested_users_view = 2}
+                                    >
+                                        Banned Users
+                                </button>
+                            {/if}
+                            </div>
                         {/if}
-                        </div>
-                    {/if}
-                    {#if users_fetched}
-                        <div class="mt-4 space-y-4">
-                            <div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
-                                <div class="flex flex-col space-y-2 max-h-60 overflow-y-auto pr-5">
-                                    {#if requested_users_view === 1}
-                                        {#each requested_users as user}
-                                            <div class="flex items-center justify-between">
-                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
-                                                {#if hasPermission}
-                                                    <div class="flex space-x-1">
-                                                        <button class="px-2 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                                                        on:click={() => addUser(user.id)}
-                                                        >Accept</button>
-                                                    </div>
-                                                {/if}
-                                            </div>
-                                        {/each}
-                                        {#if requested_users.length == 0}
-                                            <p class="text-sm text-gray-600">No requests</p>
-                                        {/if}
-                                    {:else if requested_users_view === 0}
-                                        <h1 class="text-lg font-bold text-gray-700">Admins</h1>
-                                        {#each admin_users as user}
-                                            <div class="flex items-center justify-between">
-                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
-                                                {#if hasPermission}
-                                                    <div class="flex space-x-1">
-                                                        <button
-                                                            class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                            on:click={() => premoteUser(user.id)}
-                                                        >
-                                                            Promote
-                                                        </button>
-                                                        <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
-                                                            on:click={() => demoteUser(user.id)}
-                                                        >Demote</button>
-                                                        <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
-                                                            on:click={() => banUser(user.id)}
-                                                        >Ban</button>
-                                                    </div>
-                                                {/if}
-                                            </div>
-                                        {/each}
-                                        <h1 class="text-lg font-bold text-gray-700">Moderators</h1>
-                                        {#each moderator_users as user}
-                                            <div class="flex items-center justify-between">
-                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
-                                                {#if hasPermission}
-                                                <div class="flex space-x-1">
-                                                    <button
-                                                        class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-                                                        on:click={() => premoteUser(user.id)}
-                                                    >
-                                                        Promote
-                                                    </button>
-                                                    <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
-                                                        on:click={() => demoteUser(user.id)}
-                                                    >Demote</button>
-                                                    <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
-                                                        on:click={() => banUser(user.id)}
-                                                    >Ban</button>
-                                                </div>
-                                                {/if}
-                                            </div>
-                                        {/each}
-                                        <h1 class="text-lg font-bold text-gray-700">Users</h1>
-                                        {#each users as user}
-                                            <div class="flex items-center justify-between">
-                                                <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
-                                                {#if hasPermission}
-                                                    <div class="flex space-x-1">
+                        {#if users_fetched}
+                            <div class="mt-4 space-y-4">
+                                <div class="rounded-lg border border-gray-300 bg-gray-100 p-4 hover:shadow-lg transition-shadow">
+                                    <div class="flex flex-col space-y-2 max-h-60 overflow-y-auto pr-5">
+                                        {#if requested_users_view === 1}
+                                            {#each requested_users as user}
+                                                <div class="flex items-center justify-between">
+                                                    <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                    {#if hasPermission}
                                                         <div class="flex space-x-1">
+                                                            <button class="px-2 py-1 text-xs bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                                                            on:click={() => addUser(user.id)}
+                                                            >Accept</button>
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {/each}
+                                            {#if requested_users.length == 0}
+                                                <p class="text-sm text-gray-600">No requests</p>
+                                            {/if}
+                                        {:else if requested_users_view === 0}
+                                            <h1 class="text-lg font-bold text-gray-700">Admins</h1>
+                                            {#each admin_users as user}
+                                                <div class="flex items-center justify-between">
+                                                    <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                    {#if isAadmin && user.id !== usersID}
+                                                        <div class="flex space-x-1">
+                                                            <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                                                                on:click={() => demoteUser(user.id)}
+                                                            >Demote</button>
+                                                            {#if isAadmin}
+                                                                <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                                    on:click={() => banUser(user.id)}
+                                                                >Ban</button>
+                                                            {/if}
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {/each}
+                                            <h1 class="text-lg font-bold text-gray-700">Moderators</h1>
+                                            {#each moderator_users as user}
+                                                <div class="flex items-center justify-between">
+                                                    <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                    {#if hasPermission && user.id !== usersID}
+                                                    <div class="flex space-x-1">
+                                                        {#if isAadmin}
                                                             <button
                                                                 class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
                                                                 on:click={() => premoteUser(user.id)}
                                                             >
                                                                 Promote
                                                             </button>
-                                                            <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
-                                                                on:click={() => demoteUser(user.id)}
-                                                            >Demote</button>
+                                                        {/if}
+                                                        <button class="px-2 py-1 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                                                            on:click={() => demoteUser(user.id)}
+                                                        >Demote</button>
+                                                        {#if isAadmin}
                                                             <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
                                                                 on:click={() => banUser(user.id)}
                                                             >Ban</button>
+                                                        {/if}
+                                                    </div>
+                                                    {/if}
+                                                </div>
+                                            {/each}
+                                            <h1 class="text-lg font-bold text-gray-700">Users</h1>
+                                            {#each users as user}
+                                                <div class="flex items-center justify-between">
+                                                    <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                    {#if hasPermission && user.id !== usersID}
+                                                        <div class="flex space-x-1">
+                                                            <div class="flex space-x-1">
+                                                                <button
+                                                                    class="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                                                                    on:click={() => premoteUser(user.id)}
+                                                                >
+                                                                    Promote
+                                                                </button>
+                                                                {#if isAadmin}
+                                                                    <button class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                                        on:click={() => banUser(user.id)}
+                                                                    >Ban</button>
+                                                                {/if}
+                                                            </div>
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {/each}
+                                        {:else if requested_users_view === 2}
+                                            {#each banned_users as user}
+                                                {#if isAadmin}
+                                                    <div class="flex items-center justify-between">
+                                                        <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
+                                                        <div class="flex space-x-1">
+                                                            <div class="flex space-x-1">
+                                                                <button
+                                                                    class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
+                                                                    on:click={() => banUser(user.id)}
+                                                                >
+                                                                    Unban
+                                                                </button>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 {/if}
-                                            </div>
-                                        {/each}
-                                    {:else if requested_users_view === 2}
-                                        {#each banned_users as user}
-                                            {#if hasPermission}
-                                                <div class="flex items-center justify-between">
-                                                    <a href="/user/{user.id}" class="text-sm text-gray-600 hover:text-blue-500 hover:underline">{user.name}</a>
-                                                    <div class="flex space-x-1">
-                                                        <div class="flex space-x-1">
-                                                            <button
-                                                                class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600"
-                                                                on:click={() => banUser(user.id)}
-                                                            >
-                                                                Unban
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            {/each}
+                                            {#if banned_users.length == 0}
+                                                <p class="text-sm text-gray-600">No banned users</p>
                                             {/if}
-                                        {/each}
-                                        {#if banned_users.length == 0}
-                                            <p class="text-sm text-gray-600">No banned users</p>
                                         {/if}
-                                    {/if}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        {/if}
                     {/if}
+                </div>
                 {/if}
             </div>
-        </div>
 
 
         <div class="w-full md:w-1/2 px-4 overflow-y-auto scrollbar-none flex justify-center mt-2">
@@ -594,13 +631,13 @@
                 {#if communityFetched}
                     {#if choice === 0}
                         <div class="w-full">
-                            <Feed feedType="events" showActions={true} communityID={parseInt(communityId)}>
+                            <Feed feedType="events" showActions={true} bind:communityID={int_communityId} >
                                 <Event url={"community/"+communityId+"/events"} slot="Posts" limit={30} />
                             </Feed>
                         </div>
                     {:else if choice === 1}
                         <div class="w-full">
-                            <Feed feedType="announcements" showActions={true} communityID={parseInt(communityId)}>
+                            <Feed feedType="announcements" showActions={true} bind:communityID={int_communityId} >
                                 <Annoucements url={"community/"+communityId+"/announcements"} slot="Posts" limit={30} />
                             </Feed>
                         </div>

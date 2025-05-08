@@ -23,6 +23,7 @@
 	let error = '';
     export let communityID: number;
 	export let modalShown = false;
+	export let refreshCommunity = 0;
     let hasPermission = false;
 
 	async function editCommunity() {
@@ -40,8 +41,13 @@
 		console.log('Formatted data:', formattedData);
 		try {
 			let response = (await Put('community/'+communityID, formattedData)) as response;
-			console.log(response.id);
-            modalShown = false;
+			if (response.success === true) {
+				modalShown = false;
+				refreshCommunity+= 1;
+			}
+			else {
+				error = response.error_message[0];
+			}
 		} catch (error) {
 			console.error('Error creating community:', error);
 			error = 'Error creating community. Please try again.';

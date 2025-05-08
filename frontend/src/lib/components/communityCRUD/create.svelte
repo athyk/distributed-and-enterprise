@@ -28,7 +28,13 @@
 		console.log('Formatted data:', formattedData);
 		try {
 			let response = (await post('community/', formattedData)) as response;
-			console.log(response.id);
+			if (response.id != -1){
+				window.location.href = `/communities/${response.id}`;
+			} else {
+				error = response.error_message[0];
+			}
+
+
 		} catch (error) {
 			console.error('Error creating community:', error);
 			error = 'Error creating community. Please try again.';
